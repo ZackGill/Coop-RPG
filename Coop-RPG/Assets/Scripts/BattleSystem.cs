@@ -4,9 +4,9 @@ using System.Linq;
 
 public class BattleSystem : MonoBehaviour {
 
-	List<CombatMove> moveQueue = List<BattleMove>();
-	List<Player> players = List<Player>();
-	List<Enemy> enemies = List<Enemy>();
+	List<CombatMove> moveQueue = new List<CombatMove>();
+	List<Player> players = new List<Player>();
+	List<Enemy> enemies = new List<Enemy>();
 
 	// Use this for initialization
 	void Start () {
@@ -37,7 +37,7 @@ public class BattleSystem : MonoBehaviour {
 		foreach (CombatMove move in moves) {
 			// execute
 			if (move.GetMoveType() == "Run") {
-				int playerRun = Random () % 10;
+				int playerRun = Random.Range(1, 101) % 10;
 				int enemyRun = 0;
 				foreach (Enemy enemy in enemies) {
 					enemyRun += enemy.runVal;

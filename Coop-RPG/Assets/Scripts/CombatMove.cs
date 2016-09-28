@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using System.Collections.Generic;
 public class CombatMove : MonoBehaviour {
 
 	Entity _caster;
-	List<Entity> _targets = List<Entity>();
+	List<Entity> _targets = new List<Entity>();
 	string _moveType;
 	int _speed, _cooldown;
 
@@ -27,7 +27,7 @@ public class CombatMove : MonoBehaviour {
 		return _targets;
 	}
 
-	string GetMoveType() {
+	public string GetMoveType() {
 		return _moveType;
 	}
 
