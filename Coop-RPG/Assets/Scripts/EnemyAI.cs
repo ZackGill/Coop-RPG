@@ -22,6 +22,7 @@ public class EnemyAI {
 	}
 
 	private BaseAbility ChooseAbilityAtSeventyFivePercent(){
-		//return chosenAbility = ***chosen skill***;
+        //return chosenAbility = ***chosen skill***;
+        return new BaseAbility();
 	}
 }
