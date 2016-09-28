@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class BattleSystem : MonoBehaviour {
 
@@ -19,7 +20,9 @@ public class BattleSystem : MonoBehaviour {
 				moveQueue.Add (enemy.ChooseMove ());
 			}
 			// sort and execute
-			//moveQueue.Sort (); //C# has built in sort function for list
+			var timeSort = from move in moveQueue
+			               orderby move.GetSpeed()
+			               select move;
 			ExecuteMoves();
 		}
 	}
@@ -33,6 +36,18 @@ public class BattleSystem : MonoBehaviour {
 	void ExecuteMoves(List<CombatMove> moves) {
 		foreach (CombatMove move in moves) {
 			// execute
+			if (move.GetMoveType() == "Run") {
+				int playerRun = Random () % 10;
+				int enemyRun = 0;
+				foreach (Enemy enemy in enemies) {
+					enemyRun += enemy.runVal;
+				}
+				if (playerRun >= enemyRun) {
+					print ("Run Success");
+				} else {
+					print ("Run Fail");
+				}
+			}
 		}
 	}
 }

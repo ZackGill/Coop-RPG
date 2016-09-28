@@ -3,9 +3,10 @@ using System.Collections;
 
 public class CombatMove : MonoBehaviour {
 
-	Entity caster;
-	List<Entity> targets = List<Entity>();
-
+	Entity _caster;
+	List<Entity> _targets = List<Entity>();
+	string _moveType;
+	int _speed, _cooldown;
 
 	// Use this for initialization
 	void Start () {
@@ -15,5 +16,49 @@ public class CombatMove : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	// Getters
+	Entity GetCaster() {
+		return _caster;
+	}
+		
+	List<Entity> GetTargets() {
+		return _targets;
+	}
+
+	string GetMoveType() {
+		return _moveType;
+	}
+
+	int GetSpeed() {
+		return _speed;
+	}
+
+	int GetCooldown() {
+		return _cooldown;
+	}
+
+	// Setters
+	void SetCaster(Entity c) {
+		_caster = c;
+	}
+
+	void SetTargets(List<Entity> tar) {
+		foreach (Entity e in tar) {
+			_targets.Add (e);
+		}
+	}
+
+	void SetMoveType(string str) {
+		_moveType = str;
+	}
+
+	void SetSpeed(int s) {
+		_speed = s;
+	}
+
+	void SetCooldown(int cd) {
+		_cooldown = cd;
 	}
 }
