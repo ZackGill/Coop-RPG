@@ -17,7 +17,6 @@ public class CombatMove : MonoBehaviour {
 	void Update () {
 	
 	}
-
 	// Getters
 	Entity GetCaster() {
 		return _caster;
@@ -31,7 +30,7 @@ public class CombatMove : MonoBehaviour {
 		return _moveType;
 	}
 
-	int GetSpeed() {
+	public int GetSpeed() {
 		return _speed;
 	}
 

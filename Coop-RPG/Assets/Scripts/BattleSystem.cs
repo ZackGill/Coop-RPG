@@ -23,7 +23,7 @@ public class BattleSystem : MonoBehaviour {
 			var timeSort = from move in moveQueue
 			               orderby move.GetSpeed()
 			               select move;
-			ExecuteMoves();
+			ExecuteMoves(moveQueue);
 		}
 	}
 	
