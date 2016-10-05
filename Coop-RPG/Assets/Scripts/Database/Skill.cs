@@ -4,11 +4,11 @@ namespace AssemblyCSharp
 {
 	public class Skill
 	{
-		String targets, type;
+		String targets, type, name;
 		int value, threatGen, cooldown;
 		public Skill (String name, String p)
 		{
-
+			this.name = name;
 			targets = SkillLU.getTargets (name);
 			type = SkillLU.getType (name);
 			value = SkillLU.getValue (name);
@@ -23,6 +23,10 @@ namespace AssemblyCSharp
 				value += pVal;
 			}
 			
+		}
+
+		public String getName() {
+			return name;
 		}
 
 		public String getType() {
