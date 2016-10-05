@@ -41,7 +41,7 @@ public class TestScript : MonoBehaviour {
 		};
 			
 
-		test = firebase.Child("acc23");
+		test = firebase.Child("accBUILD");
 		test.SetJsonValue ("{\"characters\" : \"TheDoo222d\", \"email\" : \"mail@mail.mail\", \"password\" : \"FUG\"}");
 		child = test.Child ("characters");
 		Debug.Log (child.ToString ());
