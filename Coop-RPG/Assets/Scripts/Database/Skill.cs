@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace AssemblyCSharp
 {
@@ -21,9 +21,11 @@ namespace AssemblyCSharp
 
 			if (pType.Equals ("damage")) {
 				value += pVal;
+				value++;
 			}
 			
 		}
+
 
 		public String getName() {
 			return name;
