@@ -20,7 +20,7 @@ namespace AssemblyCSharp
 			int pVal = PerkLU.getValue (p);
 
 			if (pType.Equals ("damage")) {
-				value++;
+				value += pVal;
 			}
 			
 		}
