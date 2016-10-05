@@ -18,15 +18,19 @@ using System.Collections;
 
 public class TestScript : MonoBehaviour {
 	IFirebase firebase;
-
+	IFirebase child;
+	IFirebase test;
 	// Use this for initialization
 	void Start () {
-	    firebase = Firebase.CreateNew ("https://incandescent-torch-2575.firebaseio.com/testing");
-		firebase.AuthWithPassword ("benwu@google.com", "password", (AuthData auth) => {
+		firebase = Firebase.CreateNew ("https://coop-rpg.firebaseio.com/Accounts");
+		firebase.AuthWithCustomToken ("nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1", (AuthData auth) => {
 			Debug.Log ("auth success!!" + auth.Uid);
 		}, (FirebaseError e) => {
 			Debug.Log ("auth failure!!");
 		});
+
+		string f = firebase.Child ("Accounts").ToString();
+		Debug.Log(f);
 
 		firebase.ChildAdded += (object sender, FirebaseChangedEventArgs e) => {
 			Debug.Log ("Child added!");
@@ -35,11 +39,15 @@ public class TestScript : MonoBehaviour {
 		firebase.ChildRemoved += (object sender, FirebaseChangedEventArgs e) => {
 			Debug.Log ("Child removed!");
 		};
+			
 
-		firebase.SetValue ("SetValue working?");
-		firebase.SetJsonValue("{\"example_child\":{\"child_working\" : true}}");
+		test = firebase.Child("acc23");
+		test.SetJsonValue ("{\"characters\" : \"TheDoo222d\", \"email\" : \"mail@mail.mail\", \"password\" : \"FUG\"}");
+		child = test.Child ("characters");
+		Debug.Log (child.ToString ());
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 	
