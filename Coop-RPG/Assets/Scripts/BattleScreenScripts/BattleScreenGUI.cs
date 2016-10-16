@@ -86,10 +86,8 @@ public class BattleScreenGUI : MonoBehaviour {
                 fightTextPanel.alpha = 0;
                 break;
             case (BattleScreenStates.FightStates.ENEMYTURN):
-                battleLogic.enemyAttacks();
                 fightMessage.text = battleLogic.getEnemyFightMessage();
                 fightButtonsPanel.interactable = false;
-                activeTime.setEnemySeconds(0);
                 break;
             case (BattleScreenStates.FightStates.PLAYERTURN):
                 battleLogic.meleeAttack();
@@ -110,8 +108,6 @@ public class BattleScreenGUI : MonoBehaviour {
                 break;
 
         }
-        nextState = false;
-        state.curState = BattleScreenStates.FightStates.NEUTRAL;
     }
 
     void SkillButtonClicked()

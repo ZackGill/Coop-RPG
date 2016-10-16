@@ -30,7 +30,7 @@ public class BattleLogic : MonoBehaviour {
     // So we can affect the state and timer when necessary.
     private BattleScreenStates state;
     private ActiveTime activeTime;
-    List<BattleScreenStates.FightStates> states = new List<BattleScreenStates.FightStates>();
+    List<BattleScreenStates.FightStates> stateQueue;
 
     void Start () {
 
@@ -40,11 +40,15 @@ public class BattleLogic : MonoBehaviour {
         enemyHP = 30;
 
         state = GetComponent<BattleScreenStates>();
+        stateQueue = new List<BattleScreenStates.FightStates>();
+        stateQueue.Add(BattleScreenStates.FightStates.BEGINNING);
+        state.curState = BattleScreenStates.FightStates.BEGINNING;
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
         playerFightMessage = enemyName + " draws near!";
     }
 	
 	void Update () {
+        print(state.curState);
         checkBattleOver();
         if (Input.GetKeyDown("space"))
             toggleState();
@@ -95,12 +99,23 @@ public class BattleLogic : MonoBehaviour {
         {
             state.curState = BattleScreenStates.FightStates.PLAYERTURN;
         }
-        if (!nextState)
-            return;
+        //if (!nextState)
+        //    return;
     }
 
     void toggleState()
     {
+        if (stateQueue.Count == 1)
+            stateQueue.Add(BattleScreenStates.FightStates.BEGINNING);
+    }
+
+    void stateTakesEffect()
+    {
+        if (state.curState == BattleScreenStates.FightStates.ENEMYTURN)
+        {
+            enemyAttacks();
+            activeTime.setEnemySeconds(0);
+        }
 
     }
 
