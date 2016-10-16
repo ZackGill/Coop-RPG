@@ -65,16 +65,13 @@ public class BattleScreenGUI : MonoBehaviour {
     // TODO: I suspect that much of this would be better in battle logic, or could be handled better.
     void stateCheck()
     {
-        if (battleOver)
-            return;
-
         fightButtonsPanel.alpha = 0;
         fightTextPanel.alpha = 1;
 
         switch (state.curState)
         {
             case (BattleScreenStates.FightStates.BEGINNING):
-                fightMessage.text = battleLogic.getPlayerFightMessage();
+                fightMessage.text = battleLogic.getFightMessage();
                 break;
             case (BattleScreenStates.FightStates.NEUTRAL):
                 if (!battleLogic.currentMoveSelected)
@@ -86,27 +83,25 @@ public class BattleScreenGUI : MonoBehaviour {
                 fightTextPanel.alpha = 0;
                 break;
             case (BattleScreenStates.FightStates.ENEMYTURN):
-                fightMessage.text = battleLogic.getEnemyFightMessage();
+                fightMessage.text = battleLogic.getFightMessage();
                 fightButtonsPanel.interactable = false;
                 break;
             case (BattleScreenStates.FightStates.PLAYERTURN):
-                battleLogic.meleeAttack();
-                fightMessage.text = battleLogic.getPlayerFightMessage();
+                fightMessage.text = battleLogic.getFightMessage();
                 battleLogic.currentMoveSelected = false;
                 break;
             case (BattleScreenStates.FightStates.WIN):
-                fightMessage.text = battleLogic.getPlayerFightMessage();
+                fightMessage.text = battleLogic.getFightMessage();
                 battleLogic.currentMoveSelected = false;
                 battleOver = true;
                 optionsPanel.alpha = 0;
                 break;
             case (BattleScreenStates.FightStates.LOSE):
-                fightMessage.text = battleLogic.getPlayerFightMessage();
+                fightMessage.text = battleLogic.getFightMessage();
                 battleLogic.currentMoveSelected = false;
                 battleOver = true;
                 optionsPanel.alpha = 0;
                 break;
-
         }
     }
 
