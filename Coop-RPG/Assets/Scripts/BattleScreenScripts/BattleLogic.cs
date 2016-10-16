@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // THIS WILL BE USED AS A MIDDLE GROUND BETWEEN THE USER INTERFACE AND BOB'S BATTLE SYSTEM, AS WELL
 // AS INFORMATION ABOUT THE CHARACTER/ENEMIES. Essentially, this is the logic behind the UI.
@@ -12,6 +13,7 @@ public class BattleLogic : MonoBehaviour {
     private float playerSpeed;
     private float playerExperience;
     private int playerLevel;
+    public bool currentMoveSelected = false;
     private float buffMultiplier = 1;
 
     // Information about the enemy.
@@ -28,6 +30,7 @@ public class BattleLogic : MonoBehaviour {
     // So we can affect the state and timer when necessary.
     private BattleScreenStates state;
     private ActiveTime activeTime;
+    List<BattleScreenStates.FightStates> states = new List<BattleScreenStates.FightStates>();
 
     void Start () {
 
@@ -43,6 +46,8 @@ public class BattleLogic : MonoBehaviour {
 	
 	void Update () {
         checkBattleOver();
+        if (Input.GetKeyDown("space"))
+            toggleState();
     }
 
     public void meleeAttack()
@@ -78,6 +83,25 @@ public class BattleLogic : MonoBehaviour {
             state.curState = BattleScreenStates.FightStates.WIN;
             playerFightMessage = enemyName + " was defeated! " + playerName + " wins!";
         }
+    }
+
+    void stateCheck()
+    {
+        if (activeTime.GetEnemyRatio() == 1)
+        {
+            state.curState = BattleScreenStates.FightStates.ENEMYTURN;
+        }
+        if (activeTime.GetRatio() == 1 && currentMoveSelected)
+        {
+            state.curState = BattleScreenStates.FightStates.PLAYERTURN;
+        }
+        if (!nextState)
+            return;
+    }
+
+    void toggleState()
+    {
+
     }
 
     public float getPlayerHP()
