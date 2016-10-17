@@ -4,6 +4,7 @@ using System.Collections;
 public class BattleLogic : MonoBehaviour {
 
     // Information about the player
+	//private Player p;
     private string playerName;
     private float playerHP;
     private float playerSpeed;
@@ -12,6 +13,7 @@ public class BattleLogic : MonoBehaviour {
     private float buffMultiplier = 1;
 
     // Information about the enemy.
+	//private Enemy e;
     private string enemyName;
     private float enemyHP;
     private float enemySpeed;
@@ -27,9 +29,10 @@ public class BattleLogic : MonoBehaviour {
     private ActiveTime activeTime;
 
     void Start () {
-
+		//initialize player here
         playerName = "Harry";
         playerHP = 100;
+		//initialize enemy here
         enemyName = "Spookeroni";
         enemyHP = 30;
 
@@ -44,6 +47,7 @@ public class BattleLogic : MonoBehaviour {
 
     public void meleeAttack()
     {
+		//e.damage(10*p.GetAttack());
         enemyHP -= 10 * buffMultiplier;
         activeTime.setSeconds(0);
         playerFightMessage = "You attack! 10 HP";
@@ -58,6 +62,7 @@ public class BattleLogic : MonoBehaviour {
 
     public void enemyAttacks()
     {
+		//p.damage(25*e.GetAttack());
         playerHP -= 25 * enemyBuffMultiplier;
         activeTime.setEnemySeconds(0);
         enemyFightMessage = "Enemy Attacks! 25 HP";
@@ -65,18 +70,19 @@ public class BattleLogic : MonoBehaviour {
 
     void checkBattleOver()
     {
-        if (playerHP <= 0)
+		if (playerHP <= 0) //if(p.GetHpCurr <= 0)
         {
             state.curState = BattleScreenStates.FightStates.LOSE;
             playerFightMessage = playerName + " fainted. Try again.";
         }
-        else if(enemyHP <= 0)
+		else if(enemyHP <= 0) //if(e.GetHpCurr <= 0)
         {
             state.curState = BattleScreenStates.FightStates.WIN;
             playerFightMessage = enemyName + " was defeated! " + playerName + " wins!";
         }
     }
 
+	// these methods will be pulled from the player/enemy classes
     public float getPlayerHP()
     {
         return playerHP;
