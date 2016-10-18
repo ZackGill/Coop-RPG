@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
     private float speed = 2.25F;
@@ -28,6 +29,14 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow))
         {
             transform.Translate(new Vector3(0, translation, 0));
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D coll)
+    {
+        if(coll.gameObject.tag == "Enemy")
+        {
+            SceneManager.LoadScene("BattleScreen");
         }
     }
 }
