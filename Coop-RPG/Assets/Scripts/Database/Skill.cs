@@ -4,6 +4,11 @@ namespace AssemblyCSharp
 {
 	public class Skill
 	{
+
+
+
+
+		/*
 		String targets, type, name;
 		int value, threatGen, cooldown;
 		public Skill (String name, String p)
@@ -50,6 +55,7 @@ namespace AssemblyCSharp
 		public int getCooldown() {
 			return cooldown;
 		}
+		*/
 	}
 }
 

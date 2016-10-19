@@ -17,6 +17,7 @@ limitations under the License.
 using System.Collections;
 
 public class TestScript : MonoBehaviour {
+	/*
 	IFirebase firebase;
 	IFirebase child;
 	IFirebase test;
@@ -52,4 +53,5 @@ public class TestScript : MonoBehaviour {
 	void Update () {
 	
 	}
+*/
 }

@@ -4,6 +4,7 @@ namespace AssemblyCSharp
 {
 	public class Monster
 	{
+		/*
 		IFirebase fb, mon, sub;
 		double AImistake;
 		bool bossTag;
@@ -37,6 +38,7 @@ namespace AssemblyCSharp
 
 
 		}
+		*/
 	}
 }
 
