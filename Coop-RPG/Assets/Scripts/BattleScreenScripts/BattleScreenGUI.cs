@@ -12,6 +12,14 @@ public class BattleScreenGUI : MonoBehaviour {
     private Button itemsButton;
     private Button runButton;
     private Button skillButtonOptions;
+    private Button skillButton1;
+    private Button skillButton2;
+    private Button skillButton3;
+    private Button skillButton4;
+    private Button skillButton5;
+    private Button skillButton6;
+    private Button skillButton7;
+    private Button skillButton8;
     private Text playerHealthString;
     private Text fightMessage;
     private Image playerHealthBar;
@@ -50,6 +58,15 @@ public class BattleScreenGUI : MonoBehaviour {
         state = GetComponent<BattleScreenStates>();
         battleLogic = GetComponent<BattleLogic>();
 
+        // The Skill Buttons.
+        skillButton1 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton1").GetComponent<Button>();
+        skillButton2 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton2").GetComponent<Button>();
+        skillButton3 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton3").GetComponent<Button>();
+        skillButton4 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton4").GetComponent<Button>();
+        skillButton5 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton5").GetComponent<Button>();
+        skillButton6 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton6").GetComponent<Button>();
+        skillButton7 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton7").GetComponent<Button>();
+        skillButton8 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton8").GetComponent<Button>();
     }
 	
 	void Update () {
