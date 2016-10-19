@@ -9,15 +9,22 @@ public class GenerateDungeon : MonoBehaviour {
     public Transform floor;
     public Transform wall;
     public Transform player;
-    public GameObject enemy;
-    int xRooms = 3, yRooms = 4, zoneSize = 11, enemyCount;
+    private GameObject[] enemy;
+    public GameObject wanderStalk;
+    public GameObject patrolCharge;
+    int xRooms = 5, yRooms = 4, zoneSize = 12, enemyCount;
+    //xRooms and yRooms must be min. 4
 	public bool[,] isFloor = new bool[0,0];
     int seed = (int)System.DateTime.Now.Ticks;
+    int BUFFER = 2;
 
     void Start() {
-        enemyCount = UnityEngine.Random.Range(xRooms, xRooms * yRooms);
+        enemy = new GameObject[2];
+        enemy[0] = wanderStalk;
+        enemy[1] = patrolCharge;
+        enemyCount =  UnityEngine.Random.Range(1, Mathf.CeilToInt(xRooms * yRooms/2));
         UnityEngine.Random.InitState(seed);
-        isFloor = new bool[zoneSize * xRooms + 2, zoneSize * yRooms + 2];
+        isFloor = new bool[zoneSize * xRooms + 2*BUFFER, zoneSize * yRooms + 2*BUFFER];
         int[,] centers = new int[xRooms * yRooms, 3];
         int roomcount = 0;
         int ULX, ULY, LRX, LRY;
@@ -45,7 +52,7 @@ public class GenerateDungeon : MonoBehaviour {
                     {
                         for (int y = ULY; y < LRY; y++)
                         {
-                            isFloor[x + zoneSize * J + 1, y + zoneSize * I + 1] = true;
+                            isFloor[x + zoneSize * J + BUFFER, y + zoneSize * I + BUFFER] = true;
                         }
                     }
                 }
@@ -139,8 +146,8 @@ public class GenerateDungeon : MonoBehaviour {
         int pX, pY;
         do
         {
-            pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
-            pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
+            pX = UnityEngine.Random.Range(0, zoneSize * 2+BUFFER);
+            pY = UnityEngine.Random.Range(0, zoneSize * 2+BUFFER);
         } while (!isFloor[pX, pY]);
 
         var pc = Instantiate(player, new Vector3(pX, pY, -.5f), Quaternion.identity);
@@ -153,7 +160,7 @@ public class GenerateDungeon : MonoBehaviour {
                 pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
                 pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
             } while (!isFloor[pX, pY]);
-            var en = Instantiate(enemy, new Vector3(pX, pY, -.5f), Quaternion.identity);
+            Instantiate(enemy[UnityEngine.Random.Range(0,enemy.Length)], new Vector3(pX, pY, -.5f), Quaternion.identity);
         }
     }
 	// Update is called once per frame
