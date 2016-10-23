@@ -15,6 +15,7 @@ public class PatrolCharge_Overworld : MonoBehaviour
     bool[,] visited;
     private coord next;
     bool exists = false, hunting = false;
+
     // Use this for initialization
     void Start()
     {
@@ -200,25 +201,25 @@ public class PatrolCharge_Overworld : MonoBehaviour
                 if (x < nX)
                 {
                     transform.Translate(new Vector3(translation, 0, 0));
-                    x = Mathf.FloorToInt(transform.position.x + (0.1F));
+                    x = Mathf.FloorToInt(transform.position.x + 0.1F);
                     dir = EAST;
                 }
                 else if (x > nX)
                 {
                     transform.Translate(new Vector3(-translation, 0, 0));
-                    x = -1 * Mathf.FloorToInt(-1 * (transform.position.x + (0.1F)));
+                    x = -1 * Mathf.FloorToInt(-1 * (transform.position.x + 0.1F));
                     dir = WEST;
                 }
                 if (y < nY)
                 {
                     transform.Translate(new Vector3(0, translation, 0));
-                    y = Mathf.FloorToInt(transform.position.y + (0.1F));
+                    y = Mathf.FloorToInt(transform.position.y + 0.1F);
                     dir = NORTH;
                 }
                 else if (y > nY)
                 {
                     transform.Translate(new Vector3(0, -translation, 0));
-                    y = -1 * Mathf.FloorToInt(-1 * (transform.position.y + (0.1F)));
+					y = -1 * Mathf.FloorToInt(-1 * (transform.position.y + 0.1F));
                     dir = SOUTH;
                 }
                 if (x == nX && y == nY && !(x == tX && y == tY))
@@ -227,10 +228,20 @@ public class PatrolCharge_Overworld : MonoBehaviour
                     steps--;
                 }
 
-                if (x == lX && y == lY) stuckInc += Time.deltaTime; else stuckInc = 0;
-                if (stuckInc > 0.5F) steps = -1; //we're stuck, lets path to a new spot.
-                lX = x;
-                lY = y;
+               // if (x == lX && y == lY) stuckInc += Time.deltaTime; else stuckInc = 0;
+				/*Ray rayForward = new Ray(transform.position, transform.forward);
+				RaycastHit hit;
+				if (Physics.Raycast (rayForward, out hit, 1.75f)) {
+					if (hit.transform.tag == "Wall") {
+						print (hit.transform.tag);
+						steps = -1;
+					}
+				}*/
+
+
+                //if (stuckInc > 0.5F) steps = -1; //we're stuck, lets path to a new spot.
+                //lX = x;
+                //lY = y;
                 if (!hunting)
                 {
                     checkForPlayer(dir);
@@ -244,8 +255,8 @@ public class PatrolCharge_Overworld : MonoBehaviour
 
     void checkForPlayer(int direction)
     {
-        int pX = Mathf.FloorToInt(playerPos.transform.position.x + 0.5F);
-        int pY = Mathf.FloorToInt(playerPos.transform.position.y + 0.5F);
+        int pX = Mathf.FloorToInt(playerPos.transform.position.x);
+        int pY = Mathf.FloorToInt(playerPos.transform.position.y);
         if (direction == EAST && pX > x && Mathf.Sqrt((pX - x) * (pX - x) + (pY - y) * (pY -y)) <= sightRange
                         && canSeeEachOther(x,y,pX,pY))
         {
@@ -281,4 +292,20 @@ public class PatrolCharge_Overworld : MonoBehaviour
         hunting = false;
         return;
     }
+
+	void OnCollisionEnter2D(Collision2D coll)
+	{
+		if (coll.gameObject.tag == "Wall") {
+			print ("collision");
+			stuckInc += Time.deltaTime;
+			if (stuckInc > 0.5F) {
+				steps = -1;
+				stuckInc = 0;
+			}
+		}
+	}
+
+	void OnCollisionExit2D(){
+		stuckInc = 0;
+	}
 }

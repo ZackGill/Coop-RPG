@@ -22,7 +22,7 @@ public class GenerateDungeon : MonoBehaviour {
         enemy = new GameObject[2];
         enemy[0] = wanderStalk;
         enemy[1] = patrolCharge;
-        enemyCount =  UnityEngine.Random.Range(1, Mathf.CeilToInt(xRooms * yRooms/2));
+		enemyCount = UnityEngine.Random.Range(1, Mathf.CeilToInt(xRooms * yRooms/2));
         UnityEngine.Random.InitState(seed);
         isFloor = new bool[zoneSize * xRooms + 2*BUFFER, zoneSize * yRooms + 2*BUFFER];
         int[,] centers = new int[xRooms * yRooms, 3];
