@@ -5,7 +5,11 @@ public class Player : Entity {
 
 	// Use this for initialization
 	void Start () {
-	
+		base.SetEntityName("Harry");
+		base.SetAttack(1);
+		base.SetDefense(1);
+		base.SetHPMax(100);
+		base.SetHPCurrent(100);
 	}
 	
 	// Update is called once per frame

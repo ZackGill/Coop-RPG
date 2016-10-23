@@ -4,21 +4,19 @@ using System.Collections;
 public class BattleLogic : MonoBehaviour {
 
     // Information about the player
-	//private Player p;
-    private string playerName;
-    private float playerHP;
+	//List<Player> players = new List<Player>();
+	//List<Enemy> enemies = new List<Enemy>();
+	private Player p;
     private float playerSpeed;
     private float playerExperience;
     private int playerLevel;
-    private float buffMultiplier = 1;
 
     // Information about the enemy.
-	//private Enemy e;
+	private Enemy e;
     private string enemyName;
     private float enemyHP;
     private float enemySpeed;
     private float enemyExperienceHeld;
-    private float enemyBuffMultiplier = 1;
 
     // Information about the battle itself.
     private string playerFightMessage;
@@ -29,10 +27,10 @@ public class BattleLogic : MonoBehaviour {
     private ActiveTime activeTime;
 
     void Start () {
-		//initialize player here
-        playerName = "Harry";
-        playerHP = 100;
+		// initialize
+		p = new Player();
 		//initialize enemy here
+		e = new Enemy();
         enemyName = "Spookeroni";
         enemyHP = 30;
 
@@ -47,61 +45,57 @@ public class BattleLogic : MonoBehaviour {
 
     public void meleeAttack()
     {
-		//e.damage(10*p.GetAttack());
-        enemyHP -= 10 * buffMultiplier;
+		e.SetHPCurrent(e.GetHPCurrent() - 10*p.GetAttack());
+        //e.hpCurrent -= 10 * p.attack; // old
         activeTime.setSeconds(0);
         playerFightMessage = "You attack! 10 HP";
     }
 
     public void skillUsed()
     {
-        enemyHP -= 15;
+        //enemyHP -= 15; // old
+		e.SetHPCurrent(e.GetHPCurrent() - 15);
         activeTime.setSeconds(0);
         playerFightMessage = "You attack! 15 HP";
     }
 
     public void enemyAttacks()
     {
-		//p.damage(25*e.GetAttack());
-        playerHP -= 25 * enemyBuffMultiplier;
+		p.SetHPCurrent(p.GetHPCurrent() - 25*e.GetAttack());
+        //playerHP -= 25 * enemyBuffMultiplier; //old
         activeTime.setEnemySeconds(0);
         enemyFightMessage = "Enemy Attacks! 25 HP";
     }
 
     void checkBattleOver()
     {
-		if (playerHP <= 0) //if(p.GetHpCurr <= 0)
+		if(p.GetHPCurrent() <= 0)
         {
             state.curState = BattleScreenStates.FightStates.LOSE;
-            playerFightMessage = playerName + " fainted. Try again.";
+			playerFightMessage = p.GetEntityName() + " fainted. Try again.";
         }
-		else if(enemyHP <= 0) //if(e.GetHpCurr <= 0)
+		else if(e.GetHPCurrent() <= 0)
         {
             state.curState = BattleScreenStates.FightStates.WIN;
-            playerFightMessage = enemyName + " was defeated! " + playerName + " wins!";
+			playerFightMessage = e.GetEntityName() + " was defeated! " + p.GetEntityName() + " wins!";
         }
     }
 
-	// these methods will be pulled from the player/enemy classes
-    public float getPlayerHP()
-    {
-        return playerHP;
-    }
+	public int GetPlayerHP() {
+		return p.GetHPCurrent();
+	}
 
-    public float getPlayerMaxHP()
-    {
-        return 100;
-    }
+	public int GetPlayerHPMax() {
+		return p.GetHPMax();
+	}
 
-    public float getEnemyHP()
-    {
-        return enemyHP;
-    }
+	public int GetEnemyHP() {
+		return e.GetHPCurrent();
+	}
 
-    public float getEnemyMaxHP()
-    {
-        return 100;
-    }
+	public int GetEnemyHPMax() {
+		return e.GetHPMax();
+	}
 
     public string getPlayerFightMessage()
     {
