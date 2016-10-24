@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 class coord
 {
     public int x, y;
@@ -20,7 +21,7 @@ class coord
         hasParent = false;
     }
 }
-public class WanderStalk_Overworld : MonoBehaviour
+public class WanderStalk_Overworld : NetworkBehaviour
 {
     private GameObject playerPos = null;
     public int sightRange = 8;
@@ -36,8 +37,7 @@ public class WanderStalk_Overworld : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        GameObject scr = GameObject.Find("EventSystem");
-        map = GameObject.Find("EventSystem").GetComponent<GenerateDungeon>().isFloor;
+        map = transform.parent.GetComponent<GenerateDungeon>().isFloor;
         exists = true;
         playerPos = GameObject.Find("PlayerChar");
     }
@@ -132,15 +132,16 @@ public class WanderStalk_Overworld : MonoBehaviour
             cur = cur.parent;
         }
         steps--;
-        next = (coord)myPath.Pop();
+        if(myPath.Count > 0)
+            next = (coord)myPath.Pop();
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(playerPos == null) 
-            playerPos = GameObject.Find("PlayerChar");
+        if (playerPos == null)
+            return;
         if (exists)
         {
             if (steps <= 0 || (x == tX && y == tY))
@@ -162,7 +163,8 @@ public class WanderStalk_Overworld : MonoBehaviour
                 else print("HUNTING");
                 makePathToTarg();
             }
-
+            if (next == null)
+                return;
             int nX = next.x;
             int nY = next.y;
 

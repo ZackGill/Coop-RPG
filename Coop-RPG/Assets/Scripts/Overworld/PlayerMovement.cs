@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
-public class PlayerMovement : MonoBehaviour
+using UnityEngine.Networking;
+public class PlayerMovement : NetworkBehaviour
 {
-    private float speed = 2.25F;
+    public float speed = 2.25F;
     // Use this for initialization
     void Start()
     {
@@ -13,6 +14,16 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+        else
+        {
+            if (Camera.main == null)
+                return;
+            Camera.main.GetComponent<moveCamera>().player = gameObject;
+        }
         float translation = Time.deltaTime * speed;
         if (Input.GetKey(KeyCode.RightArrow))
         {
@@ -32,11 +43,21 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void FixedUpdate()
+    {
+
+
+    }
+
     void OnCollisionEnter2D(Collision2D coll)
     {
         if(coll.gameObject.tag == "Enemy")
         {
             SceneManager.LoadScene("BattleScreen");
+        }
+        if(coll.gameObject.tag == "Player")
+        {
+            return;
         }
     }
 }

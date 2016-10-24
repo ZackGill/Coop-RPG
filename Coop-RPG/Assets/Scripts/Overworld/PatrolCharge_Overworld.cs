@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
-
-public class PatrolCharge_Overworld : MonoBehaviour
+using UnityEngine.Networking;
+public class PatrolCharge_Overworld : NetworkBehaviour
 {
     private GameObject playerPos = null;
     public int sightRange = 15;
@@ -18,8 +18,7 @@ public class PatrolCharge_Overworld : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        GameObject scr = GameObject.Find("EventSystem");
-        map = GameObject.Find("EventSystem").GetComponent<GenerateDungeon>().isFloor;
+        map = transform.parent.GetComponent<GenerateDungeon>().isFloor;
         exists = true;
         do
         {
@@ -144,15 +143,16 @@ public class PatrolCharge_Overworld : MonoBehaviour
             cur = cur.parent;
         }
         steps--;
-        next = (coord)myPath.Pop();
+        if(myPath.Count > 0)
+         next = (coord)myPath.Pop();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (playerPos == null)
-            playerPos = GameObject.Find("PlayerChar");
-        if (exists)
+            return;
+           if (exists)
         {
             if (steps <= 0 || (x == tX && y == tY))
             {
@@ -190,8 +190,10 @@ public class PatrolCharge_Overworld : MonoBehaviour
             else
             {
                 if(!hunting)chargeTimer = 0F;
-//                else checkForPlayer(dir);
+                //                else checkForPlayer(dir);
                 //If not hunting slow down, otherwise check if you can see the player.
+                if (next == null)
+                    return;
                 int nX = next.x;
                 int nY = next.y;
                 float translation = Time.deltaTime * speed;
