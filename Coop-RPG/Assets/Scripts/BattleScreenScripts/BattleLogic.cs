@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-// THIS WILL BE USED AS A MIDDLE GROUND BETWEEN THE USER INTERFACE AND BOB'S BATTLE SYSTEM, AS WELL
-// AS INFORMATION ABOUT THE CHARACTER/ENEMIES. Essentially, this is the logic behind the UI.
-
 public class BattleLogic : MonoBehaviour {
 
     // Information about the player

@@ -4,6 +4,9 @@ namespace AssemblyCSharp
 {
 	public class Characters
 	{
+
+
+		/*
 		IFirebase fb, chara, sub;
 		string[] charas;
 		public Characters (string cList)
@@ -45,9 +48,10 @@ namespace AssemblyCSharp
 			///	armor, acc, perks, skills);
 
 
-
+		
 
 		}
+		*/
 	}
 }
 

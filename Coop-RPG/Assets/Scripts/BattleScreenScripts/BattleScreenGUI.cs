@@ -95,11 +95,7 @@ public class BattleScreenGUI : MonoBehaviour {
                 fightMessage.text = battleLogic.getPlayerFightMessage();
                 break;
             case (BattleScreenStates.FightStates.NEUTRAL):
-                if (!currentMoveSelected)
-                {
-                    fightButtonsPanel.interactable = true;
-                    optionsPanel.interactable = false;
-                }
+                fightButtonsPanel.interactable = true;
                 fightButtonsPanel.alpha = 1;
                 fightTextPanel.alpha = 0;
                 break;
@@ -118,13 +114,11 @@ public class BattleScreenGUI : MonoBehaviour {
                 fightMessage.text = battleLogic.getPlayerFightMessage();
                 currentMoveSelected = false;
                 battleOver = true;
-                optionsPanel.alpha = 0;
                 break;
             case (BattleScreenStates.FightStates.LOSE):
                 fightMessage.text = battleLogic.getPlayerFightMessage();
                 currentMoveSelected = false;
                 battleOver = true;
-                optionsPanel.alpha = 0;
                 break;
 
         }

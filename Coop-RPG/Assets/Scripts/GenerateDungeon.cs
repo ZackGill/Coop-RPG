@@ -8,14 +8,12 @@ public class GenerateDungeon : MonoBehaviour {
     // Use this for initialization
     public Transform floor;
     public Transform wall;
-    public Transform player;
-    public GameObject enemy;
-    int xRooms = 3, yRooms = 4, zoneSize = 11, enemyCount;
-	public bool[,] isFloor = new bool[0,0];
+	int xRooms = 6, yRooms = 5, zoneSize = 15;
+	bool[,] isFloor = new bool[0,0];
     int seed = (int)System.DateTime.Now.Ticks;
 
     void Start() {
-        enemyCount = UnityEngine.Random.Range(xRooms, xRooms * yRooms);
+        System.DateTime start = System.DateTime.Now;
         UnityEngine.Random.InitState(seed);
         isFloor = new bool[zoneSize * xRooms + 2, zoneSize * yRooms + 2];
         int[,] centers = new int[xRooms * yRooms, 3];
@@ -120,7 +118,8 @@ public class GenerateDungeon : MonoBehaviour {
             }
         }
         print("Took " + loops + " iterations.");
-        
+
+        string dungeon = "";
         for (int i = 0; i < yRooms * zoneSize+2; i++)
         {
             for (int j = 0; j < xRooms * zoneSize+2; j++)
@@ -128,33 +127,19 @@ public class GenerateDungeon : MonoBehaviour {
                 if (isFloor[j, i])
                 {
                     Instantiate(floor, new Vector3(j, i, 0f), Quaternion.identity);
+                    dungeon += '░';
                 }
                 else
                 {
                     Instantiate(wall, new Vector3(j, i, 0f), Quaternion.identity);
+                    dungeon += '█';
                 }
             }
+            dungeon += "  // " + i + "\n";
         }
-
-        int pX, pY;
-        do
-        {
-            pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
-            pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
-        } while (!isFloor[pX, pY]);
-
-        var pc = Instantiate(player, new Vector3(pX, pY, -.5f), Quaternion.identity);
-        pc.name = "PlayerChar";
-
-        for (int e = 0; e < enemyCount; e++)
-        {
-            do
-            {
-                pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
-                pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
-            } while (!isFloor[pX, pY]);
-            var en = Instantiate(enemy, new Vector3(pX, pY, -.5f), Quaternion.identity);
-        }
+        //dungeonOut.text = dungeon;
+        System.DateTime end = System.DateTime.Now;
+        print("Time: " + (start - end));
     }
 	// Update is called once per frame
 	void Update ()
