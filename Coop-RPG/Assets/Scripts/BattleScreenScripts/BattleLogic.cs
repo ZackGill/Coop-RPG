@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.SceneManagement;
 public class BattleLogic : MonoBehaviour {
     // Flags so we don't attack more than once per turn.
     private bool playerAttackFlag = false;
@@ -117,7 +117,10 @@ public class BattleLogic : MonoBehaviour {
         if(state.curState == BattleScreenStates.FightStates.LOSE)
             fightMessage = playerName + " fainted. Try again.";
         if (state.curState == BattleScreenStates.FightStates.WIN)
+        {
             fightMessage = enemyName + " was defeated! " + playerName + " wins!";
+            SceneManager.LoadScene("genDungeon");
+        }
     }
 
     public float getPlayerHP()
