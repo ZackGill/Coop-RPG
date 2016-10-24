@@ -12,6 +12,7 @@ public class moveCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (Input.GetKey(KeyCode.RightArrow))
         {
             transform.Translate(new Vector3(speed * Time.deltaTime, 0, 0));
@@ -42,5 +43,14 @@ public class moveCamera : MonoBehaviour
             else
                 Camera.main.orthographicSize *= (float)1.05;
         }
+
+        try
+        {
+            player = GameObject.Find("PlayerChar");
+            transform.position = player.transform.position;
+            transform.Translate(new Vector3(0, 0, -1));
+        }
+        catch { }
+
     }
 }

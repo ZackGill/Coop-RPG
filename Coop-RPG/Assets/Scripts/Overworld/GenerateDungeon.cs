@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using System;
@@ -10,25 +10,31 @@ public class GenerateDungeon : MonoBehaviour {
     public LevelDump dump;
     public GameObject floor;
     public GameObject wall;
-	int xRooms = 6, yRooms = 5, zoneSize = 15;
-	bool[,] isFloor = new bool[0,0];
+    public GameObject player;
+    private GameObject[] enemy;
+    public GameObject wanderStalk;
+    public GameObject patrolCharge;
+    int xRooms = 5, yRooms = 4, zoneSize = 12, enemyCount;
+    //xRooms and yRooms must be min. 4
+	public bool[,] isFloor = new bool[0,0];
     int seed;
-
-
-    void test()
+    int BUFFER = 2;
+ 
+ void test()
     {
 
         SceneManager.LoadSceneAsync("LoadingScene");
 
     }
-
-
-    void Start() {
+ 
+   void Start() {
+        enemy = new GameObject[2];
+        enemy[0] = wanderStalk;
+        enemy[1] = patrolCharge;
+        enemyCount =  UnityEngine.Random.Range(1, Mathf.CeilToInt(xRooms * yRooms/2));
         dump = GameObject.Find("LevelDump").GetComponent<LevelDump>();
         seed = dump.seed;
-        System.DateTime start = System.DateTime.Now;
-        UnityEngine.Random.InitState(seed);
-        isFloor = new bool[zoneSize * xRooms + 2, zoneSize * yRooms + 2];
+        isFloor = new bool[zoneSize * xRooms + 2*BUFFER, zoneSize * yRooms + 2*BUFFER];
         int[,] centers = new int[xRooms * yRooms, 3];
         int roomcount = 0;
         int ULX, ULY, LRX, LRY;
@@ -91,10 +97,7 @@ public class GenerateDungeon : MonoBehaviour {
                          //       " with center (" + centers[roomcount - 1, 0] + "," + centers[roomcount - 1, 1] + ")");
                         for (int x = ULX; x < LRX; x++)
                         {
-                            for (int y = ULY; y < LRY; y++)
-                            {
-                                isFloor[x + zoneSize * J + 1, y + zoneSize * I + 1] = true;
-                            }
+                            isFloor[x + zoneSize * J + BUFFER, y + zoneSize * I + BUFFER] = true;
                         }
                     }
                 }
@@ -170,7 +173,18 @@ public class GenerateDungeon : MonoBehaviour {
                     if (centers[z, 2] != 0) allConnected = false;
                 }
             }
-           // print("Took " + loops + " iterations.");
+
+        }
+
+        int pX, pY;
+        do
+        {
+            pX = UnityEngine.Random.Range(0, zoneSize * 2+BUFFER);
+            pY = UnityEngine.Random.Range(0, zoneSize * 2+BUFFER);
+        } while (!isFloor[pX, pY]);
+
+        GameObject pc = (GameObject)Instantiate(player, new Vector3(pX, pY, -.5f), Quaternion.identity);
+        pc.name = "PlayerChar";
 
             string dungeon = "";
             GameObject temp;
@@ -194,7 +208,12 @@ public class GenerateDungeon : MonoBehaviour {
                 }
                 dungeon += "  // " + i + "\n";
             }
-        }
+                pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
+                pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
+            } 
+            GameObject temp = (GameObject)Instantiate(enemy[UnityEngine.Random.Range(0,enemy.Length)], new Vector3(pX, pY, -.5f), Quaternion.identity);
+        	dump.monsters.add(temp.GetComponentInChildren<Monster>());
+	}
         //dungeonOut.text = dungeon;
         System.DateTime end = System.DateTime.Now;
        // print("Time: " + (start - end));
