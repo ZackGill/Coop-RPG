@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System;
 using System.Globalization;
 using AssemblyCSharp;
+using UnityEngine.SceneManagement;
 public class GenerateDungeon : MonoBehaviour {
     // Use this for initialization
     public LevelDump dump;
@@ -12,6 +13,15 @@ public class GenerateDungeon : MonoBehaviour {
 	int xRooms = 6, yRooms = 5, zoneSize = 15;
 	bool[,] isFloor = new bool[0,0];
     int seed;
+
+
+    void test()
+    {
+
+        SceneManager.LoadSceneAsync("LoadingScene");
+
+    }
+
 
     void Start() {
         dump = GameObject.Find("LevelDump").GetComponent<LevelDump>();
@@ -77,8 +87,8 @@ public class GenerateDungeon : MonoBehaviour {
                         centers[roomcount, 2] = roomcount;
                         roomcount++;
 
-                        print("(" + (ULX + zoneSize * J) + "," + (ULY + zoneSize * I) + ") - " + (LRX - ULX) + "x" + (LRY - ULY) +
-                                " with center (" + centers[roomcount - 1, 0] + "," + centers[roomcount - 1, 1] + ")");
+                        //print("(" + (ULX + zoneSize * J) + "," + (ULY + zoneSize * I) + ") - " + (LRX - ULX) + "x" + (LRY - ULY) +
+                         //       " with center (" + centers[roomcount - 1, 0] + "," + centers[roomcount - 1, 1] + ")");
                         for (int x = ULX; x < LRX; x++)
                         {
                             for (int y = ULY; y < LRY; y++)
@@ -102,7 +112,7 @@ public class GenerateDungeon : MonoBehaviour {
                         {
                             int r1x = centers[i, 0], r1y = centers[i, 1], r2x = centers[j, 0], r2y = centers[j, 1];
                             //Four cases: R1 above/below R2, and R1 left/right of R2
-                            print("Making hallway (" + r1x + "," + r1y + ") to (" + r2x + "," + r2y + ")");
+                           // print("Making hallway (" + r1x + "," + r1y + ") to (" + r2x + "," + r2y + ")");
                             int x = r1x;
                             if (x < r2x)
                             {
@@ -160,7 +170,7 @@ public class GenerateDungeon : MonoBehaviour {
                     if (centers[z, 2] != 0) allConnected = false;
                 }
             }
-            print("Took " + loops + " iterations.");
+           // print("Took " + loops + " iterations.");
 
             string dungeon = "";
             GameObject temp;
@@ -187,11 +197,12 @@ public class GenerateDungeon : MonoBehaviour {
         }
         //dungeonOut.text = dungeon;
         System.DateTime end = System.DateTime.Now;
-        print("Time: " + (start - end));
+       // print("Time: " + (start - end));
     }
 	// Update is called once per frame
 	void Update ()
     {
         
 	}
+
 }

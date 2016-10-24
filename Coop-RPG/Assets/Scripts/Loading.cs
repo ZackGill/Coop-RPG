@@ -6,10 +6,16 @@ public class Loading : NetworkBehaviour {
     public NetworkLobbyManager server;
 	// Use this for initialization
 	void Start () {
+        print("Loading");
         server = GameObject.Find("LobbyManager").GetComponent<NetworkLobbyManager>();
         Invoke("Load", 5f);
 	}
 	
+    void Awake()
+    {
+        print("Awake");
+        Start();
+    }
 
     void Load()
     {
