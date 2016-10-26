@@ -12,8 +12,12 @@ public class moveCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        player = GameObject.Find("PlayerChar");
-        transform.position = player.transform.position;
-        transform.Translate(new Vector3(0, 0, -1));
+        try
+        {
+            player = GameObject.Find("PlayerChar");
+            transform.position = player.transform.position;
+            transform.Translate(new Vector3(0, 0, -1));
+        }
+        catch { }
     }
 }
