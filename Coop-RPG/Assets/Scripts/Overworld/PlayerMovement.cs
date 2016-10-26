@@ -14,22 +14,28 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         float translation = Time.deltaTime * speed;
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            transform.Translate(new Vector3(translation, 0, 0));
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            transform.Translate(new Vector3(-translation, 0, 0));
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            transform.Translate(new Vector3(0, -translation, 0));
-        }
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            transform.Translate(new Vector3(0, translation, 0));
-        }
+		int dir = 0;
+		if (Input.GetKey(KeyCode.RightArrow))
+		{
+			transform.Translate(new Vector3(translation, 0, 0));
+			dir = 4;
+		}
+		if (Input.GetKey(KeyCode.LeftArrow))
+		{
+			transform.Translate(new Vector3(-translation, 0, 0));
+			dir = 3;
+		}
+		if (Input.GetKey(KeyCode.DownArrow))
+		{
+			transform.Translate(new Vector3(0, -translation, 0));
+			dir = 2;
+		}
+		if (Input.GetKey(KeyCode.UpArrow))
+		{
+			transform.Translate(new Vector3(0, translation, 0));
+			dir = 1;
+		}
+		GetComponent<Animator> ().SetInteger ("Dir", dir);
     }
 
     void OnCollisionEnter2D(Collision2D coll)
