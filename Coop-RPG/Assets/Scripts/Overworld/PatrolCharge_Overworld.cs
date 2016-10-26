@@ -228,7 +228,7 @@ public class PatrolCharge_Overworld : MonoBehaviour
                     steps--;
                 }
 
-               // if (x == lX && y == lY) stuckInc += Time.deltaTime; else stuckInc = 0;
+                if (x == lX && y == lY) stuckInc += Time.deltaTime; else stuckInc = 0;
 				/*Ray rayForward = new Ray(transform.position, transform.forward);
 				RaycastHit hit;
 				if (Physics.Raycast (rayForward, out hit, 1.75f)) {
@@ -239,9 +239,9 @@ public class PatrolCharge_Overworld : MonoBehaviour
 				}*/
 
 
-                //if (stuckInc > 0.5F) steps = -1; //we're stuck, lets path to a new spot.
-                //lX = x;
-                //lY = y;
+                if (stuckInc > 0.5F) steps = -1; //we're stuck, lets path to a new spot.
+                lX = x;
+                lY = y;
                 if (!hunting)
                 {
                     checkForPlayer(dir);
