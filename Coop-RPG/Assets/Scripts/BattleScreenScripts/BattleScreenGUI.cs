@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class BattleScreenGUI : MonoBehaviour {
 
     private bool nextState = true;
+    private bool currentMoveSelected = false;
     private bool battleOver = false;
     // The 4 main choice buttons.
     private Button fightButton;
@@ -72,6 +73,8 @@ public class BattleScreenGUI : MonoBehaviour {
 	void Update () {
 
         playerHealthString.text = battleLogic.GetPlayerHP().ToString ();
+        if (battleLogic.GetPlayerHPMax() == 0)
+            return;
         playerHealthBar.fillAmount = (battleLogic.GetPlayerHP()) /(battleLogic.GetPlayerHPMax());
         playerActiveTimerBar.fillAmount = activeTime.GetRatio();
 
@@ -93,13 +96,6 @@ public class BattleScreenGUI : MonoBehaviour {
             case (BattleScreenStates.FightStates.NEUTRAL):
 
                 fightButtonsPanel.interactable = true;
-
-                if (!battleLogic.currentMoveSelected)
-                {
-                    fightButtonsPanel.interactable = true;
-                    optionsPanel.interactable = false;
-                }
-
                 fightButtonsPanel.alpha = 1;
                 fightTextPanel.alpha = 0;
                 break;
@@ -109,16 +105,16 @@ public class BattleScreenGUI : MonoBehaviour {
                 break;
             case (BattleScreenStates.FightStates.PLAYERTURN):
                 fightMessage.text = battleLogic.getFightMessage();
-                battleLogic.currentMoveSelected = false;
+                currentMoveSelected = false;
                 break;
             case (BattleScreenStates.FightStates.WIN):
                 fightMessage.text = battleLogic.getFightMessage();
-                battleLogic.currentMoveSelected = false;
+                currentMoveSelected = false;
                 battleOver = true;
                 break;
             case (BattleScreenStates.FightStates.LOSE):
                 fightMessage.text = battleLogic.getFightMessage();
-                battleLogic.currentMoveSelected = false;
+                currentMoveSelected = false;
                 battleOver = true;
                 break;
         }
@@ -147,7 +143,7 @@ public class BattleScreenGUI : MonoBehaviour {
 
         // Toggle the visibility of the Options Menu.
         optionsPanel.alpha = 0;
-        battleLogic.currentMoveSelected = true;
+        currentMoveSelected = true;
     }
 
     void RunButtonClicked()
@@ -165,6 +161,6 @@ public class BattleScreenGUI : MonoBehaviour {
 
         // Toggle the visibility of the Options Menu.
         optionsPanel.alpha = 0;
-        battleLogic.currentMoveSelected = true;
+        currentMoveSelected = true;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using SimpleFirebaseUnity;
 namespace AssemblyCSharp
 {
 	public class Monster

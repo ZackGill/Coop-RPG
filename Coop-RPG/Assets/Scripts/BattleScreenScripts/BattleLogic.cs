@@ -44,9 +44,6 @@ public class BattleLogic : MonoBehaviour {
 	void Update () {
         //print(state.curState);
         checkBattleOver();
-        stateCheck();
-        if (Input.GetKeyDown("space"))
-            toggleState();
     }
 
     public void meleeAttack()
@@ -54,7 +51,7 @@ public class BattleLogic : MonoBehaviour {
 		e.SetHPCurrent(e.GetHPCurrent() - 10*p.GetAttack());
         //e.hpCurrent -= 10 * p.attack; // old
         activeTime.setSeconds(0);
-        playerFightMessage = "You attack! 10 HP";
+        fightMessage = "You attack! 10 HP";
     }
 
     public void skillUsed()
@@ -62,7 +59,7 @@ public class BattleLogic : MonoBehaviour {
         //enemyHP -= 15; // old
 		e.SetHPCurrent(e.GetHPCurrent() - 15);
         activeTime.setSeconds(0);
-        playerFightMessage = "You attack! 15 HP";
+        fightMessage = "You attack! 15 HP";
     }
 
     public void enemyAttacks()
@@ -70,7 +67,7 @@ public class BattleLogic : MonoBehaviour {
 		p.SetHPCurrent(p.GetHPCurrent() - 25*e.GetAttack());
         //playerHP -= 25 * enemyBuffMultiplier; //old
         activeTime.setEnemySeconds(0);
-        enemyFightMessage = "Enemy Attacks! 25 HP";
+        fightMessage = "Enemy Attacks! 25 HP";
     }
 
     void checkBattleOver()
@@ -78,12 +75,12 @@ public class BattleLogic : MonoBehaviour {
 		if(p.GetHPCurrent() <= 0)
         {
             state.curState = BattleScreenStates.FightStates.LOSE;
-			playerFightMessage = p.GetEntityName() + " fainted. Try again.";
+			fightMessage = p.GetEntityName() + " fainted. Try again.";
         }
 		else if(e.GetHPCurrent() <= 0)
         {
             state.curState = BattleScreenStates.FightStates.WIN;
-			playerFightMessage = e.GetEntityName() + " was defeated! " + p.GetEntityName() + " wins!";
+			fightMessage = e.GetEntityName() + " was defeated! " + p.GetEntityName() + " wins!";
         }
     }
 
