@@ -8,16 +8,15 @@ public class PlayerMovement : NetworkBehaviour
     // Use this for initialization
     void Start()
     {
-
+        Invoke("startPos", .1f);
     }
 
-    public override void OnStartLocalPlayer()
+    void startPos()
     {
-        GameObject temp = GameObject.Find("DungeonGen");
-        temp.GetComponent<GenerateDungeon>().spawnLocal = gameObject;
+        GenerateDungeon temp = GameObject.Find("DungeonGen").GetComponent<GenerateDungeon>();
+        transform.position = temp.spawnLocal[0].transform.position;
 
     }
-
     // Update is called once per frame
     void Update()
     {

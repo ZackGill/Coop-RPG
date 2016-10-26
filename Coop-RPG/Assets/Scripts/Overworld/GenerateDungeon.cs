@@ -15,7 +15,7 @@ public class GenerateDungeon : NetworkBehaviour {
     private GameObject[] enemy;
     public GameObject wanderStalk;
     public GameObject patrolCharge;
-    public GameObject spawnLocal;
+    public GameObject[] spawnLocal;
     int xRooms = 4, yRooms = 4, zoneSize = 12, enemyCount;
     //xRooms and yRooms must be min. 4
 	public bool[,] isFloor = new bool[0,0];
@@ -170,7 +170,11 @@ public class GenerateDungeon : NetworkBehaviour {
             pY = UnityEngine.Random.Range(0, zoneSize * 2+BUFFER);
         } while (!isFloor[pX, pY]);
 
-            spawnLocal.transform.position = new Vector3(pX, pY, -.5f);
+            spawnLocal[0].transform.position = new Vector3(pX, pY, -.5f);
+        spawnLocal[1].transform.position = new Vector3(pX, pY, -.5f);
+        spawnLocal[2].transform.position = new Vector3(pX, pY, -.5f);
+        spawnLocal[3].transform.position = new Vector3(pX, pY, -.5f);
+
 
         do
         {
@@ -178,8 +182,8 @@ public class GenerateDungeon : NetworkBehaviour {
             pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
         } while (!isFloor[pX, pY] || (pX < (zoneSize * 3) && pY < (zoneSize * 3)));
         //Boss must be outside the bottom-left 3 rooms.
-        GameObject monster = (GameObject)Instantiate(boss, new Vector3(pX, pY, -.5f), Quaternion.identity);
-        NetworkServer.Spawn(monster);
+        //GameObject monster = (GameObject)Instantiate(boss, new Vector3(pX, pY, -.5f), Quaternion.identity);
+       // NetworkServer.Spawn(monster);
 
         for (int e = 0; e < enemyCount; e++)
         {
