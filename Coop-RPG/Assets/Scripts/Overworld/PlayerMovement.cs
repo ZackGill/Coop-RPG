@@ -11,6 +11,13 @@ public class PlayerMovement : NetworkBehaviour
 
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        GameObject temp = GameObject.Find("DungeonGen");
+        temp.GetComponent<GenerateDungeon>().spawnLocal = gameObject;
+
+    }
+
     // Update is called once per frame
     void Update()
     {

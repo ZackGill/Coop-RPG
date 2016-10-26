@@ -18,9 +18,9 @@ public class TotallyABossOverworld : MonoBehaviour
     void Start()
     {
         GameObject scr = GameObject.Find("EventSystem");
-        map = GameObject.Find("EventSystem").GetComponent<GenerateDungeon>().isFloor;
+        map = GameObject.Find("DungeonGen").GetComponent<GenerateDungeon>().isFloor;
         exists = true;
-        playerPos = GameObject.Find("PlayerChar");
+        playerPos = GameObject.Find("Player");
         homeX = Mathf.FloorToInt(transform.position.x);
         homeY = Mathf.FloorToInt(transform.position.y);
     }
