@@ -71,8 +71,8 @@ public class BattleScreenGUI : MonoBehaviour {
 	
 	void Update () {
 
-        playerHealthString.text = battleLogic.getPlayerHP().ToString ();
-        playerHealthBar.fillAmount = (battleLogic.getPlayerHP()) /(battleLogic.getPlayerMaxHP());
+        playerHealthString.text = battleLogic.GetPlayerHP().ToString ();
+        playerHealthBar.fillAmount = (battleLogic.GetPlayerHP()) /(battleLogic.GetPlayerHPMax());
         playerActiveTimerBar.fillAmount = activeTime.GetRatio();
 
         stateCheck();

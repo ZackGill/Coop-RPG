@@ -7,7 +7,9 @@ public class Enemy : Entity {
 
 	// Use this for initialization
 	void Start () {
-	
+		base.SetEntityName("Spookeroni");
+		base.SetHPMax(30);
+		base.SetHPCurrent(30);
 	}
 	
 	// Update is called once per frame

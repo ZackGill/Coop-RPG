@@ -1,9 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AssemblyCSharp
 {
 	public class Monster
 	{
+		Dictionary<string, string> vals = new Dictionary<string, string> (); //need to cast vars as ints when we pull them out
+
+		public void getVals() {
+			//get all values in one call and assign to dict
+			FirebaseQueue q = new FirebaseQueue ();
+			Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/Enemies", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			Firebase enemy;
+			enemy = fb.Child ("exampleMon");
+			//vals.OnGetSuccess += GetEnemyHandler;
+			//vals.OnGetFailed += GetEnemyHandlerBAD;
+			q.AddQueueGet(enemy);
+		}
+			
 		/*
 		IFirebase fb, mon, sub;
 		double AImistake;
