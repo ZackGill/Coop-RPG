@@ -9,10 +9,11 @@ public class GenerateDungeon : MonoBehaviour {
     public Transform floor;
     public Transform wall;
     public Transform player;
+    public Transform boss;
     private GameObject[] enemy;
     public GameObject wanderStalk;
     public GameObject patrolCharge;
-    int xRooms = 5, yRooms = 4, zoneSize = 12, enemyCount;
+    int xRooms = 4, yRooms = 4, zoneSize = 12, enemyCount;
     //xRooms and yRooms must be min. 4
 	public bool[,] isFloor = new bool[0,0];
     int seed = (int)System.DateTime.Now.Ticks;
@@ -152,6 +153,14 @@ public class GenerateDungeon : MonoBehaviour {
 
         var pc = Instantiate(player, new Vector3(pX, pY, -.5f), Quaternion.identity);
         pc.name = "PlayerChar";
+
+        do
+        {
+            pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
+            pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
+        } while (!isFloor[pX, pY] || (pX < (zoneSize * 3) && pY < (zoneSize * 3)));
+        //Boss must be outside the bottom-left 3 rooms.
+        Instantiate(boss, new Vector3(pX, pY, -.5f), Quaternion.identity);
 
         for (int e = 0; e < enemyCount; e++)
         {
