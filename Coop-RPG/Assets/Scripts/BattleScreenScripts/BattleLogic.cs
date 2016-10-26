@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 public class BattleLogic : MonoBehaviour {
-    // Flags so we don't attack more than once per turn.
-    private bool playerAttackFlag = false;
-    private bool enemyAttackFlag = false;
-    // Information about the player.
+
+	// Information about the player
+	//private Player p;
+
     private string playerName;
     private float playerHP;
     private float playerSpeed;
@@ -15,6 +15,7 @@ public class BattleLogic : MonoBehaviour {
     public bool currentMoveSelected = false;
     private float buffMultiplier = 1;
     // Information about the enemy.
+	//private Enemy e;
     private string enemyName;
     private float enemyHP;
     private float enemySpeed;
@@ -28,9 +29,10 @@ public class BattleLogic : MonoBehaviour {
     List<BattleScreenStates.FightStates> stateQueue;
 
     void Start () {
-
+		//initialize player here
         playerName = "Harry";
         playerHP = 100;
+		//initialize enemy here
         enemyName = "Spookeroni";
         enemyHP = 30;
 
@@ -51,6 +53,7 @@ public class BattleLogic : MonoBehaviour {
 
     public void meleeAttack()
     {
+		//e.damage(10*p.GetAttack());
         enemyHP -= 10 * buffMultiplier;
         fightMessage = "You attack! 10 HP";
     }
@@ -63,27 +66,30 @@ public class BattleLogic : MonoBehaviour {
 
     public void enemyAttacks()
     {
+		//p.damage(25*e.GetAttack());
         playerHP -= 25 * enemyBuffMultiplier;
         fightMessage = "Enemy Attacks! 25 HP";
     }
 
     void checkBattleOver()
     {
-        if (playerHP <= 0)
-            stateQueue.Add(BattleScreenStates.FightStates.LOSE);
+
+	if (playerHP <= 0) //if(p.GetHpCurr <= 0)
+ 		stateQueue.Add(BattleScreenStates.FightStates.LOSE);
         else if(enemyHP <= 0)
             stateQueue.Add(BattleScreenStates.FightStates.WIN);
-    }
-
-    void stateCheck()
-    {
-        if (activeTime.GetEnemyRatio() == 1)
-        {
+     }
+	void stateCheck()
+	{
+		if (activeTime.GetEnemyRatio() == 1){
             stateQueue.Add(BattleScreenStates.FightStates.ENEMYTURN);
             activeTime.setEnemySeconds(0);
             enemyAttackFlag = true;
-        }
+		}
+        
+
         if (activeTime.GetRatio() == 1 && currentMoveSelected)
+
         {
             stateQueue.Add(BattleScreenStates.FightStates.PLAYERTURN);
             activeTime.setSeconds(0);
@@ -123,6 +129,7 @@ public class BattleLogic : MonoBehaviour {
         }
     }
 
+	// these methods will be pulled from the player/enemy classes
     public float getPlayerHP()
     {
         return playerHP;

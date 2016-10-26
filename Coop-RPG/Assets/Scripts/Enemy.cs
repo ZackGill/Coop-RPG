@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Enemy : MonoBehaviour {
+public class Enemy : Entity {
 
     public int runVal;
 
@@ -17,6 +17,7 @@ public class Enemy : MonoBehaviour {
 
     public CombatMove ChooseMove()
     {
-        return new CombatMove();
+        //return base.moveList[0];
+		return new CombatMove();
     }
 }
