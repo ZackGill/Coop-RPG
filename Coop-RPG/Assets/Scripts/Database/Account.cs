@@ -1,16 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Collections;
-using System;
-using SimpleFirebaseUnity;
-using SimpleFirebaseUnity.MiniJSON;
-using UnityEngine;
+﻿using System;
 
 namespace AssemblyCSharp
 {
-	public class Account : MonoBehaviour
+	public class Account
 	{
-        string uName, email, password;
-
 		/*
 		string name, email, password;
 		IFirebase fb, acc;
