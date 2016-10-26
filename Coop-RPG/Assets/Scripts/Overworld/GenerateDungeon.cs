@@ -8,15 +8,14 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 public class GenerateDungeon : NetworkBehaviour {
     // Use this for initialization
-   // public LevelDump dump;
-    public GameObject floor;
-    public GameObject wall;
-    public GameObject player;
+    public Transform floor;
+    public Transform wall;
+    public Transform player;
+    public Transform boss;
     private GameObject[] enemy;
     public GameObject wanderStalk;
     public GameObject patrolCharge;
-    public GameObject spawnLocal;
-    int xRooms = 5, yRooms = 4, zoneSize = 12, enemyCount;
+    int xRooms = 4, yRooms = 4, zoneSize = 12, enemyCount;
     //xRooms and yRooms must be min. 4
 	public bool[,] isFloor = new bool[0,0];
     int seed;
@@ -206,9 +205,17 @@ public class GenerateDungeon : NetworkBehaviour {
             spawnLocal.transform.position = new Vector3(pX, pY, -.5f);
        // pc.name = "PlayerChar";
 
-            string dungeon = "";
-            GameObject tempA;
-            for (int i = 0; i < yRooms * zoneSize + 2; i++)
+        do
+        {
+            pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
+            pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
+        } while (!isFloor[pX, pY] || (pX < (zoneSize * 3) && pY < (zoneSize * 3)));
+        //Boss must be outside the bottom-left 3 rooms.
+        Instantiate(boss, new Vector3(pX, pY, -.5f), Quaternion.identity);
+
+        for (int e = 0; e < enemyCount; e++)
+        {
+            do
             {
                 for (int j = 0; j < xRooms * zoneSize + 2; j++)
                 {
