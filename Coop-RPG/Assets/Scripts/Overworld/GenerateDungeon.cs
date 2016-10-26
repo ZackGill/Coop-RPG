@@ -8,15 +8,26 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 public class GenerateDungeon : NetworkBehaviour {
     // Use this for initialization
+<<<<<<< HEAD
     public GameObject floor;
     public GameObject wall;
     public GameObject player;
     public GameObject boss;
+=======
+   // public LevelDump dump;
+    public GameObject floor;
+    public GameObject wall;
+    public GameObject player;
+>>>>>>> parent of 75f70ef... Merge branch 'JT' of https://github.com/ZackGill/Coop-RPG into Zack
     private GameObject[] enemy;
     public GameObject wanderStalk;
     public GameObject patrolCharge;
     public GameObject spawnLocal;
+<<<<<<< HEAD
     int xRooms = 4, yRooms = 4, zoneSize = 12, enemyCount;
+=======
+    int xRooms = 5, yRooms = 4, zoneSize = 12, enemyCount;
+>>>>>>> parent of 75f70ef... Merge branch 'JT' of https://github.com/ZackGill/Coop-RPG into Zack
     //xRooms and yRooms must be min. 4
 	public bool[,] isFloor = new bool[0,0];
     int seed = (int)System.DateTime.Now.Ticks;
@@ -172,6 +183,7 @@ public class GenerateDungeon : NetworkBehaviour {
 
             spawnLocal.transform.position = new Vector3(pX, pY, -.5f);
 
+<<<<<<< HEAD
         do
         {
             pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
@@ -185,6 +197,32 @@ public class GenerateDungeon : NetworkBehaviour {
         {
             do
             { 
+=======
+            string dungeon = "";
+            GameObject tempA;
+            for (int i = 0; i < yRooms * zoneSize + 2; i++)
+            {
+                for (int j = 0; j < xRooms * zoneSize + 2; j++)
+                {
+                    if (isFloor[j, i])
+                    {
+                        tempA = (GameObject)(Instantiate(floor, new Vector3(j, i, 0f), Quaternion.identity));
+                        dungeon += '░';
+                       // dump.floors.Add(tempA.transform.position);
+                        NetworkServer.Spawn(tempA);
+                    }
+                    else
+                    {
+                        tempA = (GameObject)Instantiate(wall, new Vector3(j, i, 0f), Quaternion.identity);
+                        dungeon += '█';
+                       // dump.walls.Add(tempA.transform.position);
+                        NetworkServer.Spawn(tempA);
+
+                    }
+                }
+                dungeon += "  // " + i + "\n";
+            }
+>>>>>>> parent of 75f70ef... Merge branch 'JT' of https://github.com/ZackGill/Coop-RPG into Zack
                 pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
             pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
         } while (!isFloor[pX, pY]) ;
