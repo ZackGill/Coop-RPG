@@ -8,28 +8,21 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 public class GenerateDungeon : NetworkBehaviour {
     // Use this for initialization
-    public Transform floor;
-    public Transform wall;
-    public Transform player;
-    public Transform boss;
+    public GameObject floor;
+    public GameObject wall;
+    public GameObject player;
+    public GameObject boss;
     private GameObject[] enemy;
     public GameObject wanderStalk;
     public GameObject patrolCharge;
+    public GameObject spawnLocal;
     int xRooms = 4, yRooms = 4, zoneSize = 12, enemyCount;
     //xRooms and yRooms must be min. 4
 	public bool[,] isFloor = new bool[0,0];
-    int seed;
+    int seed = (int)System.DateTime.Now.Ticks;
     int BUFFER = 2;
 
-    public NetworkManager network;
-
-
-    void test()
-    {
-
-        SceneManager.LoadSceneAsync("LoadingScene");
-
-    }
+    public GameObject network;
  
     void Awake()
     {
@@ -39,61 +32,22 @@ public class GenerateDungeon : NetworkBehaviour {
     }
 
    void Start() {
+        
+        network = GameObject.Find("LobbyManager");
+        
         if (!isServer)
             return;
         enemy = new GameObject[2];
         enemy[0] = wanderStalk;
         enemy[1] = patrolCharge;
         enemyCount =  UnityEngine.Random.Range(1, Mathf.CeilToInt(xRooms * yRooms/2));
-      //  dump = GameObject.Find("LevelDump").GetComponent<LevelDump>();
-       // seed = dump.seed;
         isFloor = new bool[zoneSize * xRooms + 2*BUFFER, zoneSize * yRooms + 2*BUFFER];
         int[,] centers = new int[xRooms * yRooms, 3];
         int roomcount = 0;
         int ULX, ULY, LRX, LRY;
         double odds = 115 - 10 * Math.Log(xRooms * yRooms, 2.71828);
-        print("ODDS: " + odds);
+        //print("ODDS: " + odds);
         UnityEngine.Random.InitState(Environment.TickCount);
-        // Check if the level dump has data to use. If count == 0, then do random. Otherwise, set everything based on that.
-        // Update Level Dump with separate
-        // If the scripts of monster and all do not work by simply copying it from the scene, can make a new one to add to list.
-        /*if (false)
-        {
-            foreach(Vector3 a in dump.floors)
-            {
-                GameObject b = (GameObject)Instantiate(floor, a, Quaternion.identity);
-                NetworkServer.Spawn(b);
-            }
-
-            foreach (Vector3 a in dump.walls)
-            {
-                GameObject b = (GameObject)Instantiate(wall, a, Quaternion.identity);
-                NetworkServer.Spawn(b);
-            }
-
-            foreach (Monster a in dump.monsters)
-            {
-                // Spawn a monster prefab, fill the details out from this object.
-            }
-
-            foreach (Character a in dump.players)
-            {
-                // Spawn a Player fab, fill out the info. Will see if need to do something special to make right client get right
-                // Character. Maybe add something to Character to keeep track of owner.
-
-                GameObject b = (GameObject)Instantiate(player, a.transform.position, Quaternion.identity);
-                NetworkServer.Spawn(b);
-
-            }
-
-            foreach (JoinManager a in dump.battles)
-            {
-                // Spawn Battle Prefab, fill it's join manager with this stuff.
-            }
-
-        }*/
-        if(true)
-        {
             for (int J = 0; J < xRooms; J++)
             {
                 for (int I = 0; I < yRooms; I++)
@@ -191,8 +145,23 @@ public class GenerateDungeon : NetworkBehaviour {
                     if (centers[z, 2] != 0) allConnected = false;
                 }
             }
-
-        
+        GameObject temp;
+        for (int i = 0; i < yRooms * zoneSize + 2; i++)
+        {
+            for (int j = 0; j < xRooms * zoneSize + 2; j++)
+            {
+                if (isFloor[j, i])
+                {
+                    temp = (GameObject)Instantiate(floor, new Vector3(j, i, 0f), Quaternion.identity);
+                    NetworkServer.Spawn(temp);
+                }
+                else
+                {
+                    temp = (GameObject)Instantiate(wall, new Vector3(j, i, 0f), Quaternion.identity);
+                    NetworkServer.Spawn(temp);
+                }
+            }
+        }
 
         int pX, pY;
         do
@@ -201,9 +170,7 @@ public class GenerateDungeon : NetworkBehaviour {
             pY = UnityEngine.Random.Range(0, zoneSize * 2+BUFFER);
         } while (!isFloor[pX, pY]);
 
-       // GameObject pc = (GameObject)Instantiate(player, new Vector3(pX, pY, -.5f), Quaternion.identity);
             spawnLocal.transform.position = new Vector3(pX, pY, -.5f);
-       // pc.name = "PlayerChar";
 
         do
         {
@@ -211,37 +178,19 @@ public class GenerateDungeon : NetworkBehaviour {
             pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
         } while (!isFloor[pX, pY] || (pX < (zoneSize * 3) && pY < (zoneSize * 3)));
         //Boss must be outside the bottom-left 3 rooms.
-        Instantiate(boss, new Vector3(pX, pY, -.5f), Quaternion.identity);
+        GameObject monster = (GameObject)Instantiate(boss, new Vector3(pX, pY, -.5f), Quaternion.identity);
+        NetworkServer.Spawn(monster);
 
         for (int e = 0; e < enemyCount; e++)
         {
             do
-            {
-                for (int j = 0; j < xRooms * zoneSize + 2; j++)
-                {
-                    if (isFloor[j, i])
-                    {
-                        tempA = (GameObject)(Instantiate(floor, new Vector3(j, i, 0f), Quaternion.identity));
-                        dungeon += '░';
-                       // dump.floors.Add(tempA.transform.position);
-                        NetworkServer.Spawn(tempA);
-                    }
-                    else
-                    {
-                        tempA = (GameObject)Instantiate(wall, new Vector3(j, i, 0f), Quaternion.identity);
-                        dungeon += '█';
-                       // dump.walls.Add(tempA.transform.position);
-                        NetworkServer.Spawn(tempA);
-
-                    }
-                }
-                dungeon += "  // " + i + "\n";
-            }
+            { 
                 pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
-                pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
-            GameObject temp = (GameObject)Instantiate(enemy[UnityEngine.Random.Range(0, enemy.Length)], new Vector3(pX, pY, -.5f), Quaternion.identity);
-            temp.transform.SetParent(transform);
-            NetworkServer.Spawn(temp);
+            pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
+        } while (!isFloor[pX, pY]) ;
+            GameObject tempE = (GameObject)Instantiate(enemy[UnityEngine.Random.Range(0, enemy.Length)], new Vector3(pX, pY, -.5f), Quaternion.identity);
+            tempE.transform.SetParent(transform);
+            NetworkServer.Spawn(tempE);
             //dump.monsters.Add(temp.GetComponentInChildren<Monster>());
         } 
 
