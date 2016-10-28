@@ -73,7 +73,7 @@ public class PlayerMovement : NetworkBehaviour
 			transform.Translate(new Vector3(0, translation, 0));
 			dir = 1;
 		}
-		GetComponent<Animator> ().SetInteger ("Dir", dir);
+		//GetComponent<Animator> ().SetInteger ("Dir", dir);
     }
 
     void FixedUpdate()

@@ -209,7 +209,6 @@ public class GenerateDungeon : NetworkBehaviour {
         }
 
         // Spawning players
-        ClientScene.AddPlayer(0);
 	
         //dungeonOut.text = dungeon;
         System.DateTime end = System.DateTime.Now;
