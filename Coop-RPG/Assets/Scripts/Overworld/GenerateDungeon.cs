@@ -15,12 +15,23 @@ public class GenerateDungeon : NetworkBehaviour {
     private GameObject[] enemy;
     public GameObject wanderStalk;
     public GameObject patrolCharge;
-    public GameObject[] spawnLocal;
+    [SyncVar]
+    public GameObject spawnLocal;
+    [SyncVar]
+    public GameObject spawnLocal1;
+    [SyncVar]
+    public GameObject spawnLocal2;
+    [SyncVar]
+    public GameObject spawnLocal3;
     int xRooms = 4, yRooms = 4, zoneSize = 12, enemyCount;
     //xRooms and yRooms must be min. 4
 	public bool[,] isFloor = new bool[0,0];
     int seed = (int)System.DateTime.Now.Ticks;
     int BUFFER = 2;
+
+    [SyncVar]
+    int pX, pY;
+
 
     public GameObject network;
  
@@ -163,17 +174,16 @@ public class GenerateDungeon : NetworkBehaviour {
             }
         }
 
-        int pX, pY;
         do
         {
             pX = UnityEngine.Random.Range(0, zoneSize * 2+BUFFER);
             pY = UnityEngine.Random.Range(0, zoneSize * 2+BUFFER);
-        } while (!isFloor[pX, pY]);
+        } while (!isFloor[pX, pY] || !isFloor[pX+1, pY] || !isFloor[pX-1, pY] || !isFloor[pX, pY + 1]);
 
-            spawnLocal[0].transform.position = new Vector3(pX, pY, -.5f);
-        spawnLocal[1].transform.position = new Vector3(pX, pY, -.5f);
-        spawnLocal[2].transform.position = new Vector3(pX, pY, -.5f);
-        spawnLocal[3].transform.position = new Vector3(pX, pY, -.5f);
+            spawnLocal.transform.position = new Vector3(pX, pY, -.5f);
+        spawnLocal1.transform.position = new Vector3(pX-1, pY, -.5f);
+        spawnLocal2.transform.position = new Vector3(pX+1, pY, -.5f);
+        spawnLocal3.transform.position = new Vector3(pX, pY+1, -.5f);
 
 
         do
@@ -196,8 +206,10 @@ public class GenerateDungeon : NetworkBehaviour {
             tempE.transform.SetParent(transform);
             NetworkServer.Spawn(tempE);
             //dump.monsters.Add(temp.GetComponentInChildren<Monster>());
-        } 
+        }
 
+        // Spawning players
+        ClientScene.AddPlayer(0);
 	
         //dungeonOut.text = dungeon;
         System.DateTime end = System.DateTime.Now;

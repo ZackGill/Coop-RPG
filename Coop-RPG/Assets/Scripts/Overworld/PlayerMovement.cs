@@ -8,13 +8,30 @@ public class PlayerMovement : NetworkBehaviour
     // Use this for initialization
     void Start()
     {
-        Invoke("startPos", .1f);
+        if(isLocalPlayer)
+          Invoke("startPos", .1f); 
     }
 
     void startPos()
     {
+        if (!isLocalPlayer)
+            return;
         GenerateDungeon temp = GameObject.Find("DungeonGen").GetComponent<GenerateDungeon>();
-        transform.position = temp.spawnLocal[0].transform.position;
+        switch(Random.Range(0, 4))
+        {
+            case 0:
+                transform.position = temp.spawnLocal.transform.position;
+                break;
+            case 1:
+                transform.position = temp.spawnLocal1.transform.position;
+                break;
+            case 2:
+                transform.position = temp.spawnLocal2.transform.position;
+                break;
+            case 3:
+                transform.position = temp.spawnLocal3.transform.position;
+                break;
+        }
 
     }
     // Update is called once per frame
@@ -22,10 +39,14 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!isLocalPlayer)
         {
+
             return;
         }
         else
         {
+            Vector3 pos = transform.position;
+            pos.z = -.5f;
+            transform.position = pos;
             if (Camera.main == null)
                 return;
             Camera.main.GetComponent<moveCamera>().player = gameObject;
