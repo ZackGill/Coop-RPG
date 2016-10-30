@@ -7,15 +7,40 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
-	public class Skill : MonoBehaviour
+	public class Skill
 	{
-		static int debug_idx = 0;
+		
 		string name, target, type;
 		int value, cooldown, threat;
 		string skillJson;
 
-		[SerializeField]
-		TextMesh txt;
+		public Skill (string n, int cd, int val, int threatGen, string targs, string t)
+		{
+			this.name = n;
+			this.cooldown = cd;
+			this.value = val;
+			this.threat = threatGen;
+			this.target = targs;
+			this.type = t;
+
+
+		}
+
+		public void applyPerk(string t, int val) {
+			if (t.Equals("damage")) {
+				value += val;
+			}
+
+			if (t.Equals ("cooldown")) {
+				cooldown -= val;
+			}
+
+
+		}
+
+		public string toString() {
+			return "" + name + ": Value: " + value + ", Type: " + type;
+		}
 
 		/*
 		public Skill(string name) {
@@ -26,74 +51,7 @@ namespace AssemblyCSharp
 		}
 		*/
 
-		void Start() {
-			StartCoroutine (Run ());
-		}
 
-		void DoDebug(string str)
-		{
-			Debug.Log(str);
-			if (txt != null)
-			{
-				txt.text += (++debug_idx + ". " + str) + "\n";
-			}
-		}
-		void GetSkill(Firebase sender, DataSnapshot snapshot) {
-			skillJson = snapshot.RawJson;
-		}
-
-		void getJson(string name) {
-			Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/SkillLU", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
-			Firebase skill = fb.Child (name);
-			skill.OnGetSuccess += GetSkill;
-			skill.GetValue ();
-
-		}
-
-		void parseJson() {
-			int cd, val, threat;
-			string targs, type;
-			skillJson = skillJson.Substring (1);
-			string[] list = skillJson.Split (',');
-			foreach (string s in list) {
-				DoDebug (s);
-				string[] sp = s.Split (':');
-				if (String.Equals(sp[0], "\"cooldown\"")) {
-					cd = int.Parse (sp [1]);
-					DoDebug ("CD FUG: " + cd);
-				}
-				if (sp [0].Equals ("\"value\"")) {
-					val = int.Parse (sp [1].Substring(0,1));
-					DoDebug ("VAL: " + val);
-				}
-				if (sp [0].Equals ("\"threatGen\"")) {
-					threat = int.Parse (sp [1]);
-					DoDebug ("THR: " + threat);
-				}
-				if (sp [0].Equals ("\"targets\"")) {
-					string temp = sp [1].Substring (1);
-					targs = temp.Substring (0, 3);
-					DoDebug ("TRGS: " + targs);
-				}
-
-				if (sp [0].Equals ("\"type\"")) {
-					string temp = sp [1].Substring (1);
-					type = temp.Substring (0, 3);
-					DoDebug ("TYPE: " + type);
-				}
-			}
-		}
-
-		IEnumerator Run() {
-			getJson ("Spin-Slash");
-
-			DoDebug("WAITING");
-			yield return new WaitForSeconds (4f);
-			DoDebug("DONE");
-
-			DoDebug (skillJson);
-			parseJson ();
-		}
 
 		/*
 		String targets, type, name;
