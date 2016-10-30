@@ -39,6 +39,8 @@ public class BattleLogic : MonoBehaviour {
         stateQueue.Add(BattleScreenStates.FightStates.BEGINNING);
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
         fightMessage = enemyName + " draws near!";
+
+        Invoke("WinBattle", 5f);
     }
 	
 	void Update () {
@@ -76,13 +78,31 @@ public class BattleLogic : MonoBehaviour {
         {
             state.curState = BattleScreenStates.FightStates.LOSE;
 			fightMessage = p.GetEntityName() + " fainted. Try again.";
+            Invoke("LoseBattle", 5f);
         }
 		else if(e.GetHPCurrent() <= 0)
         {
             state.curState = BattleScreenStates.FightStates.WIN;
 			fightMessage = e.GetEntityName() + " was defeated! " + p.GetEntityName() + " wins!";
+            Invoke("WinBattle", 5f);
         }
     }
+
+    void LoseBattle()
+    {
+
+    }
+
+    // Leave battle
+    void WinBattle()
+    {
+        // Renable player components. 
+        GameObject temp = transform.parent.GetComponent<BattleHolderScript>().player;
+        temp.GetComponent<PlayerMovement>().CmdPlayerToggle(true, null, temp);
+        temp.GetComponent<PlayerMovement>().inBattle = false;
+        Destroy(transform.parent.gameObject);
+    }
+
 
 	public int GetPlayerHP() {
 		return p.GetHPCurrent();

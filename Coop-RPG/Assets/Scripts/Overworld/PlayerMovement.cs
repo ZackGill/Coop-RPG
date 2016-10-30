@@ -2,9 +2,14 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
+
+[NetworkSettings(channel = 0)]
 public class PlayerMovement : NetworkBehaviour
 {
     public float speed = 2.25F;
+
+    public GameObject battleFab;
+    public bool inBattle = false;
     // Use this for initialization
     void Start()
     {
@@ -44,6 +49,16 @@ public class PlayerMovement : NetworkBehaviour
         }
         else
         {
+            if (inBattle)
+            {
+
+                return;
+            }
+            else
+            {
+                GetComponent<Renderer>().enabled = true;
+                GetComponent<BoxCollider2D>().enabled = true;
+            }
             Vector3 pos = transform.position;
             pos.z = -.5f;
             transform.position = pos;
@@ -81,16 +96,49 @@ public class PlayerMovement : NetworkBehaviour
 
 
     }
-
+    GameObject battle;
+    GameObject monster;
     void OnCollisionEnter2D(Collision2D coll)
     {
         if(coll.gameObject.tag == "Enemy")
         {
-            SceneManager.LoadScene("BattleScreen");
+            if (isLocalPlayer)
+            {
+                battle = (GameObject)Instantiate(battleFab, Vector3.zero, Quaternion.identity);
+                inBattle = true;
+                CmdPlayerToggle(false, coll.gameObject, gameObject);
+                monster = coll.gameObject;
+                battle.GetComponent<BattleHolderScript>().player = gameObject;
+            }
         }
         if(coll.gameObject.tag == "Player")
         {
             return;
+        }
+    }
+
+    [Command]
+    public void CmdPlayerToggle(bool toggle, GameObject monster, GameObject player)
+    {
+
+        player.GetComponent<Renderer>().enabled = toggle;
+        player.GetComponent<BoxCollider2D>().enabled = toggle;
+        if(monster != null){
+            monster.GetComponent<Renderer>().enabled = toggle;
+            monster.GetComponent<BoxCollider2D>().enabled = toggle;
+        }
+        RpcUpdatePlayer(toggle, monster, player);
+    }
+
+    [ClientRpc]
+    public void RpcUpdatePlayer(bool toggle, GameObject monster, GameObject player)
+    {
+        player.GetComponent<Renderer>().enabled = toggle;
+        player.GetComponent<BoxCollider2D>().enabled = toggle;
+        if (monster != null)
+        {
+            monster.GetComponent<Renderer>().enabled = toggle;
+            monster.GetComponent<BoxCollider2D>().enabled = toggle;
         }
     }
 }
