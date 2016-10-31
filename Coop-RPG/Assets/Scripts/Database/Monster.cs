@@ -9,13 +9,13 @@ namespace AssemblyCSharp
 
 		public void getVals() {
 			//get all values in one call and assign to dict
-			FirebaseQueue q = new FirebaseQueue ();
-			Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/Enemies", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
-			Firebase enemy;
-			enemy = fb.Child ("exampleMon");
+			//FirebaseQueue q = new FirebaseQueue ();
+			//Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/Enemies", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			//Firebase enemy;
+			//enemy = fb.Child ("exampleMon");
 			//vals.OnGetSuccess += GetEnemyHandler;
 			//vals.OnGetFailed += GetEnemyHandlerBAD;
-			q.AddQueueGet(enemy);
+		//	q.AddQueueGet(enemy);
 		}
 			
 		/*

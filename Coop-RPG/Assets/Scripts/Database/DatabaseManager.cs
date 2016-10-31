@@ -135,8 +135,6 @@ namespace AssemblyCSharp
 				DoDebug (splJson [i]);
 			}
 
-
-
 			string[] fBlock = splJson [0].Split (',');
 			foreach (string s in fBlock) {
 				string[] sp = s.Split (':');
@@ -155,8 +153,6 @@ namespace AssemblyCSharp
 
 				}
 			}
-
-		
 
 			string[] nBlock = splJson [2].Split (',');
 			foreach (string s in nBlock) {
@@ -191,6 +187,82 @@ namespace AssemblyCSharp
 
 			DoDebug ("ATTACK: " + attack);
 			ch = new Characters (className, attack, magic, defense, hp, exp);
+		}
+
+		public Enemy parseEnemy (string json) {
+			int attack, defense, magic, sightRange, hp, bossTag, level;
+			double mistakeChance;
+			string enemyName;
+			Skill[] skills = new Skill[3];
+
+			// splitting the json
+			json = json.Substring (1, json.Length - 2);
+			char[] chArr = new char[2];
+			chArr [0] = '{';
+			chArr [1] = '}';
+			string[] splJson = json.Split (chArr);
+			enemyName = splJson [0];
+
+			for (int x = 0; x < splJson.Length; x++) {
+				string[] temp = new string[2];
+				temp = splJson [x].Split (':');
+
+				//ai
+				if(temp[0].Equals ("\"AI\"")) {
+					string[] aiBlock = splJson [x].Split (',');
+					foreach (string str in aiBlock) {
+						string[] sp = str.Split (':');
+						if (sp [0].Equals ("\"mistakeChance\"")) {
+							mistakeChance = double.Parse (sp [1]);
+						}
+						if (sp [0].Equals ("\"sightrange\"")) {
+							sightRange = int.Parse (sp [1]);
+						}
+					}
+				}
+
+				//stats
+				if (temp [0].Equals ("\"stats\"")) {
+					string[] sBlock = splJson [x].Split (',');
+					foreach (string s in sBlock) {
+						string[] sp = s.Split (':');
+						if (sp [0].Equals ("\"attack\"")) {
+							attack = int.Parse (sp [1]);
+						}
+						if (sp [0].Equals ("\"magic\"")) {
+							magic = int.Parse (sp [1]);
+						}
+						if (sp [0].Equals ("\"defense\"")) {
+							defense = int.Parse (sp [1]);
+						}
+					}
+				}
+				//hp
+				if (temp [0].Equals ("\"HP\"")) {
+					hp = int.Parse (temp[1]);
+				}
+				//boss
+				if (temp [0].Equals ("\"bossTag\"")) {
+					bossTag = int.Parse (temp[1]);
+				}
+				//level
+				if (temp [0].Equals ("\"level\"")) {
+					level = int.Parse (temp[1]);
+				}
+				//perks
+				if (temp [0].Equals ("\"perks\"")) {
+					string[] p = new string[3];
+					p = temp [1].Split (';');
+				}
+				//skills
+				if (temp [0].Equals ("\"skills\"")) {
+					string[] s = new string[3];
+					s = temp [1].Split (';');
+				}
+			}
+			Enemy e = new Enemy ();
+			// set all vars
+			return e;
 		}
 
 		void parseWeaponInfo() {
