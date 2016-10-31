@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class Player : Entity {
+	public int xp;
 
 	// Use this for initialization
 	void Start () {
@@ -21,4 +22,12 @@ public class Player : Entity {
     {
         return new CombatMove();
     }
+
+	public int GetXP() {
+		return xp;
+	}
+
+	public void SetXP(int xp) {
+		this.xp = xp;
+	}
 }
