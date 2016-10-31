@@ -24,7 +24,8 @@ namespace AssemblyCSharp
 		TextMesh txt;
 
 		void Start() {
-			StartCoroutine (runChar ());
+			string yoo = "Example";
+			StartCoroutine (runChar (yoo));
 		}
 
 		void getAccJson(string aName) {
@@ -330,8 +331,8 @@ namespace AssemblyCSharp
 			}
 		}
 
-		IEnumerable runAcc() {
-			getAccJson ("fug");
+		 IEnumerable runAcc(string accName) {
+			getAccJson (accName);
 			DoDebug("WAITING");
 			yield return new WaitForSeconds (2f);
 			DoDebug("DONE");
@@ -339,8 +340,8 @@ namespace AssemblyCSharp
 
 		}
 
-		IEnumerator runChar() {
-			getCharInfo ("Example");
+		 IEnumerator runChar(string charName) {
+			getCharInfo (charName);
 			//skillList = "Spin-Slash";
 			//WAIT
 
@@ -445,7 +446,7 @@ namespace AssemblyCSharp
 			}
 
 			Characters chara = null;
-			getCharInfo ("Example");
+			getCharInfo (charName);
 			DoDebug("WAITING ON CHAR INFO");
 			yield return new WaitForSeconds (2f);
 			DoDebug("DONE");
