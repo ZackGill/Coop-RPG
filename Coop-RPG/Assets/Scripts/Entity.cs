@@ -3,12 +3,14 @@ using System.Collections;
 
 public class Entity : MonoBehaviour {
 
-	int xp;
+	int level;
 	string charClass;
 	int attack, defense, magic;
 	int hpMax, hpCurrent;
 	string entityName;
 	CombatMove[] moveList = new CombatMove[3];
+	//Skill[] skills = new Skill[3];
+	//Perk[] perks = new Perk[3];
 
 	// Use this for initialization
 	void Start () {
@@ -20,12 +22,12 @@ public class Entity : MonoBehaviour {
 	
 	}
 
-	public int GetXP() {
-		return xp;
+	public int GetLevel() {
+		return level;
 	}
 
-	public void SetXP(int xp) {
-		this.xp = xp;
+	public void SetLevel(int level) {
+		this.level = level;
 	}
 
 	public string GetCharClass() {
@@ -89,6 +91,35 @@ public class Entity : MonoBehaviour {
 	}
 
 	public void SetMoveList(CombatMove move, int slot) {
-		moveList[slot] = move;
+		this.moveList[slot] = move;
 	}
+		
+	public void SetMoveList(CombatMove[] moves) {
+		this.moveList = moves;
+	}
+	/*
+	public Skill[] GetSkills() {
+		return skills;
+	}
+
+	public void SetSkills(Skill skill, int slot) {
+		this.skills[slot] = skill;
+	}
+
+	public void SetSkills(Skills[] skills) {
+		this.skills = skills;
+	}
+
+	public Perk[] GetPerks() {
+		return perks;
+	}
+
+	public void SetPerks(Perk perk, int slot) {
+		this.perks[slot] = perk;
+	}
+
+	public void SetPerks(Perk[] perks) {
+		this.perks = perks;
+	}
+	*/
 }

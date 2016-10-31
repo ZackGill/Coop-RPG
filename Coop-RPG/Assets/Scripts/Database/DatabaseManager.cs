@@ -190,9 +190,6 @@ namespace AssemblyCSharp
 		}
 
 		public Enemy parseEnemy (string json) {
-			int attack, defense, magic, sightRange, hp, bossTag, level;
-			double mistakeChance;
-			string enemyName;
 			Skill[] skills = new Skill[3];
 
 			// splitting the json
@@ -201,7 +198,7 @@ namespace AssemblyCSharp
 			chArr [0] = '{';
 			chArr [1] = '}';
 			string[] splJson = json.Split (chArr);
-			enemyName = splJson [0];
+			Enemy e = new Enemy (splJson [0]);
 
 			for (int x = 0; x < splJson.Length; x++) {
 				string[] temp = new string[2];
@@ -213,10 +210,10 @@ namespace AssemblyCSharp
 					foreach (string str in aiBlock) {
 						string[] sp = str.Split (':');
 						if (sp [0].Equals ("\"mistakeChance\"")) {
-							mistakeChance = double.Parse (sp [1]);
+							e.SetMistakeChance(double.Parse (sp [1]));
 						}
 						if (sp [0].Equals ("\"sightrange\"")) {
-							sightRange = int.Parse (sp [1]);
+							e.SetSightRange(int.Parse (sp [1]));
 						}
 					}
 				}
@@ -227,27 +224,28 @@ namespace AssemblyCSharp
 					foreach (string s in sBlock) {
 						string[] sp = s.Split (':');
 						if (sp [0].Equals ("\"attack\"")) {
-							attack = int.Parse (sp [1]);
+							e.SetAttack(int.Parse (sp [1]));
 						}
 						if (sp [0].Equals ("\"magic\"")) {
-							magic = int.Parse (sp [1]);
+							e.SetMagic(int.Parse (sp [1]));
 						}
 						if (sp [0].Equals ("\"defense\"")) {
-							defense = int.Parse (sp [1]);
+							e.SetDefense(int.Parse (sp [1]));
 						}
 					}
 				}
 				//hp
 				if (temp [0].Equals ("\"HP\"")) {
-					hp = int.Parse (temp[1]);
+					e.SetHPMax(int.Parse (temp[1]));
+					e.SetHPCurrent (e.GetHPMax());
 				}
 				//boss
 				if (temp [0].Equals ("\"bossTag\"")) {
-					bossTag = int.Parse (temp[1]);
+					e.SetBossTag(int.Parse (temp[1]));
 				}
 				//level
 				if (temp [0].Equals ("\"level\"")) {
-					level = int.Parse (temp[1]);
+					e.SetLevel(int.Parse (temp[1]));
 				}
 				//perks
 				if (temp [0].Equals ("\"perks\"")) {
@@ -260,8 +258,6 @@ namespace AssemblyCSharp
 					s = temp [1].Split (';');
 				}
 			}
-			Enemy e = new Enemy ();
-			// set all vars
 			return e;
 		}
 
