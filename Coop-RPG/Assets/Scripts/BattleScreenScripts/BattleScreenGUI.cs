@@ -30,6 +30,7 @@ public class BattleScreenGUI : MonoBehaviour {
     // This is how we'll interact with the other scripts.
     private ActiveTime activeTime;
     private BattleScreenStates state;
+    private EnemyQuantity enemies;
     private BattleLogic battleLogic;
 
 	void Start () {
@@ -67,6 +68,7 @@ public class BattleScreenGUI : MonoBehaviour {
         skillButton6 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton6").GetComponent<Button>();
         skillButton7 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton7").GetComponent<Button>();
         skillButton8 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton8").GetComponent<Button>();
+
     }
 	
 	void Update () {

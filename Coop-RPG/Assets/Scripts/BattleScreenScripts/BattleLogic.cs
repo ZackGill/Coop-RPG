@@ -28,20 +28,21 @@ public class BattleLogic : MonoBehaviour {
     // So we can affect the state and timer when necessary.
     private BattleScreenStates state;
     private ActiveTime activeTime;
+    private EnemyQuantity enemies;
     List<BattleScreenStates.FightStates> stateQueue;
 
     void Start () {
 
         playerName = "Harry";
         playerHP = 100;
-        enemyName = "Spookeroni";
+        enemyName = "Squawk-topus";
         enemyHP = 30;
 
         state = GetComponent<BattleScreenStates>();
         stateQueue = new List<BattleScreenStates.FightStates>();
         stateQueue.Add(BattleScreenStates.FightStates.BEGINNING);
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
-        fightMessage = enemyName + " draws near!";
+        fightMessage = enemyName + " slithers hither!";
     }
 	
 	void Update () {
@@ -121,6 +122,18 @@ public class BattleLogic : MonoBehaviour {
             fightMessage = playerName + " fainted. Try again.";
         if (state.curState == BattleScreenStates.FightStates.WIN)
             fightMessage = enemyName + " was defeated! " + playerName + " wins!";
+    }
+
+    void moreEnemies()
+    {
+        if (enemies.getNumberOfEnemies() == 2)
+        {
+
+        }
+        else if (enemies.getNumberOfEnemies() == 3)
+        {
+
+        }
     }
 
     public float getPlayerHP()
