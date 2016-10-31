@@ -4,54 +4,68 @@ namespace AssemblyCSharp
 {
 	public class Characters
 	{
+		int attack, magic, defense, hp, exp;
+		string clName;
+		Skill[] skills;
+
+		public Characters(string cl, int atk, int mg, int def, int hp, int exp) {
+			clName = cl;
+			attack = atk;
+			magic = mg;
+			defense = def;
+			this.hp = hp;
+			this.exp = exp;
 
 
-		/*
-		IFirebase fb, chara, sub;
-		string[] charas;
-		public Characters (string cList)
-		{
-		///	charas = cList.Split (",");
 		}
 
-		public Characters (int index) {
-			fb = Firebase.CreateNew ("https://coop-rpg.firebaseio.com/Characters");
-			fb.AuthWithCustomToken ("nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1", (AuthData auth) => {
+		public int getAttack() {
+			return attack;
+		}
 
-			}, (FirebaseError e) => {
+		public void setAttack(int atk) {
+			attack = atk;
+		}
 
-			});
+		public int getMagic() {
+			return magic;
+		}
 
-			string cName = charas[index];
-			chara = fb.Child(cName);
+		public void setMagic(int mg) {
+			magic = mg;
+		}
+		public int getDefense() {
+			return defense;
+		}
 
-			int exp, hp, atk, def, mag;
-			string rpgclass, weapon, armor, acc, perks, skills;
+		public void setDefense(int def) {
+			defense = def;
+		}
 
-			exp = int.Parse(chara.Child("EXP").ToString());
-			hp = int.Parse(chara.Child("HP").ToString());
-		///	rpgclass = int.Parse(chara.Child("class").ToString());
-			sub = chara.Child("Stats");
-			atk = int.Parse(sub.Child("attack").ToString());
-			def = int.Parse(sub.Child("defense").ToString());
-			mag = int.Parse(sub.Child("magic").ToString());
-			sub = chara.Child("equipment");
-			weapon = sub.Child("weapon").ToString();
-			armor = sub.Child("armor").ToString();
-			acc = sub.Child("accesory").ToString();
+		public int getExp() {
+			return exp;
+		}
 
+		public void setExp(int exp) {
+			this.exp = exp;
+		}
 
+		public int getHP() {
+			return hp;
+		}
 
-		
+		public void setHP(int hp) {
+			this.hp = hp;
+		}
 
-			/// Character(cName, exp, hp, atk, def, mag, rpgclass, weapon,
-			///	armor, acc, perks, skills);
+		public Skill[] getSkills() {
+			return skills;
+		}
 
-
-		
+		public void setSkills(Skill[] sk) {
+			skills = sk;
 
 		}
-		*/
 	}
 }
 
