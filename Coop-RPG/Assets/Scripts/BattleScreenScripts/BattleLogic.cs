@@ -6,6 +6,7 @@ using System.Collections.Generic;
 // AS INFORMATION ABOUT THE CHARACTER/ENEMIES. Essentially, this is the logic behind the UI.
 
 public class BattleLogic : MonoBehaviour {
+    public int numEnemies = 0;
     // Flags so we don't attack more than once per turn.
     private bool playerAttackFlag = false;
     private bool enemyAttackFlag = false;
@@ -26,9 +27,10 @@ public class BattleLogic : MonoBehaviour {
     // Information about the battle itself.
     private string fightMessage;
     // So we can affect the state and timer when necessary.
+    private ArrowSelection selection;
     private BattleScreenStates state;
     private ActiveTime activeTime;
-    private EnemyQuantity enemies;
+    private EnemyQuantity enemyQuantity;
     List<BattleScreenStates.FightStates> stateQueue;
 
     void Start () {
@@ -39,24 +41,33 @@ public class BattleLogic : MonoBehaviour {
         enemyHP = 30;
 
         state = GetComponent<BattleScreenStates>();
+        selection = GetComponent<ArrowSelection>();
         stateQueue = new List<BattleScreenStates.FightStates>();
+        enemyQuantity = GetComponent<EnemyQuantity>();
         stateQueue.Add(BattleScreenStates.FightStates.BEGINNING);
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
         fightMessage = enemyName + " slithers hither!";
     }
 	
 	void Update () {
-        //print(state.curState);
+        print(state.curState);
         checkBattleOver();
         stateCheck();
         if (Input.GetKeyDown("space"))
             toggleState();
+        // FOR TESTING TODO: REMOVE
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            enemyQuantity.addAnEnemy();
+            moreEnemies();
+            toggleState();
+        }
     }
 
     public void meleeAttack()
     {
         enemyHP -= 10 * buffMultiplier;
-        fightMessage = "You attack! 10 HP";
+        fightMessage = "You attack " + selection.getArrowPos() +"! 10 HP";
     }
 
     public void skillUsed()
@@ -87,7 +98,22 @@ public class BattleLogic : MonoBehaviour {
             activeTime.setEnemySeconds(0);
             enemyAttackFlag = true;
         }
-        if (activeTime.GetRatio() == 1 && currentMoveSelected)
+        if(currentMoveSelected && enemyQuantity.getNumberOfEnemies() > 1 && state.curState == BattleScreenStates.FightStates.NEUTRAL && !playerAttackFlag)
+        {
+            stateQueue.Add(BattleScreenStates.FightStates.PICKANENEMY);
+            currentMoveSelected = false;
+            toggleState();
+        }
+        else if(state.curState == BattleScreenStates.FightStates.PICKANENEMY)
+        {
+            if (Input.GetKeyDown("space"))
+            {
+                toggleState();
+                currentMoveSelected = true;
+                playerAttackFlag = true;
+            }
+        }
+        else if (activeTime.GetRatio() == 1 && currentMoveSelected)
         {
             stateQueue.Add(BattleScreenStates.FightStates.PLAYERTURN);
             activeTime.setSeconds(0);
@@ -122,17 +148,31 @@ public class BattleLogic : MonoBehaviour {
             fightMessage = playerName + " fainted. Try again.";
         if (state.curState == BattleScreenStates.FightStates.WIN)
             fightMessage = enemyName + " was defeated! " + playerName + " wins!";
+        if (state.curState == BattleScreenStates.FightStates.SECONDENEMYJOINS)
+        {
+            fightMessage = "Good grief! A " + enemyName + " joins in!";
+            numEnemies = 2;
+        }
+        if (state.curState == BattleScreenStates.FightStates.THIRDENEMYJOINS)
+        {
+            fightMessage = "Just my luck! it's a " + enemyName + "!";
+            numEnemies = 3;
+        }
+        if (state.curState == BattleScreenStates.FightStates.PICKANENEMY)
+            fightMessage = "Select a target.";
     }
 
     void moreEnemies()
     {
-        if (enemies.getNumberOfEnemies() == 2)
+        if (enemyQuantity.getNumberOfEnemies() == numEnemies)
+            return;
+        else if (enemyQuantity.getNumberOfEnemies() == 2)
         {
-
+            stateQueue.Add(BattleScreenStates.FightStates.SECONDENEMYJOINS);
         }
-        else if (enemies.getNumberOfEnemies() == 3)
+        else if (enemyQuantity.getNumberOfEnemies() == 3)
         {
-
+            stateQueue.Add(BattleScreenStates.FightStates.THIRDENEMYJOINS);
         }
     }
 

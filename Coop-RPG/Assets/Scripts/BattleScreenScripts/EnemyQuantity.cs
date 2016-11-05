@@ -19,4 +19,15 @@ public class EnemyQuantity : MonoBehaviour {
     {
         return numberOfEnemies;
     }
+    
+    // Not sure which of the following two methods makes more sense
+    public void setNumberOfEnemies(int numEn)
+    {
+        numberOfEnemies = numEn;
+    }
+
+    public void addAnEnemy()
+    {
+        numberOfEnemies++;
+    }
 }
