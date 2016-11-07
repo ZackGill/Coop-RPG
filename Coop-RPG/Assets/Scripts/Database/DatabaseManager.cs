@@ -44,7 +44,19 @@ namespace AssemblyCSharp
 			acc.GetValue ();
 		}
 
-		 void getCharList() {
+		void getClassDescJson() {
+			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/ClassDesc", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			fb.OnGetSuccess += GetJson;
+			fb.GetValue ();
+		}
+
+		public string[] getClassDesc() {
+			tempJson = tempJson.Substring (1, tempJson.Length - 2);
+			string[] ret = tempJson.Split (',');
+			return ret;
+		}
+
+		public string[] getCharList() {
 			tempJson = tempJson.Substring(1);
 			string characters;
 			string[] list = tempJson.Split (',');
@@ -52,8 +64,7 @@ namespace AssemblyCSharp
 			characters = characters.Substring (1, characters.Length-2);
 			//Actual list of chars
 			string[] cList = characters.Split (';');
-			charList = cList [1];
-
+			return cList;
 		}
 			
 
