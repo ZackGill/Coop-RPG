@@ -2,7 +2,8 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class BattleScreenGUI : MonoBehaviour {
+public class BattleScreenGUI : MonoBehaviour
+{
 
     private bool nextState = true;
     private bool battleOver = false;
@@ -20,6 +21,8 @@ public class BattleScreenGUI : MonoBehaviour {
     private Button skillButton6;
     private Button skillButton7;
     private Button skillButton8;
+    Button[] skillButtons;
+    private Skill[] playerSkills;
     private Text playerHealthString;
     private Text fightMessage;
     private Image playerHealthBar;
@@ -32,12 +35,14 @@ public class BattleScreenGUI : MonoBehaviour {
     private BattleScreenStates state;
     private EnemyQuantity enemies;
     private BattleLogic battleLogic;
+    private Characters character;
     // To control enemy sprites
     private SpriteRenderer enemy1;
     private SpriteRenderer enemy2;
     private SpriteRenderer enemy3;
 
-	void Start () {
+    void Start()
+    {
 
         // Set listeners for our four main buttons.
         fightButton = transform.FindChild("FightMenu/FightButtonsPanel/FightButton").GetComponent<Button>();
@@ -72,6 +77,21 @@ public class BattleScreenGUI : MonoBehaviour {
         skillButton6 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton6").GetComponent<Button>();
         skillButton7 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton7").GetComponent<Button>();
         skillButton8 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton8").GetComponent<Button>();
+        skillButtons = new Button[8];
+        skillButtons[0] = skillButton1;
+        skillButtons[1] = skillButton2;
+        skillButtons[2] = skillButton3;
+        skillButtons[3] = skillButton4;
+        skillButtons[4] = skillButton5;
+        skillButtons[5] = skillButton6;
+        skillButtons[6] = skillButton7;
+        skillButtons[7] = skillButton8;
+        for (int i = 0; i < skillButtons.Length; i++)
+        {
+            skillButtons[i].enabled = false;
+            skillButtons[i].GetComponent<Image>().enabled = false;
+            skillButtons[i].transform.Find("Text").GetComponent<Text>().enabled = false;
+        }
 
         // The enemy sprites.
         enemy1 = transform.FindChild("EnemyPanel/Enemy").GetComponent<SpriteRenderer>();
@@ -79,15 +99,21 @@ public class BattleScreenGUI : MonoBehaviour {
         enemy3 = transform.FindChild("EnemyPanel/Enemy3").GetComponent<SpriteRenderer>();
         enemy2.enabled = false;
         enemy3.enabled = false;
-    }
-	
-	void Update () {
 
-        playerHealthString.text = battleLogic.getPlayerHP().ToString ();
-        playerHealthBar.fillAmount = (battleLogic.getPlayerHP()) /(battleLogic.getPlayerMaxHP());
+        character = GetComponent<Characters>();
+    }
+
+    void Update()
+    {
+
+        playerHealthString.text = battleLogic.getPlayerHP().ToString();
+        playerHealthBar.fillAmount = (battleLogic.getPlayerHP()) / (battleLogic.getPlayerMaxHP());
         playerActiveTimerBar.fillAmount = activeTime.GetRatio();
 
         stateCheck();
+
+        character = battleLogic.getCharacter();
+        fillSkillButtons();
     }
 
     // Checks the state of the battle and changes the UI accordingly.
@@ -106,7 +132,7 @@ public class BattleScreenGUI : MonoBehaviour {
                 if (!battleLogic.currentMoveSelected)
                 {
                     fightButtonsPanel.interactable = true;
-                    optionsPanel.interactable = false;
+                    optionsPanel.interactable = true;
                 }
                 fightButtonsPanel.alpha = 1;
                 fightTextPanel.alpha = 0;
@@ -183,13 +209,28 @@ public class BattleScreenGUI : MonoBehaviour {
         optionsPanel.alpha = 0;
     }
 
-    public void skillButtonClicked()
+    public void fillSkillButtons()
+    {
+        playerSkills = character.getSkills();
+        for (int i = 0; i < playerSkills.Length; i++)
+        {
+            skillButtons[i].transform.Find("Text").GetComponent<Text>().text = playerSkills[i].getName();
+            skillButtons[i].interactable = true;
+            skillButtons[i].enabled = true;
+            skillButtons[i].GetComponent<Image>().enabled = true;
+            skillButtons[i].transform.Find("Text").GetComponent<Text>().enabled = true;
+        }
+    }
+
+    public void skillButtonClicked(int which)
     {
         fightButtonsPanel.interactable = false;
         optionsPanel.interactable = false;
 
         // Toggle the visibility of the Options Menu.
         optionsPanel.alpha = 0;
+        battleLogic.whichSkill = which;
         battleLogic.currentMoveSelected = true;
     }
+
 }

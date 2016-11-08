@@ -1,55 +1,110 @@
 using System;
+using System.Collections.Generic;
+using System.Collections;
+using SimpleFirebaseUnity;
+using SimpleFirebaseUnity.MiniJSON;
+using UnityEngine;
 
-namespace AssemblyCSharp
+public class Skill
 {
-	public class Skill
-	{
-		String targets, type, name;
-		int value, threatGen, cooldown;
-		public Skill (String name, String p)
-		{
-			this.name = name;
-			targets = SkillLU.getTargets (name);
-			type = SkillLU.getType (name);
-			value = SkillLU.getValue (name);
-			threatGen = SkillLU.getThreat (name);
-			cooldown = SkillLU.getCD (name);
 
-	
-			String pType = PerkLU.getType (p);
-			int pVal = PerkLU.getValue (p);
+    string name, target, type;
+    int value, cooldown, threat;
+    string skillJson;
 
-			if (pType.Equals ("damage")) {
-				value += pVal;
-				value++;
-			}
-			
-		}
+    public Skill(string n, int cd, int val, int threatGen, string targs, string t)
+    {
+        this.name = n;
+        this.cooldown = cd;
+        this.value = val;
+        this.threat = threatGen;
+        this.target = targs;
+        this.type = t;
 
 
-		public String getName() {
-			return name;
-		}
+    }
 
-		public String getType() {
-			return type;
-		}
+    public void applyPerk(string t, int val)
+    {
+        if (t.Equals("damage"))
+        {
+            value += val;
+        }
 
-		public String getTargets() {
-			return targets;
-		}
+        if (t.Equals("cooldown"))
+        {
+            cooldown -= val;
+        }
 
-		public int getValue() {
-			return value;
-		}
 
-		public int getThreatGen() {
-			return threatGen;
-		}
+    }
 
-		public int getCooldown() {
-			return cooldown;
-		}
-	}
+    public string toString()
+    {
+        return "" + name + ": Value: " + value + ", Type: " + type;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    /*
+    public Skill(string name) {
+        this.name = name;
+
+
+
+    }
+    */
+
+
+
+    /*
+    String targets, type, name;
+    int value, threatGen, cooldown;
+    public Skill (String name, String p)
+    {
+        this.name = name;
+        targets = SkillLU.getTargets (name);
+        type = SkillLU.getType (name);
+        value = SkillLU.getValue (name);
+        threatGen = SkillLU.getThreat (name);
+        cooldown = SkillLU.getCD (name);
+
+
+        String pType = PerkLU.getType (p);
+        int pVal = PerkLU.getValue (p);
+
+        if (pType.Equals ("damage")) {
+            value += pVal;
+            value++;
+        }
+
+    }
+
+
+
+    public String getType() {
+        return type;
+    }
+
+    public String getTargets() {
+        return targets;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public int getThreatGen() {
+        return threatGen;
+    }
+
+    public int getCooldown() {
+        return cooldown;
+    }
+    */
 }
+
 

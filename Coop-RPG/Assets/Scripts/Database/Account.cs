@@ -4,6 +4,7 @@ namespace AssemblyCSharp
 {
 	public class Account
 	{
+		/*
 		string name, email, password;
 		IFirebase fb, acc;
 		public Account (string name, string email, string password)
@@ -30,6 +31,7 @@ namespace AssemblyCSharp
 
 			return ret;
 		}
+		*/
 	}
 }
 

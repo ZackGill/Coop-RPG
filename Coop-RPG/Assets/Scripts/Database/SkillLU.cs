@@ -4,7 +4,7 @@ namespace AssemblyCSharp
 {
 	public static class SkillLU
 	{
-		
+		/*
 		public static int getCD(String name) {
 			int ret = 0;
 			IFirebase fb, sk;
