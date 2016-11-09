@@ -23,7 +23,7 @@ class coord
 }
 public class WanderStalk_Overworld : NetworkBehaviour
 {
-    private GameObject playerPos = null;
+    private GameObject playerPos = GameObject.FindGameObjectWithTag("Player");
     public int sightRange = 8;
     public float speed = 2.25F;
     private int x, y, tX, tY, lX, lY, steps, NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3, dir = 0;

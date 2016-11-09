@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 public class PatrolCharge_Overworld : NetworkBehaviour
 {
-    private GameObject playerPos = null;
+    private GameObject playerPos = GameObject.FindGameObjectWithTag("Player");
     public int sightRange = 15;
     public float speed = 1.65F, chargeTimer = 0F;
     private int x, y, tX, tY, lX, lY, steps, NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3, dir = 0, patrolStep = 0;
