@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
-// THIS WILL BE USED AS A MIDDLE GROUND BETWEEN THE USER INTERFACE AND BOB'S BATTLE SYSTEM, AS WELL
-// AS INFORMATION ABOUT THE CHARACTER/ENEMIES. Essentially, this is the logic behind the UI.
-
+// This is kind of the logic behind the GUI and the states that influence it. The logic for the damage and moves being done is in 
+// BattleAttackHandler.
 public class BattleLogic : MonoBehaviour
 {
+    // Many of the following variables were needed for testing pre-firebase and should be removed.
     public int numEnemies = 0;
     public int whichSkill = -1;
     // Flags so we don't attack more than once per turn.
@@ -48,7 +48,7 @@ public class BattleLogic : MonoBehaviour
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
         enemyName = "Squawk-topus";
         playerName = "Harry";
-        playerHP = 100;
+        playerHP = 1;
         enemyHP = 30;
         fightMessage = enemyName + " slithers hither!";
         StartCoroutine(updateCharacter());
