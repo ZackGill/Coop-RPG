@@ -66,6 +66,8 @@ namespace AssemblyCSharp
 			skills = sk;
 
 		}
+
+
 	}
 }
 

@@ -6,8 +6,9 @@ using SimpleFirebaseUnity.MiniJSON;
 using UnityEngine;
 namespace AssemblyCSharp
 {
-	public class DatabaseManager : MonoBehaviour
+	public class DatabaseManager
 	{
+		public Coroutine co { get; private set; }
 		string tempJson;
 		string skillList;
 		string perkList;
@@ -18,15 +19,23 @@ namespace AssemblyCSharp
 		int attackToAdd = 0;
 		int defenseToAdd = 0;
 		int magicToAdd = 0;
+		Characters ch = null;
+		public bool isDone = false;
 
 		static int debug_idx = 0;
 		[SerializeField]
 		TextMesh txt;
 
+		public DatabaseManager() {
+
+		}
+
+		/*
 		void Start() {
 			string yoo = "Example";
-			StartCoroutine (runChar (yoo));
+			//StartCoroutine (runChar (yoo));
 		}
+		*/
 
 		void getAccJson(string aName) {
 			Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/Accounts", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
@@ -35,7 +44,19 @@ namespace AssemblyCSharp
 			acc.GetValue ();
 		}
 
-		 void getCharList() {
+		void getClassDescJson() {
+			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/ClassDesc", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			fb.OnGetSuccess += GetJson;
+			fb.GetValue ();
+		}
+
+		public string[] getClassDesc() {
+			tempJson = tempJson.Substring (1, tempJson.Length - 2);
+			string[] ret = tempJson.Split (',');
+			return ret;
+		}
+
+		public string[] getCharList() {
 			tempJson = tempJson.Substring(1);
 			string characters;
 			string[] list = tempJson.Split (',');
@@ -43,8 +64,7 @@ namespace AssemblyCSharp
 			characters = characters.Substring (1, characters.Length-2);
 			//Actual list of chars
 			string[] cList = characters.Split (';');
-			charList = cList [1];
-
+			return cList;
 		}
 			
 
@@ -399,7 +419,7 @@ namespace AssemblyCSharp
 			}
 		}
 
-		 IEnumerable runAcc(string accName) {
+		 public IEnumerable runAcc(string accName) {
 			getAccJson (accName);
 			DoDebug("WAITING");
 			yield return new WaitForSeconds (2f);
@@ -408,7 +428,7 @@ namespace AssemblyCSharp
 
 		}
 
-		 IEnumerator runChar(string charName) {
+		public IEnumerator runChar(string charName) {
 			getCharInfo (charName);
 			//skillList = "Spin-Slash";
 			//WAIT
@@ -513,26 +533,32 @@ namespace AssemblyCSharp
 			/// end loop
 			}
 
-			Characters chara = null;
+
 			getCharInfo (charName);
 			DoDebug("WAITING ON CHAR INFO");
 			yield return new WaitForSeconds (2f);
 			DoDebug("DONE");
-			parseCharInfo (1, ref chara);
+			parseCharInfo (1, ref ch);
 
-			chara.setSkills (sTemp);
-			chara.setAttack (chara.getAttack () + attackToAdd);
-			chara.setMagic (chara.getMagic () + magicToAdd);
-			chara.setDefense (chara.getDefense () + defenseToAdd);
+			ch.setSkills (sTemp);
+			ch.setAttack (ch.getAttack () + attackToAdd);
+			ch.setMagic (ch.getMagic () + magicToAdd);
+			ch.setDefense (ch.getDefense () + defenseToAdd);
 
-			DoDebug("ATTACK: " + chara.getAttack() + "\nDefense: " + chara.getDefense());
+			DoDebug("ATTACK: " + ch.getAttack() + "\nDefense: " + ch.getDefense());
 
-		
+			isDone = true;
+
+			yield return ch;
 
 		}
 
 		void GetJson(Firebase sender, DataSnapshot snapshot) {
 			tempJson = snapshot.RawJson;
+		}
+
+		public Characters getChar() {
+			return ch;
 		}
 
 
