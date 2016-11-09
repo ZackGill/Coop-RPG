@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 public class BattleLogic : MonoBehaviour {
-
-    // Information about the player
-	//List<Player> players = new List<Player>();
-	//List<Enemy> enemies = new List<Enemy>();
-	private Player p;
+    public int numEnemies = 0;
+    // Flags so we don't attack more than once per turn.
+    private bool playerAttackFlag = false;
+    private bool enemyAttackFlag = false;
+    // Information about the player.
+    private string playerName;
+    private float playerHP;
     private float playerSpeed;
     private float playerExperience;
     private int playerLevel;
@@ -22,38 +24,47 @@ public class BattleLogic : MonoBehaviour {
     // Information about the battle itself.
     private string fightMessage;
     // So we can affect the state and timer when necessary.
+    private ArrowSelection selection;
     private BattleScreenStates state;
     private ActiveTime activeTime;
+    private EnemyQuantity enemyQuantity;
     List<BattleScreenStates.FightStates> stateQueue;
 
     void Start () {
-		// initialize
-		p = new Player();
-		//initialize enemy here
-		e = new Enemy();
-        enemyName = "Spookeroni";
+
+        playerName = "Harry";
+        playerHP = 100;
+        enemyName = "Squawk-topus";
         enemyHP = 30;
 
         state = GetComponent<BattleScreenStates>();
+        selection = GetComponent<ArrowSelection>();
         stateQueue = new List<BattleScreenStates.FightStates>();
+        enemyQuantity = GetComponent<EnemyQuantity>();
         stateQueue.Add(BattleScreenStates.FightStates.BEGINNING);
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
-        fightMessage = enemyName + " draws near!";
-
-        Invoke("WinBattle", 5f);
+        fightMessage = enemyName + " slithers hither!";
     }
 	
 	void Update () {
-        //print(state.curState);
+        print(state.curState);
         checkBattleOver();
+        stateCheck();
+        if (Input.GetKeyDown("space"))
+            toggleState();
+        // FOR TESTING TODO: REMOVE
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            enemyQuantity.addAnEnemy();
+            moreEnemies();
+            toggleState();
+        }
     }
 
     public void meleeAttack()
     {
-		e.SetHPCurrent(e.GetHPCurrent() - 10*p.GetAttack());
-        //e.hpCurrent -= 10 * p.attack; // old
-        activeTime.setSeconds(0);
-        fightMessage = "You attack! 10 HP";
+        enemyHP -= 10 * buffMultiplier;
+        fightMessage = "You attack " + selection.getArrowPos() +"! 10 HP";
     }
 
     public void skillUsed()
@@ -80,7 +91,22 @@ public class BattleLogic : MonoBehaviour {
 			fightMessage = p.GetEntityName() + " fainted. Try again.";
             Invoke("LoseBattle", 5f);
         }
-		else if(e.GetHPCurrent() <= 0)
+        if(currentMoveSelected && enemyQuantity.getNumberOfEnemies() > 1 && state.curState == BattleScreenStates.FightStates.NEUTRAL && !playerAttackFlag)
+        {
+            stateQueue.Add(BattleScreenStates.FightStates.PICKANENEMY);
+            currentMoveSelected = false;
+            toggleState();
+        }
+        else if(state.curState == BattleScreenStates.FightStates.PICKANENEMY)
+        {
+            if (Input.GetKeyDown("space"))
+            {
+                toggleState();
+                currentMoveSelected = true;
+                playerAttackFlag = true;
+            }
+        }
+        else if (activeTime.GetRatio() == 1 && currentMoveSelected)
         {
             state.curState = BattleScreenStates.FightStates.WIN;
 			fightMessage = e.GetEntityName() + " was defeated! " + p.GetEntityName() + " wins!";
@@ -91,6 +117,48 @@ public class BattleLogic : MonoBehaviour {
     void LoseBattle()
     {
 
+    void stateTakesEffect()
+    {
+        if (state.curState == BattleScreenStates.FightStates.PLAYERTURN && playerAttackFlag == true)
+        {
+            meleeAttack();
+            playerAttackFlag = false;
+        }
+        if (state.curState == BattleScreenStates.FightStates.ENEMYTURN && enemyAttackFlag == true)
+        {
+            enemyAttacks();
+            enemyAttackFlag = false;
+        }
+        if(state.curState == BattleScreenStates.FightStates.LOSE)
+            fightMessage = playerName + " fainted. Try again.";
+        if (state.curState == BattleScreenStates.FightStates.WIN)
+            fightMessage = enemyName + " was defeated! " + playerName + " wins!";
+        if (state.curState == BattleScreenStates.FightStates.SECONDENEMYJOINS)
+        {
+            fightMessage = "Good grief! A " + enemyName + " joins in!";
+            numEnemies = 2;
+        }
+        if (state.curState == BattleScreenStates.FightStates.THIRDENEMYJOINS)
+        {
+            fightMessage = "Just my luck! it's a " + enemyName + "!";
+            numEnemies = 3;
+        }
+        if (state.curState == BattleScreenStates.FightStates.PICKANENEMY)
+            fightMessage = "Select a target.";
+    }
+
+    void moreEnemies()
+    {
+        if (enemyQuantity.getNumberOfEnemies() == numEnemies)
+            return;
+        else if (enemyQuantity.getNumberOfEnemies() == 2)
+        {
+            stateQueue.Add(BattleScreenStates.FightStates.SECONDENEMYJOINS);
+        }
+        else if (enemyQuantity.getNumberOfEnemies() == 3)
+        {
+            stateQueue.Add(BattleScreenStates.FightStates.THIRDENEMYJOINS);
+        }
     }
 
     // Leave battle

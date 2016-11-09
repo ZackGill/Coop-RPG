@@ -31,7 +31,12 @@ public class BattleScreenGUI : MonoBehaviour {
     // This is how we'll interact with the other scripts.
     private ActiveTime activeTime;
     private BattleScreenStates state;
+    private EnemyQuantity enemies;
     private BattleLogic battleLogic;
+    // To control enemy sprites
+    private SpriteRenderer enemy1;
+    private SpriteRenderer enemy2;
+    private SpriteRenderer enemy3;
 
 	void Start () {
 
@@ -68,6 +73,13 @@ public class BattleScreenGUI : MonoBehaviour {
         skillButton6 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton6").GetComponent<Button>();
         skillButton7 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton7").GetComponent<Button>();
         skillButton8 = transform.FindChild("OptionsMenu/VisibleArea/SkillsMenu/SkillsScroll/SkillButton8").GetComponent<Button>();
+
+        // The enemy sprites.
+        enemy1 = transform.FindChild("EnemyPanel/Enemy").GetComponent<SpriteRenderer>();
+        enemy2 = transform.FindChild("EnemyPanel/Enemy2").GetComponent<SpriteRenderer>();
+        enemy3 = transform.FindChild("EnemyPanel/Enemy3").GetComponent<SpriteRenderer>();
+        enemy2.enabled = false;
+        enemy3.enabled = false;
     }
 	
 	void Update () {
@@ -103,6 +115,16 @@ public class BattleScreenGUI : MonoBehaviour {
                 fightMessage.text = battleLogic.getFightMessage();
                 fightButtonsPanel.interactable = false;
                 break;
+            case (BattleScreenStates.FightStates.SECONDENEMYJOINS):
+                fightMessage.text = battleLogic.getFightMessage();
+                fightButtonsPanel.interactable = false;
+                enemy2.enabled = true;
+                break;
+            case (BattleScreenStates.FightStates.THIRDENEMYJOINS):
+                fightMessage.text = battleLogic.getFightMessage();
+                fightButtonsPanel.interactable = false;
+                enemy3.enabled = true;
+                break;
             case (BattleScreenStates.FightStates.PLAYERTURN):
                 fightMessage.text = battleLogic.getFightMessage();
                 currentMoveSelected = false;
@@ -111,6 +133,11 @@ public class BattleScreenGUI : MonoBehaviour {
                 fightMessage.text = battleLogic.getFightMessage();
                 currentMoveSelected = false;
                 battleOver = true;
+                break;
+            case (BattleScreenStates.FightStates.PICKANENEMY):
+                fightMessage.text = battleLogic.getFightMessage();
+                battleLogic.currentMoveSelected = false;
+                optionsPanel.alpha = 0;
                 break;
             case (BattleScreenStates.FightStates.LOSE):
                 fightMessage.text = battleLogic.getFightMessage();
