@@ -135,7 +135,6 @@ public class DatabaseManager : MonoBehaviour
 
             }
 
-
         }
         sk.applyPerk(type, value);
     }

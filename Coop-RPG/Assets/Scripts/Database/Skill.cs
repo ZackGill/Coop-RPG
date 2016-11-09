@@ -49,6 +49,30 @@ public class Skill
         return name;
     }
 
+    public String getType()
+    {
+        return type;
+    }
+
+    public String getTarget()
+    {
+        return target;
+    }
+
+    public int getValues()
+    {
+        return value;
+    }
+
+    public int getThreatGen()
+    {
+        return threat;
+    }
+
+    public int getCooldown()
+    {
+        return cooldown;
+    }
     /*
     public Skill(string name) {
         this.name = name;
@@ -85,25 +109,7 @@ public class Skill
 
 
 
-    public String getType() {
-        return type;
-    }
 
-    public String getTargets() {
-        return targets;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public int getThreatGen() {
-        return threatGen;
-    }
-
-    public int getCooldown() {
-        return cooldown;
-    }
     */
 }
 

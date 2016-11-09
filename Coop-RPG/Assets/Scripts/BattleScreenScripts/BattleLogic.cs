@@ -46,16 +46,17 @@ public class BattleLogic : MonoBehaviour
         enemyQuantity = GetComponent<EnemyQuantity>();
         stateQueue.Add(BattleScreenStates.FightStates.BEGINNING);
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
-
+        enemyName = "Squawk-topus";
         playerName = "Harry";
         playerHP = 100;
-        enemyName = "Squawk-topus";
         enemyHP = 30;
         fightMessage = enemyName + " slithers hither!";
+        StartCoroutine(updateCharacter());
     }
 
     void Update()
     {
+        print(state.curState);
         checkBattleOver();
         stateCheck();
         if (Input.GetKeyDown("space"))
@@ -67,10 +68,13 @@ public class BattleLogic : MonoBehaviour
             moreEnemies();
             toggleState();
         }
+    }
 
-        // TODO: Don't update this EVERY time...
+    IEnumerator updateCharacter()
+    {
+        yield return new WaitForSeconds(50);
         character = attack.getCharacter();
-
+        playerName = "Harry";
         playerHP = character.getHP();
         playerSkills = character.getSkills();
     }
@@ -129,16 +133,17 @@ public class BattleLogic : MonoBehaviour
     {
         if (state.curState == BattleScreenStates.FightStates.PLAYERTURN && playerAttackFlag == true)
         {
-            if (whichSkill >= 0)
-                attack.playerHealsSelf(whichSkill);
-            else
-                attack.playerAttacksEnemy(whichSkill);
+            if (character.getSkills()[whichSkill].getType() == "heal")
+                playerHP += attack.giveDamage(whichSkill);
+            enemyHP -= attack.giveDamage(whichSkill);
+            fightMessage = attack.getFightMessage();
             playerAttackFlag = false;
             whichSkill = -1;
         }
         if (state.curState == BattleScreenStates.FightStates.ENEMYTURN && enemyAttackFlag == true)
         {
-            attack.enemyAttacks();
+            playerHP -= attack.enemyAttacks();
+            fightMessage = attack.getFightMessage();
             enemyAttackFlag = false;
         }
         if (state.curState == BattleScreenStates.FightStates.LOSE)
@@ -196,11 +201,6 @@ public class BattleLogic : MonoBehaviour
     public string getFightMessage()
     {
         return fightMessage;
-    }
-
-    public void setFightMessage(string message)
-    {
-        fightMessage = message;
     }
 
     public Characters getCharacter()

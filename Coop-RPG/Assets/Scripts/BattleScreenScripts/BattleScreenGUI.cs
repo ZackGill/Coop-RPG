@@ -101,6 +101,7 @@ public class BattleScreenGUI : MonoBehaviour
         enemy3.enabled = false;
 
         character = GetComponent<Characters>();
+        StartCoroutine(updateFromDatabase());
     }
 
     void Update()
@@ -112,6 +113,12 @@ public class BattleScreenGUI : MonoBehaviour
 
         stateCheck();
 
+        character = battleLogic.getCharacter();
+    }
+
+    IEnumerator updateFromDatabase()
+    {
+        yield return new WaitForSeconds(51);
         character = battleLogic.getCharacter();
         fillSkillButtons();
     }
