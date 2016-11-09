@@ -23,7 +23,7 @@ class coord
 }
 public class WanderStalk_Overworld : NetworkBehaviour
 {
-    private GameObject playerPos = GameObject.FindGameObjectWithTag("Player");
+    private GameObject[] playerPos = null;
     public int sightRange = 8;
     public float speed = 2.25F;
     private int x, y, tX, tY, lX, lY, steps, NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3, dir = 0;
@@ -39,7 +39,6 @@ public class WanderStalk_Overworld : NetworkBehaviour
     {
         map = transform.parent.GetComponent<GenerateDungeon>().isFloor;
         exists = true;
-        playerPos = GameObject.Find("PlayerChar");
     }
     bool canSeeEachOther(int x1, int y1, int x2, int y2)
     {
@@ -141,7 +140,9 @@ public class WanderStalk_Overworld : NetworkBehaviour
     void Update()
     {
         if (playerPos == null)
-            return;
+        {
+            playerPos = GameObject.FindGameObjectsWithTag("Player");
+        }
         if (exists)
         {
             if (steps <= 0 || (x == tX && y == tY))
@@ -217,41 +218,54 @@ public class WanderStalk_Overworld : NetworkBehaviour
 
     void checkForPlayer(int direction)
     {
-        int pX = Mathf.FloorToInt(playerPos.transform.position.x + 0.5F);
-        int pY = Mathf.FloorToInt(playerPos.transform.position.y + 0.5F);
-        if (direction == EAST && pX > x && Mathf.Sqrt((pX - x) * (pX - x) + (pY - y) * (pY - y)) <= sightRange
-                        && canSeeEachOther(x, y, pX, pY))
+        float dist = float.MaxValue;
+        bool tFound = false;
+        for (int i = 0; i < playerPos.Length; i++)
         {
-            tX = pX + 1;
-            tY = pY;
-            hunting = true;
-            return;
+            int pX = Mathf.FloorToInt(playerPos[i].transform.position.x + 0.5F);
+            int pY = Mathf.FloorToInt(playerPos[i].transform.position.y + 0.5F);
+            float pDistance = Mathf.Sqrt((pX - x) * (pX - x) + (pY - y) * (pY - y));
+            if (pDistance < dist)
+            {
+                if (direction == EAST && pX > x && Mathf.Sqrt((pX - x) * (pX - x) + (pY - y) * (pY - y)) <= sightRange
+                                && canSeeEachOther(x, y, pX, pY))
+                {
+                    tX = pX + 1;
+                    tY = pY;
+                    tFound = true;
+                    dist = pDistance;
+                    hunting = true;
+                }
+                if (direction == WEST && pX < x && Mathf.Sqrt((pX - x) * (pX - x) + (pY - y) * (pY - y)) <= sightRange
+                                && canSeeEachOther(x, y, pX, pY))
+                {
+                    tX = pX - 1;
+                    tY = pY;
+                    tFound = true;
+                    dist = pDistance;
+                    hunting = true;
+                }
+                if (direction == NORTH && pY > y && Mathf.Sqrt((pX - x) * (pX - x) + (pY - y) * (pY - y)) <= sightRange
+                                && canSeeEachOther(x, y, pX, pY))
+                {
+                    tX = pX;
+                    tY = pY + 1;
+                    tFound = true;
+                    dist = pDistance;
+                    hunting = true;
+                }
+                if (direction == SOUTH && pY < y && Mathf.Sqrt((pX - x) * (pX - x) + (pY - y) * (pY - y)) <= sightRange
+                                && canSeeEachOther(x, y, pX, pY))
+                {
+                    tX = pX;
+                    tY = pY - 1;
+                    tFound = true;
+                    dist = pDistance;
+                    hunting = true;
+                }
+            }
         }
-        if (direction == WEST && pX < x && Mathf.Sqrt((pX - x) * (pX - x) + (pY - y) * (pY - y)) <= sightRange
-                        && canSeeEachOther(x, y, pX, pY))
-        {
-            tX = pX - 1;
-            tY = pY;
-            hunting = true;
-            return;
-        }
-        if (direction == NORTH && pY > y && Mathf.Sqrt((pX - x) * (pX - x) + (pY - y) * (pY - y)) <= sightRange
-                        && canSeeEachOther(x, y, pX, pY))
-        {
-            tX = pX;
-            tY = pY + 1;
-            hunting = true;
-            return;
-        }
-        if (direction == SOUTH && pY < y && Mathf.Sqrt((pX - x) * (pX - x) + (pY - y) * (pY - y)) <= sightRange
-                        && canSeeEachOther(x, y, pX, pY))
-        {
-            tX = pX;
-            tY = pY - 1;
-            hunting = true;
-            return;
-        }
-        hunting = false;
+        hunting = tFound;
         return;
     }
 }
