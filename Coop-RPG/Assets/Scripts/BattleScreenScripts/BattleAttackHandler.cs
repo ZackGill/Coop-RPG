@@ -14,6 +14,7 @@ public class BattleAttackHandler : MonoBehaviour
     private Enemy enemy3;
 
     private string fightMessage;
+
     private float buffMultiplier = 1;
     private float enemyBuffMultiplier = 1;
     private int playerMeleeDamage = 9;
@@ -23,37 +24,45 @@ public class BattleAttackHandler : MonoBehaviour
     private DatabaseBattle db;
     private ArrowSelection selection;
     private BattleLogic logic;
+    private ActiveTime activeTime;
+    Skill[] skills = new Skill[8];
 
     void Start()
     {
-        character = GetComponent<Characters>();
+        character = new Characters("okay", 10, 10, 10, 10, 10);
         db = GetComponent<DatabaseBattle>();
         selection = GetComponent<ArrowSelection>();
         logic = GetComponent<BattleLogic>();
+        activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
     }
 
     // TODO: Don't update this EVERY time...
     void Update()
     {
+
+        // Maybe this should be done every time though.
+        //activeTime.setMaxTime(200);
+
         character = db.getCharacter();
+        //skills = character.getSkills();
     }
 
+
+    // For when the player's HP is being affected.
     public int enemyAttacks()
     {
         fightMessage = "You are attacked! -5 HP";
         return 5;
     }
 
+
+    // For when the enemy's HP is being affected.
     public int giveDamage(int whichSkill)
     {
 
         print(whichSkill);
 
         int damageDone = (int)(playerMeleeDamage * buffMultiplier);
-
-        Skill[] skills = new Skill[8];
-        if(character.getSkills().Length > 0)
-            skills = character.getSkills();
 
         fightMessage = "You attack " + selection.getArrowPos() + "! It does " + damageDone + " HP";
         if(whichSkill >= 0)
