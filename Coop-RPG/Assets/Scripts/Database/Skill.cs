@@ -75,7 +75,7 @@ namespace AssemblyCSharp
 			}
 			
 		}
-
+		*/
 
 		public String getName() {
 			return name;
@@ -86,7 +86,7 @@ namespace AssemblyCSharp
 		}
 
 		public String getTargets() {
-			return targets;
+			return target;
 		}
 
 		public int getValue() {
@@ -94,13 +94,13 @@ namespace AssemblyCSharp
 		}
 
 		public int getThreatGen() {
-			return threatGen;
+			return threat;
 		}
 
 		public int getCooldown() {
 			return cooldown;
 		}
-		*/
+
 	}
 }
 

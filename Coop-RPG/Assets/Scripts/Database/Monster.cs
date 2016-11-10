@@ -5,6 +5,7 @@ namespace AssemblyCSharp
 {
 	public class Monster
 	{
+<<<<<<< HEAD
 		Dictionary<string, string> vals = new Dictionary<string, string> (); //need to cast vars as ints when we pull them out
 
 		public void getVals() {
@@ -35,24 +36,86 @@ namespace AssemblyCSharp
 			});
 
 			mon = fb.Child (name);
+=======
+		float mistakeChance;
+		int attack, magic, defense, hp, level, sightRange;
+		bool bossTag = false;
+		float moveSpeed;
+
+		Skill[] skills;
 		
-			hp = int.Parse(mon.Child("HP").ToString());
-			level = int.Parse (mon.Child ("level").ToString ());
-			bossTag = bool.Parse (mon.Child ("bossTag").ToString ());
-			sub = mon.Child("Stats");
-			atk = int.Parse(sub.Child("attack").ToString());
-			def = int.Parse(sub.Child("defense").ToString());
-			mag = int.Parse(sub.Child("magic").ToString());
-			sub = mon.Child("AI");
-			AIsight = int.Parse(sub.Child("sightrange").ToString());
-			AImistake = double.Parse (sub.Child ("mistakeChance").ToString ());
 
-			///perks
-			/// skills
-
+		public Monster(int atk, int mag, int def, int hp, int lvl, bool bt, int sr, float mis, float ms) {
+			attack = atk;
+			magic = mag;
+			defense = def;
+			this.hp = hp;
+			level = lvl;
+			sightRange = sr;
+			mistakeChance = mis;
+			bossTag = bt;
+			moveSpeed = ms;
+>>>>>>> refs/remotes/origin/Cameron
+		
 
 		}
-		*/
+
+		public void setMS(float ms) {
+			moveSpeed = ms;
+		}
+
+		public void setMistakeChance(float mis) {
+			mistakeChance = mis;
+		}
+
+		public void setSightRange(int sr) {
+			sightRange = sr;
+		}
+
+		public int getSightRange() {
+			return sightRange;
+		}
+
+		public float getMS() {
+			return moveSpeed;
+		}
+
+		public int getHP() {
+			return hp;
+		}
+
+		public int getAttack() {
+			return attack;
+		}
+
+		public int getMagic() {
+			return magic;
+		}
+
+		public bool getBossTag() {
+			return bossTag;
+		}
+
+		public int getLevel() {
+			return level;
+		}
+
+		public float getMistakeChance() {
+			return mistakeChance;
+		}
+
+		public int getDefense() {
+			return defense;
+		}
+
+		public Skill[] getSkills() {
+			return skills;
+		}
+
+		public void setSkills(Skill[] sk) {
+			skills = sk;
+
+		}
 	}
 }
 
