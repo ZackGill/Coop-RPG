@@ -24,6 +24,7 @@ namespace AssemblyCSharp
 		Monster mon = null;
 		bool logOnOk = false;
 
+        bool createAcc = false;
 
 		public bool isDone = false;
 
@@ -46,6 +47,11 @@ namespace AssemblyCSharp
 
 		private void checkLogOn(string pass) {
 			string save = tempJson;
+            if (tempJson == null)
+            {
+                logOnOk = false;
+                return;
+            }
 			tempJson = tempJson.Substring (1, tempJson.Length - 2);
 			string[] sp = tempJson.Split (',');
 			foreach (string s in sp) {
@@ -66,10 +72,16 @@ namespace AssemblyCSharp
 			tempJson = save;
 		}
 
+        public string error;
+
 		public bool getLogOnOk() {
 			return logOnOk;
 		}
 
+        public bool createAccGood()
+        {
+            return createAcc;
+        }
 
 		void getAccJson(string aName) {
 			Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/Accounts", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
@@ -78,7 +90,29 @@ namespace AssemblyCSharp
 			acc.GetValue ();
 		}
 
-		void getClassDescJson() {
+        void createFailed(Firebase sender, FirebaseError err)
+        {
+            DoDebug("" + err.Message);
+            error = err.Message + "";
+            createAcc = false;
+        }
+
+
+        void createSuccess(Firebase sender, DataSnapshot data)
+        {
+            DoDebug("Made the account");
+            createAcc = true;
+        }
+
+        void newAcc(string name, string pass, string email)
+        {
+            Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Accounts", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+            fb.OnSetFailed += createFailed;
+            fb.OnSetSuccess += createSuccess;
+            fb.Child(name, true).SetValue("{ \"characters\": \"NONE\", \"email\": \"" + email + "\", \"password\": \"" + pass + "\"}", true);
+        }
+
+        void getClassDescJson() {
 			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/ClassDesc", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
 			fb.OnGetSuccess += GetJson;
 			fb.GetValue ();
@@ -104,6 +138,17 @@ namespace AssemblyCSharp
 			tempJson = tempJson.Substring(1, tempJson.Length-2);
 			string characters;
 			string[] list = tempJson.Split (',');
+            if (list.Length <= 0)
+            {
+                charList = null;
+                return;
+            }
+            string[] tempStrings = list[0].Split(':');
+            if(tempStrings.Length <= 1)
+            {
+                charList = null;
+                return;
+            }
 			characters = list[0].Split (':')[1];
 			characters = characters.Substring (1, characters.Length-2);
 			//Actual list of chars
@@ -467,7 +512,7 @@ namespace AssemblyCSharp
 			}
 		}
 
-		public IEnumerable runAcc(string accName, string pass) {
+		public IEnumerator runAcc(string accName, string pass) {
 			getAccJson (accName);
 			DoDebug("WAITING");
 			yield return new WaitForSeconds (2f);
@@ -477,6 +522,13 @@ namespace AssemblyCSharp
 
 
 		}
+
+        public IEnumerator runCreateAcc(string name, string pass, string email)
+        {
+            newAcc(name, pass, email);
+            DoDebug("WAITING ACC");
+            yield return new WaitForSeconds(3f);
+        }
 
 		public IEnumerator runChar(string charName) {
 			getCharInfo (charName);

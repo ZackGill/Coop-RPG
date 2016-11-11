@@ -67,7 +67,7 @@ public class BattleAttackHandler : MonoBehaviour
         fightMessage = "You attack " + selection.getArrowPos() + "! It does " + damageDone + " HP";
         if(whichSkill >= 0)
         {
-            damageDone = skills[whichSkill].getValues();
+            damageDone = skills[whichSkill].getValue();
             fightMessage = "You cast " + skills[whichSkill].getName() + "! It does " + damageDone + " HP!";
         }
         return damageDone;

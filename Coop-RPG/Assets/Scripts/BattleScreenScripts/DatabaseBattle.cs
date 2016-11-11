@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using AssemblyCSharp;
 public class DatabaseBattle : MonoBehaviour {
 
     private Characters character;
