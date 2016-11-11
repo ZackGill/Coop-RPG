@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using AssemblyCSharp;
 // This is kind of the logic behind the GUI and the states that influence it. The logic for the damage and moves being done is in 
 // BattleAttackHandler.
 public class BattleLogic : MonoBehaviour

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using AssemblyCSharp;
 /// <summary>
 ///  This will be the logic between the fight itself, that is to say the battle, how much damage is being taken, what kind of moves
 ///  are being done, etc.
