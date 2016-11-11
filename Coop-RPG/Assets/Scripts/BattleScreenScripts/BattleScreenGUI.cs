@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class BattleScreenGUI : MonoBehaviour
 {
-
     private bool nextState = true;
     private bool battleOver = false;
     // The 4 main choice buttons.
@@ -108,7 +107,7 @@ public class BattleScreenGUI : MonoBehaviour
     {
 
         playerHealthString.text = battleLogic.getPlayerHP().ToString();
-        playerHealthBar.fillAmount = (battleLogic.getPlayerHP()) / (battleLogic.getPlayerMaxHP());
+        playerHealthBar.fillAmount = (battleLogic.getPlayerHP()) / (100);
         playerActiveTimerBar.fillAmount = activeTime.GetRatio();
 
         stateCheck();
