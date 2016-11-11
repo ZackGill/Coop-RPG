@@ -5,7 +5,7 @@ namespace AssemblyCSharp
 	public static class ItemLU
 	{
 		
-
+		/*
 		public static int getArmor(String name) {
 			int ret = 0;
 			IFirebase fb, inner, item;
@@ -90,7 +90,7 @@ namespace AssemblyCSharp
 
 			return ret;
 		}
-
+		*/
 
 	}
 }

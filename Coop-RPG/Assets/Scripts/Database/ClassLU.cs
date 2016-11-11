@@ -1,10 +1,63 @@
 ﻿using System;
-
+using SimpleFirebaseUnity;
+using SimpleFirebaseUnity.MiniJSON;
 namespace AssemblyCSharp
 {
 	public static class ClassLU
 	{
-		
+		public static int getAttack(string name) {
+			int ret = 0;
+			Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/Classes", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			Firebase inner = fb.Child ("baseStats").Child ("attack");
+			/*inner.OnGetSuccess += (async (Firebase sender, DataSnapshot snap)=>{
+				ret = int.Parse(snap.RawValue);
+
+			};*/
+				
+			inner.OnGetSuccess += (Firebase sender, DataSnapshot snapshot)=>{
+				ret = int.Parse(snapshot.RawJson);
+				};
+			inner.GetValue ();
+			return ret;
+		}
+
+		public static int getMagic(string name) {
+			int ret = 0;
+			Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/Classes", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			Firebase inner = fb.Child ("baseStats").Child ("magic");
+			/*inner.OnGetSuccess += (async (Firebase sender, DataSnapshot snap)=>{
+				ret = int.Parse(snap.RawValue);
+
+			};*/
+
+			inner.OnGetSuccess += (Firebase sender, DataSnapshot snapshot)=>{
+				ret = int.Parse(snapshot.RawJson);
+			};
+			inner.GetValue ();
+			return ret;
+		}
+
+		public static int getDefense(string name) {
+			int ret = 0;
+			Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/Classes", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			Firebase inner = fb.Child ("baseStats").Child ("defense");
+			/*inner.OnGetSuccess += (async (Firebase sender, DataSnapshot snap)=>{
+				ret = int.Parse(snap.RawValue);
+
+			};*/
+
+			inner.OnGetSuccess += (Firebase sender, DataSnapshot snapshot)=>{
+				ret = int.Parse(snapshot.RawJson);
+			};
+			inner.GetValue ();
+			return ret;
+		}
+
+
+
+	
+
+		/*
 		public static int getAttack(String name) {
 			int ret = 0;
 			IFirebase fb, stat, cl;
@@ -65,6 +118,7 @@ namespace AssemblyCSharp
 
 			return ret;
 		}
+		*/
 	}
 }
 

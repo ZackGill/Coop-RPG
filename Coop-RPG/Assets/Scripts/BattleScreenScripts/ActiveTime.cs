@@ -31,7 +31,7 @@ public class ActiveTime : MonoBehaviour {
 
     public float GetRatio()
     {
-        return seconds / maxTime;
+        return seconds / (maxTime);
     }
 
     public float GetEnemyRatio()
@@ -47,5 +47,15 @@ public class ActiveTime : MonoBehaviour {
     public void setEnemySeconds(float sec)
     {
         enemySeconds = sec;
+    }
+
+    public float getMaxTime()
+    {
+        return maxTime;
+    }
+
+    public void setMaxTime(float sec)
+    {
+        maxTime = sec;
     }
 }
