@@ -137,10 +137,10 @@ namespace AssemblyCSharp
 
 		IEnumerator wait() {
 			DatabaseManager db = new DatabaseManager();
-			Characters test = null;
-			StartCoroutine(db.runChar("Example"));
+			Monster test = null;
+			StartCoroutine(db.runMon("WanderStalk"));
 			yield return new WaitForSeconds (35f);
-			test = db.getChar ();
+			test = db.getMon ();
 			DoDebug ("-AFTER-\nAttack: " + test.getAttack () + "\nDefense: " + test.getDefense ());
 
 		}
