@@ -11,6 +11,9 @@ using AssemblyCSharp;
         public InputField LoginName, LoginPass, email;
         public Canvas loginCanvas, charactersCanvas, newCharCanvas;
         public CharacterInfo charToUse;
+    public GameObject characterList;
+    public GameObject characterButton;
+
 
     public Text error;
 
@@ -38,12 +41,22 @@ using AssemblyCSharp;
         // Do Character list stuff here if true
         if (loginCheck)
         {
-
+            charactersCanvas.gameObject.SetActive(true);
+            for(int i = 0; i < chars.Length; i++)
+            {
+                GameObject temp = (GameObject)Instantiate(characterButton, characterList.transform);
+                temp.GetComponentInChildren<Text>().text = chars[i];
+            }
         }
         else
         {
             error.text = "Error finding account. Did you type your password in correctly?";
         }
+
+    }
+
+    public void Play()
+    {
 
     }
 
