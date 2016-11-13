@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
-// THIS WILL BE USED AS A MIDDLE GROUND BETWEEN THE USER INTERFACE AND BOB'S BATTLE SYSTEM, AS WELL
-// AS INFORMATION ABOUT THE CHARACTER/ENEMIES. Essentially, this is the logic behind the UI.
-
+// This is kind of the logic behind the GUI and the states that influence it. The logic for the damage and moves being done is in 
+// BattleAttackHandler.
 public class BattleLogic : MonoBehaviour
 {
+    // Many of the following variables were needed for testing pre-firebase and should be removed.
     public int numEnemies = 0;
     public int whichSkill = -1;
     // Flags so we don't attack more than once per turn.
@@ -15,7 +15,6 @@ public class BattleLogic : MonoBehaviour
     // Information about the player.
     private string playerName;
     private float playerHP;
-    private float playerSpeed;
     private float playerExperience;
     private Skill[] playerSkills;
     private int playerLevel;
@@ -23,8 +22,8 @@ public class BattleLogic : MonoBehaviour
     // Information about the enemy.
     private string enemyName;
     private float enemyHP;
-    private float enemySpeed;
-    private float enemyExperienceHeld;
+    private float enemy2HP;
+    private float enemy3HP;
     // Information about the battle itself.
     private string fightMessage;
     // So we can affect the state and timer when necessary.
@@ -32,6 +31,8 @@ public class BattleLogic : MonoBehaviour
     private Characters character;
     private BattleScreenStates state;
     private ActiveTime activeTime;
+    private ActiveTime enemy2ActiveTime;
+    private ActiveTime enemy3ActiveTime;
     private EnemyQuantity enemyQuantity;
     private BattleAttackHandler attack;
     List<BattleScreenStates.FightStates> stateQueue;
@@ -48,7 +49,7 @@ public class BattleLogic : MonoBehaviour
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
         enemyName = "Squawk-topus";
         playerName = "Harry";
-        playerHP = 100;
+        playerHP = 97;
         enemyHP = 30;
         fightMessage = enemyName + " slithers hither!";
         StartCoroutine(updateCharacter());
@@ -89,10 +90,14 @@ public class BattleLogic : MonoBehaviour
 
     void stateCheck()
     {
-        if (activeTime.GetEnemyRatio() == 1)
+        if (activeTime.GetEnemyRatio() == 1 || 
+            (enemy2ActiveTime != null && enemy2ActiveTime.GetEnemyRatio() == 1) ||
+            (enemy3ActiveTime != null && enemy3ActiveTime.GetEnemyRatio() == 1))
         {
             stateQueue.Add(BattleScreenStates.FightStates.ENEMYTURN);
             activeTime.setEnemySeconds(0);
+            enemy2ActiveTime.setEnemySeconds(0);
+            enemy3ActiveTime.setEnemySeconds(0);
             enemyAttackFlag = true;
         }
         if (currentMoveSelected && enemyQuantity.getNumberOfEnemies() > 1 && state.curState == BattleScreenStates.FightStates.NEUTRAL && !playerAttackFlag)
@@ -133,9 +138,17 @@ public class BattleLogic : MonoBehaviour
     {
         if (state.curState == BattleScreenStates.FightStates.PLAYERTURN && playerAttackFlag == true)
         {
-            if (character.getSkills()[whichSkill].getType() == "heal")
-                playerHP += attack.giveDamage(whichSkill);
-            enemyHP -= attack.giveDamage(whichSkill);
+            //if (character.getSkills()[whichSkill].getType() == "heal")
+            //    playerHP += attack.giveDamage(whichSkill);
+
+            // WHICH ENEMY GETS HURT?
+            if(selection.getArrowPos() == 0)
+                enemy2HP -= attack.giveDamage(whichSkill);
+            if (selection.getArrowPos() == 1)
+                enemyHP -= attack.giveDamage(whichSkill);
+            if (selection.getArrowPos() == 2)
+                enemy3HP -= attack.giveDamage(whichSkill);
+
             fightMessage = attack.getFightMessage();
             playerAttackFlag = false;
             whichSkill = -1;
@@ -171,21 +184,20 @@ public class BattleLogic : MonoBehaviour
         else if (enemyQuantity.getNumberOfEnemies() == 2)
         {
             stateQueue.Add(BattleScreenStates.FightStates.SECONDENEMYJOINS);
+            enemy2HP = 30;
+            enemy2ActiveTime = transform.FindChild("EnemyPanel/Enemy2").GetComponent<ActiveTime>();
         }
         else if (enemyQuantity.getNumberOfEnemies() == 3)
         {
             stateQueue.Add(BattleScreenStates.FightStates.THIRDENEMYJOINS);
+            enemy3HP = 30;
+            enemy2ActiveTime = transform.FindChild("EnemyPanel/Enemy3").GetComponent<ActiveTime>();
         }
     }
 
     public float getPlayerHP()
     {
         return playerHP;
-    }
-
-    public float getPlayerMaxHP()
-    {
-        return 100;
     }
 
     public float getEnemyHP()
