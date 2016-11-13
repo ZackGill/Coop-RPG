@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ArrowSelection : MonoBehaviour {
+public class ArrowSelection : MonoBehaviour
+{
 
     private int arrowPos = 1;
     private EnemyQuantity enemyQuantity;
@@ -14,7 +15,8 @@ public class ArrowSelection : MonoBehaviour {
     private SpriteRenderer enemy3;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         enemyQuantity = GetComponent<EnemyQuantity>();
         battleLogic = GetComponent<BattleLogic>();
         state = GetComponent<BattleScreenStates>();
@@ -24,9 +26,10 @@ public class ArrowSelection : MonoBehaviour {
         enemy3 = transform.FindChild("EnemyPanel/Enemy3").GetComponent<SpriteRenderer>();
         arrow.enabled = false;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         if (state.curState == BattleScreenStates.FightStates.PICKANENEMY)
             selectEnemy();
         else
@@ -45,7 +48,7 @@ public class ArrowSelection : MonoBehaviour {
             arrowPos = 0;
         if (arrowPos == -1)
             arrowPos = numEnemies - 1;
-       
+
         drawArrow();
     }
 
@@ -56,7 +59,7 @@ public class ArrowSelection : MonoBehaviour {
         Vector3 center2 = enemy2.bounds.center;
         Vector3 center3 = enemy3.bounds.center;
         Vector3 position = this.transform.position;
-        if(arrowPos == 0)
+        if (arrowPos == 0)
             position = new Vector3(center2.x, center2.y + 2.5f, center2.z);
         if (arrowPos == 1)
             position = new Vector3(center1.x, center1.y + 2.5f, center1.z);

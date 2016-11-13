@@ -166,7 +166,7 @@ namespace AssemblyCSharp
 			string targs, type;
 			cd = val = threat = 0;
 			targs = type = "";
-			skillJson = skillJson.Substring (1);
+			skillJson = skillJson.Substring (1, skillJson.Length-2);
 			string[] list = skillJson.Split (',');
 			Skill sk;
 			foreach (string s in list) {
@@ -177,7 +177,7 @@ namespace AssemblyCSharp
 
 				}
 				if (sp [0].Equals ("\"value\"")) {
-					val = int.Parse (sp [1].Substring(0,1));
+					val = int.Parse (sp [1]);
 
 				}
 				if (sp [0].Equals ("\"threatGen\"")) {
@@ -191,8 +191,8 @@ namespace AssemblyCSharp
 				}
 
 				if (sp [0].Equals ("\"type\"")) {
-					string temp = sp [1].Substring (1);
-					type = temp.Substring (0, 3);
+					
+					type = sp[1].Substring(1, sp[1].Length-2);
 		
 				}
 
@@ -271,7 +271,8 @@ namespace AssemblyCSharp
 			string[] nBlock = splJson [2].Split (',');
 			foreach (string s in nBlock) {
 				string[] sp = s.Split (':');
-				if (String.Equals(sp[0], ",\"perks\"")) {
+				DoDebug ("!!!!!!HERE!!!!!!  " + sp [0]);
+				if (String.Equals(sp[0], "\"perks\"")) {
 					perkList = sp [1].Substring (1, sp [1].Length - 2);
 
 				}
@@ -594,6 +595,7 @@ namespace AssemblyCSharp
 
 
 			DoDebug ("SKILL LIST: " + skillList);
+			DoDebug ("PERK LIST: " + perkList);
 
 			int ind = 0;
 			string[] sList = skillList.Split (';');
