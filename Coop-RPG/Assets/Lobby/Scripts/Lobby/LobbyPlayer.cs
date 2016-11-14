@@ -121,10 +121,13 @@ namespace Prototype.NetworkLobby
 
             //we switch from simple name display to name input
             colorButton.interactable = true;
-            nameInput.interactable = true;
+            nameInput.interactable = false;
+
 
             nameInput.onEndEdit.RemoveAllListeners();
             nameInput.onEndEdit.AddListener(OnNameChanged);
+
+            OnNameChanged(GameObject.Find("CharacterInfo").GetComponent<CharacterInfo>().charName);
 
             colorButton.onClick.RemoveAllListeners();
             colorButton.onClick.AddListener(OnColorClicked);

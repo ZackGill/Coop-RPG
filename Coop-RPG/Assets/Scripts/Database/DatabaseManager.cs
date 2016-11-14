@@ -100,7 +100,7 @@ namespace AssemblyCSharp
 
         void createSuccess(Firebase sender, DataSnapshot data)
         {
-            DoDebug("Made the account");
+            DoDebug("Made the thing");
             createAcc = true;
         }
 
@@ -131,10 +131,10 @@ namespace AssemblyCSharp
 		public IEnumerator runClassDesc() {
 			getClassDescJson ();
 			yield return new WaitForSeconds(3f);
-			setCharList();
-		}
+            setClassDesc();
+        }
 
-		public void setCharList() {
+        public void setCharList() {
 			tempJson = tempJson.Substring(1, tempJson.Length-2);
 			string characters;
 			string[] list = tempJson.Split (',');
@@ -523,6 +523,33 @@ namespace AssemblyCSharp
 
 
 		}
+        
+        // For now, not pulling default stats from class. Letting Cameron or someone else handle that.
+        void newChar(string name, string clName)
+        {
+            Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+            fb.OnSetFailed += createFailed;
+            fb.OnSetSuccess += createSuccess;
+            fb.Child(name, true).SetValue("{ \"EXP\": \"1\", \"HP\": \"1\", \"class\": \"" + 
+                clName + "\", \"perks\": \"Spin-Slash1\", \"skills\":"+
+                " \"Spin-Slash\"}", true);
+
+
+            Firebase temp = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters/" + name, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+            temp.Child("equipment", true).SetValue("{ \"acc1\": \"NONE\", \"acc2\": \"NONE\", \"armor\": \"rag\", \"weapon\": \"stick\"}", true);
+
+            Firebase temp2 = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters/" + name, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+
+
+            temp2.Child("stats", true).SetValue("{ \"attack\": \"1\", \"defense\": \"1\", \"magic\": \"1\"}", true);
+        }
+
+        public IEnumerator runCreateChar(string name, string clName)
+        {
+            newChar(name, clName);
+            DoDebug("WAITING CHAR CREATE");
+            yield return new WaitForSeconds(5f);
+        }
 
         public IEnumerator runCreateAcc(string name, string pass, string email)
         {
@@ -530,7 +557,7 @@ namespace AssemblyCSharp
             DoDebug("WAITING ACC");
             yield return new WaitForSeconds(3f);
         }
-
+        
 		public IEnumerator runChar(string charName) {
 			getCharInfo (charName);
 			//skillList = "Spin-Slash";

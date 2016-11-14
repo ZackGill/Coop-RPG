@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace AssemblyCSharp
 {
@@ -67,7 +68,15 @@ namespace AssemblyCSharp
 
 		}
 
+        public string getClassName()
+        {
+            return clName;
+        }
 
+        public void setClassName(string temp)
+        {
+            clName = temp;
+        }
 	}
 }
 

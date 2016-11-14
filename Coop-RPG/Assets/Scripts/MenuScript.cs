@@ -4,16 +4,22 @@ using SimpleFirebaseUnity;
 using SimpleFirebaseUnity.MiniJSON;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using AssemblyCSharp;
     public class MenuScript : MonoBehaviour
     {
 
-        public InputField LoginName, LoginPass, email;
-        public Canvas loginCanvas, charactersCanvas, newCharCanvas;
+    public CharacterInfo character;
+
+    public InputField LoginName, LoginPass, email;
+        public GameObject loginCanvas, charactersCanvas, newCharCanvas;
         public CharacterInfo charToUse;
     public GameObject characterList;
     public GameObject characterButton;
 
+
+    public InputField charName;
+    public Dropdown classesSel;
 
     public Text error;
 
@@ -55,17 +61,12 @@ using AssemblyCSharp;
 
     }
 
-    public void Play()
-    {
-
-    }
-
     public void checkCreate()
     {
 
         if (createAccCheck)
         {
-            // Show character Creation stuff
+            StartCoroutine(createCharScreen());
         }
         else
         {
@@ -76,7 +77,7 @@ using AssemblyCSharp;
 
     bool loginCheck = false;
     string[] chars;
-
+    string[] classes;
     bool createAccCheck = false;
     string err = "";
     public IEnumerator logIn()
@@ -98,6 +99,7 @@ using AssemblyCSharp;
         yield return new WaitForSeconds(5f);
         createAccCheck = db.createAccGood();
         err = db.error;
+        checkCreate();
     }
 
         public void CreateClicked()
@@ -110,6 +112,73 @@ using AssemblyCSharp;
         email.text = "mail@mail.mail";
         error.text = "";
         StartCoroutine(createAccount());
+    }
+
+    public void playGo()
+    {
+
+        SceneManager.LoadScene("Lobby");
+    }
+
+    public void play()
+    {
+        StartCoroutine(chooseChar());
+    }
+
+    public IEnumerator chooseChar()
+    {
+        DatabaseManager db = new DatabaseManager();
+        StartCoroutine(db.runChar(charName.text));
+        yield return new WaitForSeconds(20f);
+        Characters temp = db.getChar();
+        character.character = temp;
+        character.charName = charName.text;
+        playGo();
+    }
+
+    public void charScreen()
+    {
+        newCharCanvas.SetActive(true);
+        loginCanvas.SetActive(false);
+        foreach(string s in classes)
+        {
+            classesSel.options.Add(new Dropdown.OptionData(s));
+        }
+
+    }
+
+    public void createAndPlay()
+    {
+        if(charName.text == null)
+        {
+            error.text = "Please enter in a name";
+            return;
+        }
+        error.text = "";
+        StartCoroutine(createChar());
+    }
+
+    public IEnumerator createChar()
+    {
+        print("Before getting the drop down");
+        print(classesSel.value + "");
+        string temp = classesSel.options[classesSel.value].text;
+        temp = temp.Substring(1, temp.IndexOf('\"', 1)-1);
+        print(temp);
+        DatabaseManager db = new DatabaseManager();
+        StartCoroutine(db.runCreateChar(charName.text, temp));
+        yield return new WaitForSeconds(5f);
+        play();
+        // Put error checks here, will do later.
+    }
+
+    public IEnumerator createCharScreen()
+    {
+        DatabaseManager db = new DatabaseManager();
+        StartCoroutine(db.runClassDesc());
+        yield return new WaitForSeconds(5f);
+        classes = db.getClassDesc();
+        charScreen();
     }
 
     public void LoginClicked()
