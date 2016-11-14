@@ -542,6 +542,8 @@ namespace AssemblyCSharp
 
 
             temp2.Child("stats", true).SetValue("{ \"attack\": \"1\", \"defense\": \"1\", \"magic\": \"1\"}", true);
+
+            
         }
 
         public IEnumerator runCreateChar(string name, string clName)

@@ -40,7 +40,7 @@ public class BattleLogic : MonoBehaviour
     void Start()
     {
         attack = GetComponent<BattleAttackHandler>();
-        character = GetComponent<Characters>();
+       // character = GetComponent<Characters>();
         state = GetComponent<BattleScreenStates>();
         selection = GetComponent<ArrowSelection>();
         stateQueue = new List<BattleScreenStates.FightStates>();
@@ -140,7 +140,7 @@ public class BattleLogic : MonoBehaviour
         {
             //if (character.getSkills()[whichSkill].getType() == "heal")
             //    playerHP += attack.giveDamage(whichSkill);
-
+            print(attack.ToString());
             // WHICH ENEMY GETS HURT?
             if(selection.getArrowPos() == 0)
                 enemy2HP -= attack.giveDamage(whichSkill);
