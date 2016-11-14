@@ -30,4 +30,8 @@ public class EnemyQuantity : MonoBehaviour {
     {
         numberOfEnemies++;
     }
+
+	public void removeAnEnemy() {
+		numberOfEnemies--;
+	}
 }

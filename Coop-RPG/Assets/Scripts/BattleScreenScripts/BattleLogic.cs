@@ -18,12 +18,14 @@ public class BattleLogic : MonoBehaviour
     private float playerExperience;
     private Skill[] playerSkills;
     private int playerLevel;
+	private Player[] players;
     public bool currentMoveSelected = false;
     // Information about the enemy.
     private string enemyName;
     private float enemyHP;
     private float enemy2HP;
     private float enemy3HP;
+	private Enemy[] enemies;
     // Information about the battle itself.
     private string fightMessage;
     // So we can affect the state and timer when necessary.
@@ -47,11 +49,17 @@ public class BattleLogic : MonoBehaviour
         enemyQuantity = GetComponent<EnemyQuantity>();
         stateQueue.Add(BattleScreenStates.FightStates.BEGINNING);
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
-        enemyName = "Squawk-topus";
+		enemies = new Enemy[3];
+		players = new Player[3];
+		/*enemyName = "Squawk-topus";
         playerName = "Harry";
         playerHP = 97;
-        enemyHP = 30;
-        fightMessage = enemyName + " slithers hither!";
+        enemyHP = 30;*/
+		enemies [0].SetEntityName ("Squawk-topus");
+		enemies [0].InitHP (30);
+		players [0].SetEntityName ("Harry");
+		players [0].InitHP (97);
+		fightMessage = enemies[0].GetEntityName() + " slithers hither!";
         StartCoroutine(updateCharacter());
     }
 
@@ -67,6 +75,7 @@ public class BattleLogic : MonoBehaviour
         {
             enemyQuantity.addAnEnemy();
             moreEnemies();
+			lessEnemies();
             toggleState();
         }
     }
@@ -75,17 +84,30 @@ public class BattleLogic : MonoBehaviour
     {
         yield return new WaitForSeconds(50);
         character = attack.getCharacter();
-        playerName = "Harry";
-        playerHP = character.getHP();
+        //playerName = "Harry";
+        //playerHP = character.getHP();
+		players[0].SetHPCurrent(character.getHP());
         playerSkills = character.getSkills();
     }
 
     void checkBattleOver()
     {
-        if (playerHP <= 0)
+		bool deadplayers = true;
+		bool deadenemies = true;
+		foreach(Player p in players){
+			if (p.GetHPCurrent () > 0) {
+				deadplayers = false;
+			}
+		}
+		foreach (Enemy e in enemies) {
+			if (e.GetHPCurrent () > 0) {
+				deadenemies = false;
+			}
+		}
+        if (deadplayers)
             stateQueue.Add(BattleScreenStates.FightStates.LOSE);
-        else if (enemyHP <= 0)
-            stateQueue.Add(BattleScreenStates.FightStates.WIN);
+		else if(deadenemies)
+			stateQueue.Add(BattleScreenStates.FightStates.WIN);
     }
 
     void stateCheck()
@@ -143,11 +165,11 @@ public class BattleLogic : MonoBehaviour
 
             // WHICH ENEMY GETS HURT?
             if(selection.getArrowPos() == 0)
-                enemy2HP -= attack.giveDamage(whichSkill);
+				enemies[0].DamageEntity(attack.giveDamage(whichSkill));
             if (selection.getArrowPos() == 1)
-                enemyHP -= attack.giveDamage(whichSkill);
+				enemies[1].DamageEntity(attack.giveDamage(whichSkill));
             if (selection.getArrowPos() == 2)
-                enemy3HP -= attack.giveDamage(whichSkill);
+				enemies[2].DamageEntity(attack.giveDamage(whichSkill));
 
             fightMessage = attack.getFightMessage();
             playerAttackFlag = false;
@@ -155,22 +177,22 @@ public class BattleLogic : MonoBehaviour
         }
         if (state.curState == BattleScreenStates.FightStates.ENEMYTURN && enemyAttackFlag == true)
         {
-            playerHP -= attack.enemyAttacks();
+			players[0].DamageEntity(attack.enemyAttacks());
             fightMessage = attack.getFightMessage();
             enemyAttackFlag = false;
         }
         if (state.curState == BattleScreenStates.FightStates.LOSE)
-            fightMessage = playerName + " fainted. Try again.";
+			fightMessage = players[0].GetEntityName() + " fainted. Try again.";
         if (state.curState == BattleScreenStates.FightStates.WIN)
-            fightMessage = enemyName + " was defeated! " + playerName + " wins!";
+			fightMessage = enemies[0].GetEntityName() + " was defeated! " + players[0].GetEntityName() + " wins!";
         if (state.curState == BattleScreenStates.FightStates.SECONDENEMYJOINS)
         {
-            fightMessage = "Good grief! A " + enemyName + " joins in!";
+			fightMessage = "Good grief! A " + enemies[1].GetEntityName() + " joins in!";
             numEnemies = 2;
         }
         if (state.curState == BattleScreenStates.FightStates.THIRDENEMYJOINS)
         {
-            fightMessage = "Just my luck! it's a " + enemyName + "!";
+			fightMessage = "Just my luck! it's a " + enemies[2].GetEntityName() + "!";
             numEnemies = 3;
         }
         if (state.curState == BattleScreenStates.FightStates.PICKANENEMY)
@@ -184,16 +206,45 @@ public class BattleLogic : MonoBehaviour
         else if (enemyQuantity.getNumberOfEnemies() == 2)
         {
             stateQueue.Add(BattleScreenStates.FightStates.SECONDENEMYJOINS);
-            enemy2HP = 30;
+            //enemy2HP = 30;
+			enemies[1].InitHP(30);
+			enemies [1].SetEntityName ("Sqwak-topus2");
             enemy2ActiveTime = transform.FindChild("EnemyPanel/Enemy2").GetComponent<ActiveTime>();
         }
         else if (enemyQuantity.getNumberOfEnemies() == 3)
         {
             stateQueue.Add(BattleScreenStates.FightStates.THIRDENEMYJOINS);
-            enemy3HP = 30;
-            enemy2ActiveTime = transform.FindChild("EnemyPanel/Enemy3").GetComponent<ActiveTime>();
+            //enemy3HP = 30;
+			enemies[2].InitHP(30);
+			enemies [2].SetEntityName ("Sqwak-topus3");
+            enemy3ActiveTime = transform.FindChild("EnemyPanel/Enemy3").GetComponent<ActiveTime>();
         }
     }
+		
+	void lessEnemies() {
+		if (enemyQuantity.getNumberOfEnemies() == numEnemies)
+			return;
+		else {
+			foreach (Enemy e in enemies) {
+				if (e.GetHPCurrent() == 0) {
+					e.SetEntityName ("dead"); //error if set e to null possibly want 'new Enemy();'
+				}
+			}
+			// this will change the order in the enemy lineup
+			// however i think this will break everything if put in now
+			/*if (enemies [0] == null) {
+				if (enemies [2] != null) {
+					enemies [0] = enemies [2];
+				} else if (enemies [1] != null) {
+					enemies [0] = enemies [1];
+					enemies [1] = null;
+				}
+			} else if (enemies [1] == null && enemies [2] != null) {
+				enemies [1] = enemies [2];
+				enemies [2] = null;
+			}*/
+		}
+	}
 
     public float getPlayerHP()
     {

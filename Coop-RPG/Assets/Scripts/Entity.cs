@@ -97,6 +97,15 @@ public class Entity {
 	public void SetMoveList(CombatMove[] moves) {
 		this.moveList = moves;
 	}
+
+	public void InitHP(int hp) {
+		this.hpMax = hp;
+		this.hpCurrent = hp;
+	}
+
+	public void DamageEntity(int damage) {
+		this.hpCurrent -= damage;
+	}
 	/*
 	public Skill[] GetSkills() {
 		return skills;
