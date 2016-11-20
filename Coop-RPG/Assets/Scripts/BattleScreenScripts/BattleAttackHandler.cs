@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using AssemblyCSharp;
 
 /// <summary>
 ///  This will be the logic between the fight itself, that is to say the battle, how much damage is being taken, what kind of moves
@@ -49,10 +50,18 @@ public class BattleAttackHandler : MonoBehaviour
 
 
     // For when the player's HP is being affected.
-    public int enemyAttacks()
+	public int enemyAttacks(int enemySkill)
     {
-        fightMessage = "You are attacked! -5 HP";
-        return 5;
+		print(enemySkill);
+		int damageDone = (int)logic.getEnemyHP () / 2;  //get the max hp of enemy that the player is fighting, this will be the regular skill / attack.
+		fightMessage = "You are attacked! -5 HP";
+
+		if(enemySkill >= 0)
+		{
+			damageDone = skills[enemySkill].getValue();
+			fightMessage = "You cast " + skills[enemySkill].getName() + "! It does " + damageDone + " HP!";
+		}
+		return damageDone;
     }
 
 
@@ -67,7 +76,7 @@ public class BattleAttackHandler : MonoBehaviour
         fightMessage = "You attack " + selection.getArrowPos() + "! It does " + damageDone + " HP";
         if(whichSkill >= 0)
         {
-            damageDone = skills[whichSkill].getValues();
+            damageDone = skills[whichSkill].getValue();
             fightMessage = "You cast " + skills[whichSkill].getName() + "! It does " + damageDone + " HP!";
         }
         return damageDone;

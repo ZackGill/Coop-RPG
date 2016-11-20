@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using AssemblyCSharp;
 
 public class CommonEnemyAi : MonoBehaviour
 {
@@ -23,47 +24,41 @@ public class CommonEnemyAi : MonoBehaviour
      * 
      * **************************************************************************/
 
-    private float mistakeChance = 0.13f;
-
+	private Monster monster;
+	private BattleLogic logic;
     //enemy stats assuming its a dragon type =p
-    private string sampleEnemySkill = "Fire Ball";
-    private string regularEnemySkill = "Tail swing";
+    private int sampleEnemySkill = 2;
+    private int regularEnemySkill = 1;
     private int coolDownTimerAttack = 0;
+	private int[] player = { 1, 2, 3, 4 };
+	private int randomPlayer = Random.Range (1, 5);
+
 
     //assuming the case of enemy not having any healing skills of its own
-    public void AI()
+	public int AI()
     {
-        //just an example for tonignt so I don't forget
-        if (coolDownTimerAttack == 0)
-        {
-
-            if (Random.Range(0.00f, 1.00f) > mistakeChance)
-            {
-                //add what ever it needs to do to attack here.
-                Debug.Log(sampleEnemySkill);
-                coolDownTimerAttack = 3;
-            }
-            else
-            {
-                Debug.Log("Enemy Missed!");
-            }
-
-        }
-        else
-        {
-            /* *********************************************************
+		//compare if random player is still alive or not, if so, keep attacking the same one, or be completely random and attack
+		//random players.
+		//just an example for tonignt so I don't forget
+		if (coolDownTimerAttack == 0) {
+			if (Random.Range (0.00f, 1.00f) > monster.getMistakeChance()) {
+				//add what ever it needs to do to attack here.
+				return sampleEnemySkill;
+				coolDownTimerAttack = 3;
+			} else {
+				return -1;
+			}
+		} else {
+			/* *********************************************************
              * example enemy regular skill. If all of enemy's skill are
              * in cooldown, use regular skill.
              * ********************************************************/
-            if (Random.Range(0.00f, 1.00f) > mistakeChance)
-            { 
-                Debug.Log(regularEnemySkill);
-            }
-            else
-            {
-                Debug.Log("Enemy Missed!");
-            }
-        }
+			if (Random.Range (0.00f, 1.00f) > monster.getMistakeChance()) { 
+				return regularEnemySkill;
+			} else {
+				return -1;
+			}
+		}
     }
 
     void update()

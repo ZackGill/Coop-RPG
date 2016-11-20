@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 // This is kind of the logic behind the GUI and the states that influence it. The logic for the damage and moves being done is in 
 // BattleAttackHandler.
+using AssemblyCSharp;
+
+
 public class BattleLogic : MonoBehaviour
 {
     // Many of the following variables were needed for testing pre-firebase and should be removed.
@@ -36,6 +39,7 @@ public class BattleLogic : MonoBehaviour
     private EnemyQuantity enemyQuantity;
     private BattleAttackHandler attack;
     List<BattleScreenStates.FightStates> stateQueue;
+	private CommonEnemyAi enemyAi;
 
     void Start()
     {
@@ -155,9 +159,15 @@ public class BattleLogic : MonoBehaviour
         }
         if (state.curState == BattleScreenStates.FightStates.ENEMYTURN && enemyAttackFlag == true)
         {
-            playerHP -= attack.enemyAttacks();
-            fightMessage = attack.getFightMessage();
-            enemyAttackFlag = false;
+			int ai = enemyAi.AI ();
+			if (ai != -1) {
+				playerHP -= attack.enemyAttacks (ai);
+				fightMessage = attack.getFightMessage ();
+				enemyAttackFlag = false;
+			} else {
+				fightMessage = "Enemy Missed!";
+				enemyAttackFlag = false;
+			}
         }
         if (state.curState == BattleScreenStates.FightStates.LOSE)
             fightMessage = playerName + " fainted. Try again.";
