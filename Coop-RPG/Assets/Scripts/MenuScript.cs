@@ -8,14 +8,19 @@ using AssemblyCSharp;
     public class MenuScript : MonoBehaviour
     {
 
-        public InputField LoginName, LoginPass, createName, createPass;
-        public Canvas createCanvas, loginCanvas, charactersCanvas, newCharCanvas;
+        public InputField LoginName, LoginPass, email;
+        public Canvas loginCanvas, charactersCanvas, newCharCanvas;
         public CharacterInfo charToUse;
+    public GameObject characterList;
+    public GameObject characterButton;
+
+
+    public Text error;
 
         static int debug_idx = 0;
         string userName, password;
 
-    Firebase fire;
+        Firebase fire;
 
         // Use this for initialization
         void Start()
@@ -31,27 +36,91 @@ using AssemblyCSharp;
             
         }
 
-        public void createFailed()
+        public void checkLogin()
+    {
+        // Do Character list stuff here if true
+        if (loginCheck)
         {
-
-
+            charactersCanvas.gameObject.SetActive(true);
+            for(int i = 0; i < chars.Length; i++)
+            {
+                GameObject temp = (GameObject)Instantiate(characterButton, characterList.transform);
+                temp.GetComponentInChildren<Text>().text = chars[i];
+            }
+        }
+        else
+        {
+            error.text = "Error finding account. Did you type your password in correctly?";
         }
 
-        public void createWorks()
+    }
+
+    public void Play()
+    {
+
+    }
+
+    public void checkCreate()
+    {
+
+        if (createAccCheck)
         {
-
-
+            // Show character Creation stuff
+        }
+        else
+        {
+            error.text = err;
         }
 
-        public void loginFailed()
+    }
+
+    bool loginCheck = false;
+    string[] chars;
+
+    bool createAccCheck = false;
+    string err = "";
+    public IEnumerator logIn()
+    {
+
+        DatabaseManager db = new DatabaseManager();
+        StartCoroutine(db.runAcc(LoginName.text, LoginPass.text));
+        yield return new WaitForSeconds(5f);
+        loginCheck = db.getLogOnOk();
+        chars = db.getCharList();
+        checkLogin();
+    }
+
+    public IEnumerator createAccount()
+    {
+
+        DatabaseManager db = new DatabaseManager();
+        StartCoroutine(db.runCreateAcc(LoginName.text, LoginPass.text, email.text));
+        yield return new WaitForSeconds(5f);
+        createAccCheck = db.createAccGood();
+        err = db.error;
+    }
+
+        public void CreateClicked()
+      {
+        if (LoginName.text == null || LoginPass.text == null || LoginName.text.Length <= 0 || LoginPass.text.Length <= 0)
         {
-
-
+            error.text = "Please Enter a Username and password";
+            return;
         }
+        email.text = "mail@mail.mail";
+        error.text = "";
+        StartCoroutine(createAccount());
+    }
 
-        public void loginGood()
+    public void LoginClicked()
+    {
+        if(LoginName.text == null || LoginPass.text == null || LoginName.text.Length == 0 || LoginPass.text.Length == 0)
         {
-
+            error.text = "Please Enter Username and Password";
+            return;
         }
+        error.text = "";
+        StartCoroutine(logIn());
+    }
 
     }

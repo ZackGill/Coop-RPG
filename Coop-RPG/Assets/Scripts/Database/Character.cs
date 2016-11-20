@@ -118,8 +118,10 @@ namespace AssemblyCSharp
 
 //		public Character(string name) {
 		void Start() {
-			attack = magic = defense = 0;
-			StartCoroutine (Run ());
+			
+			StartCoroutine (wait());
+
+			//StartCoroutine (Run ());
 			/*
 			getVals ();
 
@@ -132,6 +134,17 @@ namespace AssemblyCSharp
 			DoDebug( "HP: " + hp + "ATK: " + attack + "EXP: " + exp);
 			*/
 		}
+
+		IEnumerator wait() {
+			DatabaseManager db = new DatabaseManager();
+			Monster test = null;
+			StartCoroutine(db.runMon("WanderStalk"));
+			yield return new WaitForSeconds (35f);
+			test = db.getMon ();
+			DoDebug ("-AFTER-\nAttack: " + test.getAttack () + "\nDefense: " + test.getDefense ());
+
+		}
+	
 
 		private void getVals() {
 			FirebaseQueue q = new FirebaseQueue ();
