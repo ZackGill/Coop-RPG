@@ -7,7 +7,10 @@ public static class Dungeon
 }
 
 public class SetDungeonSize : MonoBehaviour {
-
+    public void makeRandom()
+    {
+        Dungeon.Size = UnityEngine.Random.Range(1, 3);
+    }
 	public void makeSmall()
     {
         Dungeon.Size = 1;

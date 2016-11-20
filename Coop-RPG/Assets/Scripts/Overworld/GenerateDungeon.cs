@@ -51,6 +51,9 @@ public class GenerateDungeon : NetworkBehaviour {
 
         if (!isServer)
             return;
+        if(Dungeon.Size == 0) { //Dungeon size not set, pick one at random
+            Dungeon.Size = UnityEngine.Random.Range(SMALL, LARGE);
+        }
         if (Dungeon.Size == SMALL)
         {
             xRooms = UnityEngine.Random.Range(4, 6);
