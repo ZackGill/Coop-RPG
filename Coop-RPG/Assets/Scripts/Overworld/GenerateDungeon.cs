@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using System;
@@ -28,6 +28,8 @@ public class GenerateDungeon : NetworkBehaviour {
 	public bool[,] isFloor = new bool[0,0];
     int seed = (int)System.DateTime.Now.Ticks;
     int BUFFER = 2;
+    public int size = 1;
+    private int SMALL = 1, MED = 2, LARGE = 3; //Dungeon size, default to small
 
     [SyncVar]
     int pX, pY;
@@ -45,9 +47,28 @@ public class GenerateDungeon : NetworkBehaviour {
    void Start() {
         
         network = GameObject.Find("LobbyManager");
-        
+        UnityEngine.Random.InitState(seed);
+
         if (!isServer)
             return;
+        if (Dungeon.Size == SMALL)
+        {
+            xRooms = UnityEngine.Random.Range(4, 6);
+            yRooms = UnityEngine.Random.Range(4, 6);
+            zoneSize = UnityEngine.Random.Range(8, 16);
+        }
+        else if (Dungeon.Size == MED)
+        {
+            xRooms = UnityEngine.Random.Range(5, 9);
+            yRooms = UnityEngine.Random.Range(5, 9);
+            zoneSize = UnityEngine.Random.Range(10, 20);
+        }
+        else if (Dungeon.Size == LARGE)
+        {
+            xRooms = UnityEngine.Random.Range(7, 12);
+            yRooms = UnityEngine.Random.Range(7, 12);
+            zoneSize = UnityEngine.Random.Range(12, 24);
+        }
         enemy = new GameObject[2];
         enemy[0] = wanderStalk;
         enemy[1] = patrolCharge;
@@ -58,7 +79,6 @@ public class GenerateDungeon : NetworkBehaviour {
         int ULX, ULY, LRX, LRY;
         double odds = 115 - 10 * Math.Log(xRooms * yRooms, 2.71828);
         //print("ODDS: " + odds);
-        UnityEngine.Random.InitState(Environment.TickCount);
             for (int J = 0; J < xRooms; J++)
             {
                 for (int I = 0; I < yRooms; I++)
@@ -192,8 +212,8 @@ public class GenerateDungeon : NetworkBehaviour {
             pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
         } while (!isFloor[pX, pY] || (pX < (zoneSize * 3) && pY < (zoneSize * 3)));
         //Boss must be outside the bottom-left 3 rooms.
-        //GameObject monster = (GameObject)Instantiate(boss, new Vector3(pX, pY, -.5f), Quaternion.identity);
-       // NetworkServer.Spawn(monster);
+        GameObject monster = (GameObject)Instantiate(boss, new Vector3(pX, pY, -.5f), Quaternion.identity);
+        NetworkServer.Spawn(monster);
 
         for (int e = 0; e < enemyCount; e++)
         {
