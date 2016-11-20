@@ -4,18 +4,31 @@ namespace AssemblyCSharp
 {
 	public class Characters
 	{
-		int attack, magic, defense, hp, exp;
+		int attack, magic, defense, hp, exp, level;
 		string clName;
 		Skill[] skills;
 
-		public Characters(string cl, int atk, int mg, int def, int hp, int exp) {
+		public Characters(string cl, int atk, int mg, int def, int hp, int exp, int lvl) {
 			clName = cl;
 			attack = atk;
 			magic = mg;
 			defense = def;
 			this.hp = hp;
 			this.exp = exp;
+			level = lvl;
 
+
+		}
+
+		public Characters() {
+			clName = "";
+			attack = 0;
+			magic = 0;
+			defense = 0;
+			hp = 0;
+			exp = 0;
+			skills = null;
+			level = 0;
 
 		}
 
@@ -65,6 +78,14 @@ namespace AssemblyCSharp
 		public void setSkills(Skill[] sk) {
 			skills = sk;
 
+		}
+
+		public void setLevel(int lvl) {
+			level = lvl;
+		}
+
+		public int getLevel() {
+			return level;
 		}
 
 
