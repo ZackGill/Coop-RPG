@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using SimpleFirebaseUnity;
+using UnityEngine;
 namespace AssemblyCSharp
 {
-	public class Monster
+	public class Monster : MonoBehaviour
 	{
 
 		float mistakeChance;

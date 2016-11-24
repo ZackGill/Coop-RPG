@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
+using AssemblyCSharp;
 
 [NetworkSettings(channel = 0)]
 public class PlayerMovement : NetworkBehaviour
@@ -9,6 +10,7 @@ public class PlayerMovement : NetworkBehaviour
     public float speed = 2.25F;
 
     public GameObject battleFab;
+    public GameObject overworldBattle;
     public bool inBattle = false;
     // Use this for initialization
     void Start()
@@ -127,6 +129,20 @@ public class PlayerMovement : NetworkBehaviour
             monster.GetComponent<Renderer>().enabled = toggle;
             monster.GetComponent<BoxCollider2D>().enabled = toggle;
         }
+        // Battle?
+        if(toggle == false)
+        {
+            GameObject temp = (GameObject)Instantiate(overworldBattle, player.transform.position, Quaternion.identity);
+            OverworldBattle temp2 = temp.GetComponent<OverworldBattle>();
+            temp2.enemy0 = monster.GetComponent<Monster>(); // Make sure wandering monsters have this script
+            temp2.info.numPlayers = 1;
+            temp2.info.numEnemies = 1;
+            battle.GetComponentInChildren<BattleLogic>().infoDump = temp2;
+            battle.GetComponentInChildren<BattleLogic>().playerNum = temp2.info.numPlayers-1;
+            temp2.battle0 = battle.GetComponentInChildren<BattleLogic>();
+            NetworkServer.Spawn(temp);
+        }
+
         RpcUpdatePlayer(toggle, monster, player);
     }
 
