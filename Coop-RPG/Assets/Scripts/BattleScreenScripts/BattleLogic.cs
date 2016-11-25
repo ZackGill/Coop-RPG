@@ -54,23 +54,19 @@ public class BattleLogic : NetworkBehaviour
     // Used by Zack to test Mulitplayer synching. Using this so don't have to try skills and all,
     // since their use isn't completed in the battle code by Lex and Bob, don't want to spend hours porting it
     // to the prefab and solving merge issues if I'm just going to have to do it again. 
-    public void Test()
+    [Command]
+    public void CmdTest()
     {
-        print(EventPlayerDamage.GetInvocationList().Length);
-
-        print(EventEnemyDamage.GetInvocationList().Length);
-
-        Debug.Log("About to test");
-        if(EventEnemyDamage != null)
-          EventEnemyDamage(5, 0, 0);
-        if(EventPlayerDamage != null)
-          EventPlayerDamage(10, 0);
+        if (infoDump == null)
+            return;
+        infoDump.CmdPlayerDamage(10, 0);
+        infoDump.CmdEnemyDamage(5, 0, 0);
     }
-
 
     void setEnemyHP()
     {
-
+        if (infoDump == null)
+            return;
         enemyHP = infoDump.info.enemyHP;
         enemy2HP = infoDump.info.enemy2HP;
         enemy3HP = infoDump.info.enemy3HP;
@@ -79,6 +75,8 @@ public class BattleLogic : NetworkBehaviour
 
     void setPlayerHP()
     {
+        if (infoDump == null)
+            return;
         switch (playerNum)
         {
             case 0:
@@ -115,7 +113,7 @@ public class BattleLogic : NetworkBehaviour
         fightMessage = enemyName + " slithers hither!";
         StartCoroutine(updateCharacter());
 
-        Invoke("Test", 5f);
+        Invoke("CmdTest", 5f);
     }
 
     void Update() {
@@ -123,6 +121,7 @@ public class BattleLogic : NetworkBehaviour
         {
             setEnemyHP();
             setPlayerHP();
+            if(infoDump != null)
             infoDump.info.fightMessage = fightMessage;
         }
        // print(state.curState);
@@ -167,6 +166,7 @@ public class BattleLogic : NetworkBehaviour
             enemy2ActiveTime.setEnemySeconds(0);
             enemy3ActiveTime.setEnemySeconds(0);
             enemyAttackFlag = true;
+            if (infoDump != null) ;
             infoDump.info.enemyAttackFlag = true;
         }
         if (currentMoveSelected && enemyQuantity.getNumberOfEnemies() > 1 && state.curState == BattleScreenStates.FightStates.NEUTRAL && !playerAttackFlag)
@@ -228,6 +228,7 @@ public class BattleLogic : NetworkBehaviour
 
             }
             fightMessage = attack.getFightMessage();
+            if(infoDump != null)
             infoDump.info.fightMessage = fightMessage;
             playerAttackFlag = false;
             whichSkill = -1;
@@ -237,9 +238,11 @@ public class BattleLogic : NetworkBehaviour
             if(EventPlayerDamage != null)
                 EventPlayerDamage(attack.enemyAttacks(), playerNum);
             fightMessage = attack.getFightMessage();
+            if(infoDump != null)
             infoDump.info.fightMessage = fightMessage;
 
             enemyAttackFlag = false;
+            if(infoDump != null)
             infoDump.info.enemyAttackFlag = false;
         }
         if (state.curState == BattleScreenStates.FightStates.LOSE)
@@ -250,17 +253,21 @@ public class BattleLogic : NetworkBehaviour
         {
             fightMessage = "Good grief! A " + enemyName + " joins in!";
             numEnemies = 2;
-            infoDump.info.numEnemies = 2;
-            infoDump.info.fightMessage = fightMessage;
-
+            if (infoDump != null)
+            {
+                infoDump.info.numEnemies = 2;
+                infoDump.info.fightMessage = fightMessage;
+            }
         }
         if (state.curState == BattleScreenStates.FightStates.THIRDENEMYJOINS)
         {
             fightMessage = "Just my luck! it's a " + enemyName + "!";
             numEnemies = 3;
-            infoDump.info.numEnemies = 3;
-            infoDump.info.fightMessage = fightMessage;
-
+            if (infoDump != null)
+            {
+                infoDump.info.numEnemies = 3;
+                infoDump.info.fightMessage = fightMessage;
+            }
 
         }
         if (state.curState == BattleScreenStates.FightStates.PICKANENEMY)

@@ -29,7 +29,7 @@ public class OverworldBattle : NetworkBehaviour {
         public float enemy2Max;
     }
 
-    [SyncVar]
+    [SyncVar(hook="OnInfo")]
     public BattleInfo info;
 
     public Monster enemy0;
@@ -44,7 +44,11 @@ public class OverworldBattle : NetworkBehaviour {
     public bool event1added = false;
     public bool event2added = false;
 
-
+    public void OnInfo(BattleInfo value)
+    {
+        Debug.Log("Hook called: OldPlayerHealth=" + info.player0HP + "New value=" + value.player0HP);
+        info = value;
+    }
 
     // Use this for initialization
     void Start () {
@@ -54,7 +58,7 @@ public class OverworldBattle : NetworkBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (battle0 != null && !event0added)
+        /*if (battle0 != null && !event0added)
         {
             print("Subscribing to events");
             battle0.EventPlayerDamage += PlayerDamage;
@@ -73,38 +77,45 @@ public class OverworldBattle : NetworkBehaviour {
             battle2.EventPlayerDamage += PlayerDamage;
             battle2.EventEnemyDamage += EnemyDamage;
             event2added = true;
-        }
+        }*/
     }
-
-    public void PlayerDamage(float amount, int playerNum)
+    [Command]
+    public void CmdPlayerDamage(float amount, int playerNum)
     {
+        BattleInfo temp = info;
         print("PlayerDamage");
         switch (playerNum)
         {
             case 0:
-                info.player0HP -= amount;
+                temp.player0HP -= amount;
                 break;
             case 1:
-                info.player1HP -= amount;
+                temp.player1HP -= amount;
                 break;
             case 2:
-                info.player2HP -= amount;
+                temp.player2HP -= amount;
                 break;
             default:
                 break;
+
         }
+
+        info = temp;
 
     }
 
     // variables are damage done.
-    public void EnemyDamage(float enemy1HP, float enemy2HP, float enemy3HP)
+    [Command]
+    public void CmdEnemyDamage(float enemy1HP, float enemy2HP, float enemy3HP)
     {
+        BattleInfo temp = info;
+
         print("EnemyDamage");
-        info.enemyHP -= enemy1HP;
-        info.enemy2HP -= enemy2HP;
-        info.enemy3HP -= enemy3HP;
+        temp.enemyHP -= enemy1HP;
+        temp.enemy2HP -= enemy2HP;
+        temp.enemy3HP -= enemy3HP;
 
-
+        info = temp;
     }
 
 

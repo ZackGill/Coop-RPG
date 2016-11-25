@@ -99,8 +99,8 @@ public class PlayerMovement : NetworkBehaviour
 
 
     }
-    GameObject battle;
-    GameObject monster;
+    public GameObject battle;
+    public GameObject monster;
     void OnCollisionEnter2D(Collision2D coll)
     {
         if(coll.gameObject.tag == "Enemy")
@@ -117,6 +117,22 @@ public class PlayerMovement : NetworkBehaviour
         if(coll.gameObject.tag == "Player")
         {
             return;
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.tag == "DustCloud")
+        {
+            if (isLocalPlayer)
+            {
+                battle = (GameObject)Instantiate(battleFab, Vector3.zero, Quaternion.identity);
+                inBattle = true;
+                CmdPlayerToggle(false, null, gameObject);
+                monster = null;
+                battle.GetComponent<BattleHolderScript>().player = gameObject;
+
+            }
         }
     }
 
@@ -140,9 +156,21 @@ public class PlayerMovement : NetworkBehaviour
             temp2.enemy0 = monster.GetComponent<Monster>(); // Make sure wandering monsters have this script
             temp2.info.numPlayers = 1;
             temp2.info.numEnemies = 1;
-            battle.GetComponentInChildren<BattleLogic>().infoDump = temp2;
-            battle.GetComponentInChildren<BattleLogic>().playerNum = temp2.info.numPlayers-1;
-            temp2.battle0 = battle.GetComponentInChildren<BattleLogic>();
+            if (battle != null)
+            {
+                battle.GetComponentInChildren<BattleLogic>().infoDump = temp2;
+                battle.GetComponentInChildren<BattleLogic>().playerNum = temp2.info.numPlayers - 1;
+
+                if (temp2.battle0 != null)
+                    if (temp2.battle1 != null)
+                        if (temp2.battle2 != null)
+                            return;
+                        else
+                            temp2.battle2 = battle.GetComponentInChildren<BattleLogic>();
+                    else
+                        temp2.battle1 = battle.GetComponentInChildren<BattleLogic>();
+                temp2.battle0 = battle.GetComponentInChildren<BattleLogic>();
+            }
             NetworkServer.Spawn(battleDump);
         }
         else
