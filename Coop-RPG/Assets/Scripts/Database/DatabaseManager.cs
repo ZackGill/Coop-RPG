@@ -531,27 +531,6 @@ namespace AssemblyCSharp
 
 		}
         
-        // For now, not pulling default stats from class. Letting Cameron or someone else handle that.
-        void newChar(string name, string clName)
-        {
-            Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
-            fb.OnSetFailed += createFailed;
-            fb.OnSetSuccess += createSuccess;
-            fb.Child(name, true).SetValue("{ \"EXP\": \"1\", \"HP\": \"1\", \"class\": \"" + 
-                clName + "\", \"perks\": \"Spin-Slash1\", \"skills\":"+
-                " \"Spin-Slash\"}", true);
-
-
-            Firebase temp = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters/" + name, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
-            temp.Child("equipment", true).SetValue("{ \"acc1\": \"NONE\", \"acc2\": \"NONE\", \"armor\": \"rag\", \"weapon\": \"stick\"}", true);
-
-            Firebase temp2 = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters/" + name, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
-
-
-            temp2.Child("stats", true).SetValue("{ \"attack\": \"1\", \"defense\": \"1\", \"magic\": \"1\"}", true);
-
-            
-        }
 
         public IEnumerator runCreateChar(string name, string clName)
         {
@@ -892,35 +871,6 @@ namespace AssemblyCSharp
 			yield return new WaitForSeconds (5f);
 
 
-		}
-
-		public IEnumerator runCreateAcc(string name, string pass, string email)
-		{
-			newAcc(name, pass, email);
-			DoDebug("WAITING ACC");
-			yield return new WaitForSeconds(3f);
-		}
-
-		void newAcc(string name, string pass, string email)
-		{
-			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Accounts", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
-			fb.OnSetFailed += createFailed;
-			fb.OnSetSuccess += createSuccess;
-			fb.Child(name, true).SetValue("{ \"characters\": \"NONE\", \"email\": \"" + email + "\", \"password\": \"" + pass + "\"}", true);
-		}
-
-		void createFailed(Firebase sender, FirebaseError err)
-		{
-			
-			DoDebug("" + err.Message);
-		
-		}
-
-
-		void createSuccess(Firebase sender, DataSnapshot data)
-		{
-			DoDebug("Made the thing");
-	
 		}
 
 		void accCharListJson(string name) {

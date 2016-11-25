@@ -29,7 +29,7 @@ public class BattleAttackHandler : MonoBehaviour
 
     void Start()
     {
-        character = new Characters("okay", 10, 10, 10, 10, 10);
+        character = new Characters("okay", 10, 10, 10, 10, 10, 1);
         db = GetComponent<DatabaseBattle>();
         selection = GetComponent<ArrowSelection>();
         logic = GetComponent<BattleLogic>();

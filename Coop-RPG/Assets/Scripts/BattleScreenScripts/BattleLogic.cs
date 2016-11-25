@@ -15,9 +15,9 @@ public class BattleLogic : NetworkBehaviour
     public delegate void EnemyDamageDelegate(float amount0, float amount1, float amount2);
 
     [SyncEvent]
-    public event PlayerDamageDelegate EventPlayerDamage;
+    public event PlayerDamageDelegate EventPlayerDamage = delegate { };
     [SyncEvent]
-    public event EnemyDamageDelegate EventEnemyDamage;
+    public event EnemyDamageDelegate EventEnemyDamage = delegate { };
 
 
     // Many of the following variables were needed for testing pre-firebase and should be removed.
@@ -50,6 +50,23 @@ public class BattleLogic : NetworkBehaviour
     private EnemyQuantity enemyQuantity;
     private BattleAttackHandler attack;
     List<BattleScreenStates.FightStates> stateQueue;
+
+    // Used by Zack to test Mulitplayer synching. Using this so don't have to try skills and all,
+    // since their use isn't completed in the battle code by Lex and Bob, don't want to spend hours porting it
+    // to the prefab and solving merge issues if I'm just going to have to do it again. 
+    public void Test()
+    {
+        print(EventPlayerDamage.GetInvocationList().Length);
+
+        print(EventEnemyDamage.GetInvocationList().Length);
+
+        Debug.Log("About to test");
+        if(EventEnemyDamage != null)
+          EventEnemyDamage(5, 0, 0);
+        if(EventPlayerDamage != null)
+          EventPlayerDamage(10, 0);
+    }
+
 
     void setEnemyHP()
     {
@@ -97,6 +114,8 @@ public class BattleLogic : NetworkBehaviour
         enemyHP = 30;
         fightMessage = enemyName + " slithers hither!";
         StartCoroutine(updateCharacter());
+
+        Invoke("Test", 5f);
     }
 
     void Update() {
@@ -192,14 +211,22 @@ public class BattleLogic : NetworkBehaviour
             //    playerHP += attack.giveDamage(whichSkill);
 
             // WHICH ENEMY GETS HURT?
-            if(selection.getArrowPos() == 0)
-                EventEnemyDamage(0, attack.giveDamage(whichSkill), 0);
+            if (selection.getArrowPos() == 0)
+            {
+                if (EventEnemyDamage != null)
+                    EventEnemyDamage(0, attack.giveDamage(whichSkill), 0);
+            }
             if (selection.getArrowPos() == 1)
+            {
+                if(EventEnemyDamage != null)
                 EventEnemyDamage(attack.giveDamage(whichSkill), 0, 0);
+            }
             if (selection.getArrowPos() == 2)
+            {
+                if(EventEnemyDamage != null)
                 EventEnemyDamage(0, 0, attack.giveDamage(whichSkill));
 
-
+            }
             fightMessage = attack.getFightMessage();
             infoDump.info.fightMessage = fightMessage;
             playerAttackFlag = false;
@@ -207,7 +234,8 @@ public class BattleLogic : NetworkBehaviour
         }
         if (state.curState == BattleScreenStates.FightStates.ENEMYTURN && enemyAttackFlag == true)
         {
-            EventPlayerDamage(attack.enemyAttacks(), playerNum);
+            if(EventPlayerDamage != null)
+                EventPlayerDamage(attack.enemyAttacks(), playerNum);
             fightMessage = attack.getFightMessage();
             infoDump.info.fightMessage = fightMessage;
 

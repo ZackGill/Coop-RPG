@@ -12,6 +12,7 @@ public class PlayerMovement : NetworkBehaviour
     public GameObject battleFab;
     public GameObject overworldBattle;
     public bool inBattle = false;
+
     // Use this for initialization
     void Start()
     {
@@ -119,6 +120,8 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
+    public GameObject battleDump;
+
     [Command]
     public void CmdPlayerToggle(bool toggle, GameObject monster, GameObject player)
     {
@@ -132,17 +135,22 @@ public class PlayerMovement : NetworkBehaviour
         // Battle?
         if(toggle == false)
         {
-            GameObject temp = (GameObject)Instantiate(overworldBattle, player.transform.position, Quaternion.identity);
-            OverworldBattle temp2 = temp.GetComponent<OverworldBattle>();
+            battleDump = (GameObject)Instantiate(overworldBattle, player.transform.position, Quaternion.identity);
+            OverworldBattle temp2 = battleDump.GetComponent<OverworldBattle>();
             temp2.enemy0 = monster.GetComponent<Monster>(); // Make sure wandering monsters have this script
             temp2.info.numPlayers = 1;
             temp2.info.numEnemies = 1;
             battle.GetComponentInChildren<BattleLogic>().infoDump = temp2;
             battle.GetComponentInChildren<BattleLogic>().playerNum = temp2.info.numPlayers-1;
             temp2.battle0 = battle.GetComponentInChildren<BattleLogic>();
-            NetworkServer.Spawn(temp);
+            NetworkServer.Spawn(battleDump);
         }
-
+        else
+        {
+            // Destroy the overwold battle thing. Not pulling any data, should be done already.
+            Network.Destroy(battleDump);
+            inBattle = false;
+        }
         RpcUpdatePlayer(toggle, monster, player);
     }
 

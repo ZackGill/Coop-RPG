@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
-
-public class BattleHolderScript : MonoBehaviour {
+using UnityEngine.Networking;
+public class BattleHolderScript : NetworkBehaviour {
     public GameObject player;
 	// Use this for initialization
 	void Start () {
-        Invoke("die", 5f);
+        Invoke("die", 120f);
 	}
 	
     void die()
     {
+        player.GetComponent<PlayerMovement>().CmdPlayerToggle(true, null, player);
         Destroy(gameObject);
     }
 
