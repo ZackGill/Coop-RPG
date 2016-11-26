@@ -26,10 +26,10 @@ public class GenerateDungeon : NetworkBehaviour {
     int xRooms = 4, yRooms = 4, zoneSize = 12, enemyCount;
     //xRooms and yRooms must be min. 4
 	public bool[,] isFloor = new bool[0,0];
+    int[,] connectID = new int[0, 0], centers = new int[0,0];
     int seed = (int)System.DateTime.Now.Ticks;
     int BUFFER = 2;
-    public int size = 1;
-    private int SMALL = 1, MED = 2, LARGE = 3; //Dungeon size, default to small
+    private int SMALL = 1, MED = 2, LARGE = 3; //Dungeon size
 
     [SyncVar]
     int pX, pY;
@@ -44,14 +44,16 @@ public class GenerateDungeon : NetworkBehaviour {
 
     }
 
-   void Start() {
-        
+    void Start()
+    {
+
         network = GameObject.Find("LobbyManager");
         UnityEngine.Random.InitState(seed);
 
         if (!isServer)
             return;
-        if(Dungeon.Size == 0) { //Dungeon size not set, pick one at random
+        if (Dungeon.Size == 0)
+        { //Dungeon size not set, pick one at random
             Dungeon.Size = UnityEngine.Random.Range(SMALL, LARGE);
         }
         if (Dungeon.Size == SMALL)
@@ -75,110 +77,167 @@ public class GenerateDungeon : NetworkBehaviour {
         enemy = new GameObject[2];
         enemy[0] = wanderStalk;
         enemy[1] = patrolCharge;
-        enemyCount =  UnityEngine.Random.Range(1, Mathf.CeilToInt(xRooms * yRooms/2));
-        isFloor = new bool[zoneSize * xRooms + 2*BUFFER, zoneSize * yRooms + 2*BUFFER];
-        int[,] centers = new int[xRooms * yRooms, 3];
+        enemyCount = UnityEngine.Random.Range(1, Mathf.CeilToInt(xRooms * yRooms / 2));
+        isFloor = new bool[zoneSize * xRooms + 2 * BUFFER, zoneSize * yRooms + 2 * BUFFER];
+        connectID = new int[zoneSize * xRooms + 2 * BUFFER, zoneSize * yRooms + 2 * BUFFER];
+        centers = new int[xRooms * yRooms, 3];
         int roomcount = 0;
         int ULX, ULY, LRX, LRY;
         double odds = 115 - 10 * Math.Log(xRooms * yRooms, 2.71828);
         //print("ODDS: " + odds);
-            for (int J = 0; J < xRooms; J++)
+        for (int J = 0; J < xRooms; J++)
+        {
+            for (int I = 0; I < yRooms; I++)
             {
-                for (int I = 0; I < yRooms; I++)
+                if (UnityEngine.Random.Range(0, 100) < odds) //The more rooms, the lower odds this specific room will be added.
                 {
-                    if (UnityEngine.Random.Range(0, 100) < odds) //The more rooms, the lower odds this specific room will be added.
+                    ULX = UnityEngine.Random.Range(0, zoneSize / 2);
+                    ULY = UnityEngine.Random.Range(0, zoneSize / 2);
+                    LRX = UnityEngine.Random.Range(ULX + 4, zoneSize);
+                    LRY = UnityEngine.Random.Range(ULY + 4, zoneSize);
+
+                    centers[roomcount, 0] = (ULX + zoneSize * J + LRX + zoneSize * J) / 2;
+                    centers[roomcount, 1] = (ULY + zoneSize * I + LRY + zoneSize * I) / 2;
+                    centers[roomcount, 2] = roomcount;
+
+                    for (int x = ULX; x < LRX; x++)
                     {
-                        ULX = UnityEngine.Random.Range(0, zoneSize / 2);
-                        ULY = UnityEngine.Random.Range(0, zoneSize / 2);
-                        LRX = UnityEngine.Random.Range(ULX + 4, zoneSize);
-                        LRY = UnityEngine.Random.Range(ULY + 4, zoneSize);
-
-                        centers[roomcount, 0] = (ULX + zoneSize * J + LRX + zoneSize * J) / 2;
-                        centers[roomcount, 1] = (ULY + zoneSize * I + LRY + zoneSize * I) / 2;
-                        centers[roomcount, 2] = roomcount;
-                        roomcount++;
-
-                        //print("(" + (ULX + zoneSize * J) + "," + (ULY + zoneSize * I) + ") - " + (LRX - ULX) + "x" + (LRY - ULY) +
-                         //       " with center (" + centers[roomcount - 1, 0] + "," + centers[roomcount - 1, 1] + ")");
-                        for (int x = ULX; x < LRX; x++)
+                        for (int y = ULY; y < LRY; y++)
                         {
-                            for( int y = ULY; y < LRY; y++)
-                             isFloor[x + zoneSize * J + BUFFER, y + zoneSize * I + BUFFER] = true;
+                            isFloor[x + zoneSize * J + BUFFER, y + zoneSize * I + BUFFER] = true;
+                            connectID[x + zoneSize * J + BUFFER, y + zoneSize * I + BUFFER] = roomcount;
+                            //When a room is made, assign all its floor tiles a 'connect ID' for making halls and the like.
                         }
+                    }
+                    roomcount++;
+                }
+            }
+        }
+        bool allConnected = false;
+        int loops = 0;
+        while (!allConnected)
+        {
+            loops++;
+            for (int i = loops % yRooms; i < roomcount; i += yRooms)
+            {
+                int j = UnityEngine.Random.Range(0, roomcount - 1);
+                {
+                    if (connectID[centers[i, 0], centers[i, 1]] != connectID[centers[j, 0], centers[j, 1]]) // If rooms arent connected, connect
+                    {
+                        int r1x = centers[i, 0], r1y = centers[i, 1], r2x = centers[j, 0], r2y = centers[j, 1];
+                        //Four cases: R1 above/below R2, and R1 left/right of R2
+                         print("Making hallway (" + r1x + "," + r1y + ") to (" + r2x + "," + r2y + ")");
+                        int startID = connectID[r1x, r1y];
+                        int x = r1x;
+                        if (x < r2x)
+                        {
+                            for (x = r1x; x < r2x; x++)
+                            {
+                                if (isFloor[x, r1y] && connectID[x,r1y] != startID)
+                                {
+                                    connectRooms(startID, connectID[x, r1y], roomcount);
+                                    break;
+                                }
+                                else
+                                {
+                                    isFloor[x, r1y] = true;
+                                    connectID[x, r1y] = startID;
+                                }
+                            }
+                            x--;
+                        }
+                        else
+                        {
+                            for (x = r1x; x >= r2x; x--)
+                            {
+                                if (isFloor[x, r1y] && connectID[x, r1y] != startID)
+                                {
+                                    connectRooms(startID, connectID[x, r1y], roomcount);
+                                    break;
+                                }
+                                else
+                                {
+                                    isFloor[x, r1y] = true;
+                                    connectID[x, r1y] = startID;
+                                }
+                            }
+                            x++;
+                        }
+                        int y = r1y;
+                        if (y < r2y)
+                        {
+                            for (y = r1y; y < r2y; y++)
+                            {
+                                if (isFloor[x, y] && connectID[x, y] != startID)
+                                {
+                                    connectRooms(startID, connectID[x, y], roomcount);
+                                    break;
+                                }
+                                else
+                                {
+                                    isFloor[x, y] = true;
+                                    connectID[x, y] = startID;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (y = r1y; y >= r2y; y--)
+                            {
+                                if (isFloor[x, y] && connectID[x, y] != startID)
+                                {
+                                    connectRooms(startID, connectID[x, y], roomcount);
+                                    break;
+                                }
+                                else {
+                                    isFloor[x, y] = true;
+                                    connectID[x, y] = startID;
+                                }
+                            }
+                        }
+                        
+
                     }
                 }
             }
-            bool allConnected = false;
-            int loops = 0;
-            while (!allConnected)
+            allConnected = true;
+            for (int x = 0; x < connectID.GetLength(0); x++)
             {
-                loops++;
-                for (int i = loops % yRooms; i < roomcount; i += yRooms)
+                for (int y = 0; y < connectID.GetLength(1); y++)
                 {
-                    int j = UnityEngine.Random.Range(0, roomcount - 1);
-                    {
-                        if (centers[i, 2] != centers[j, 2]) // If rooms arent connected, connect
-                        {
-                            int r1x = centers[i, 0], r1y = centers[i, 1], r2x = centers[j, 0], r2y = centers[j, 1];
-                            //Four cases: R1 above/below R2, and R1 left/right of R2
-                           // print("Making hallway (" + r1x + "," + r1y + ") to (" + r2x + "," + r2y + ")");
-                            int x = r1x;
-                            if (x < r2x)
-                            {
-                                for (x = r1x; x < r2x; x++)
-                                {
-                                    isFloor[x, r1y] = true;
-                                }
-                                x--;
-                            }
-                            else
-                            {
-                                for (x = r1x; x >= r2x; x--)
-                                {
-                                    isFloor[x, r1y] = true;
-                                }
-                                x++;
-                            }
-                            int y = r1y;
-                            if (y < r2y)
-                            {
-                                for (y = r1y; y < r2y; y++)
-                                {
-                                    isFloor[x, y] = true;
-                                }
-                            }
-                            else
-                            {
-                                for (y = r1y; y >= r2y; y--)
-                                {
-                                    isFloor[x, y] = true;
-                                }
-                            }
-                            if (centers[i, 2] < centers[j, 2])
-                            {
-                                int room2Value = centers[j, 2];
-                                for (int k = 0; k < roomcount; k++)
-                                {
-                                    if (centers[k, 2] == room2Value) centers[k, 2] = centers[i, 2];
-                                }
-                            }
-                            else
-                            {
-                                int room2Value = centers[i, 2];
-                                for (int k = 0; k < roomcount; k++)
-                                {
-                                    if (centers[k, 2] == room2Value) centers[k, 2] = centers[j, 2];
-                                }
-                            }
-                        }
-                    }
-                }
-                allConnected = true;
-                for (int z = 0; z < roomcount; z++)
-                {
-                    if (centers[z, 2] != 0) allConnected = false;
+                    if (connectID[x, y] > 0) allConnected = false;
                 }
             }
+        }
+        spawnEntities();
+    }
+
+    public void connectRooms(int a, int b, int roomcount)
+    {
+        print("Connecting " + a + " to " + b);
+        if (a < b)
+        {
+            for(int x = 0; x < connectID.GetLength(0); x++)
+            {
+                for(int y = 0; y < connectID.GetLength(1); y++)
+                {
+                    if (connectID[x, y] == b) connectID[x, y] = a;
+                }
+            }
+        }
+        else
+        {
+            for (int x = 0; x < connectID.GetLength(0); x++)
+            {
+                for (int y = 0; y < connectID.GetLength(1); y++)
+                {
+                    if (connectID[x, y] == a) connectID[x, y] = b;
+                }
+            }
+        }
+    }
+
+    public void spawnEntities() { 
         GameObject temp;
         for (int i = 0; i < yRooms * zoneSize + 2; i++)
         {
@@ -199,14 +258,14 @@ public class GenerateDungeon : NetworkBehaviour {
 
         do
         {
-            pX = UnityEngine.Random.Range(0, zoneSize * 2+BUFFER);
-            pY = UnityEngine.Random.Range(0, zoneSize * 2+BUFFER);
-        } while (!isFloor[pX, pY] || !isFloor[pX+1, pY] || !isFloor[pX-1, pY] || !isFloor[pX, pY + 1]);
+            pX = UnityEngine.Random.Range(0, zoneSize * 2 + BUFFER);
+            pY = UnityEngine.Random.Range(0, zoneSize * 2 + BUFFER);
+        } while (!isFloor[pX, pY] || !isFloor[pX + 1, pY] || !isFloor[pX - 1, pY] || !isFloor[pX, pY + 1]);
 
-            spawnLocal.transform.position = new Vector3(pX, pY, -.5f);
-        spawnLocal1.transform.position = new Vector3(pX-1, pY, -.5f);
-        spawnLocal2.transform.position = new Vector3(pX+1, pY, -.5f);
-        spawnLocal3.transform.position = new Vector3(pX, pY+1, -.5f);
+        spawnLocal.transform.position = new Vector3(pX, pY, -.5f);
+        spawnLocal1.transform.position = new Vector3(pX - 1, pY, -.5f);
+        spawnLocal2.transform.position = new Vector3(pX + 1, pY, -.5f);
+        spawnLocal3.transform.position = new Vector3(pX, pY + 1, -.5f);
 
 
         do
@@ -221,10 +280,10 @@ public class GenerateDungeon : NetworkBehaviour {
         for (int e = 0; e < enemyCount; e++)
         {
             do
-            { 
+            {
                 pX = UnityEngine.Random.Range(0, zoneSize * xRooms);
-            pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
-        } while (!isFloor[pX, pY]) ;
+                pY = UnityEngine.Random.Range(0, zoneSize * yRooms);
+            } while (!isFloor[pX, pY]);
             GameObject tempE = (GameObject)Instantiate(enemy[UnityEngine.Random.Range(0, enemy.Length)], new Vector3(pX, pY, -.5f), Quaternion.identity);
             tempE.transform.SetParent(transform);
             NetworkServer.Spawn(tempE);
@@ -232,10 +291,10 @@ public class GenerateDungeon : NetworkBehaviour {
         }
 
         // Spawning players
-	
+
         //dungeonOut.text = dungeon;
         System.DateTime end = System.DateTime.Now;
-       // print("Time: " + (start - end));
+        // print("Time: " + (start - end));
     }
 	// Update is called once per frame
 	void Update ()
