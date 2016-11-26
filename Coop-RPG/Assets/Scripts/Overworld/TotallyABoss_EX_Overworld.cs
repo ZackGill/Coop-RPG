@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class TotallyABossOverworld : MonoBehaviour
+public class TotallyABoss_EX_Overworld : MonoBehaviour
 {
     private GameObject[] playerPos = null;
     public int sightRange = 30;
