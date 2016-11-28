@@ -23,7 +23,9 @@ namespace AssemblyCSharp
 		Characters ch = null;
 		Monster mon = null;
 		bool logOnOk = false;
+		string monList;
 
+        bool createAcc = false;
 
 		public bool isDone = false;
 
@@ -46,6 +48,11 @@ namespace AssemblyCSharp
 
 		private void checkLogOn(string pass) {
 			string save = tempJson;
+            if (tempJson == null)
+            {
+                logOnOk = false;
+                return;
+            }
 			tempJson = tempJson.Substring (1, tempJson.Length - 2);
 			string[] sp = tempJson.Split (',');
 			foreach (string s in sp) {
@@ -66,10 +73,16 @@ namespace AssemblyCSharp
 			tempJson = save;
 		}
 
+        public string error;
+
 		public bool getLogOnOk() {
 			return logOnOk;
 		}
 
+        public bool createAccGood()
+        {
+            return createAcc;
+        }
 
 		void getAccJson(string aName) {
 			Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/Accounts", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
@@ -78,7 +91,29 @@ namespace AssemblyCSharp
 			acc.GetValue ();
 		}
 
-		void getClassDescJson() {
+        void createFailed(Firebase sender, FirebaseError err)
+        {
+            DoDebug("" + err.Message);
+            error = err.Message + "";
+            createAcc = false;
+        }
+
+
+        void createSuccess(Firebase sender, DataSnapshot data)
+        {
+            DoDebug("Made the thing");
+            createAcc = true;
+        }
+
+        void newAcc(string name, string pass, string email)
+        {
+            Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Accounts", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+            fb.OnSetFailed += createFailed;
+            fb.OnSetSuccess += createSuccess;
+            fb.Child(name, true).SetValue("{ \"characters\": \"NONE\", \"email\": \"" + email + "\", \"password\": \"" + pass + "\"}", true);
+        }
+
+        void getClassDescJson() {
 			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/ClassDesc", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
 			fb.OnGetSuccess += GetJson;
 			fb.GetValue ();
@@ -97,13 +132,24 @@ namespace AssemblyCSharp
 		public IEnumerator runClassDesc() {
 			getClassDescJson ();
 			yield return new WaitForSeconds(3f);
-			setCharList();
-		}
+            setClassDesc();
+        }
 
-		public void setCharList() {
+        public void setCharList() {
 			tempJson = tempJson.Substring(1, tempJson.Length-2);
 			string characters;
 			string[] list = tempJson.Split (',');
+            if (list.Length <= 0)
+            {
+                charList = null;
+                return;
+            }
+            string[] tempStrings = list[0].Split(':');
+            if(tempStrings.Length <= 1)
+            {
+                charList = null;
+                return;
+            }
 			characters = list[0].Split (':')[1];
 			characters = characters.Substring (1, characters.Length-2);
 			//Actual list of chars
@@ -187,8 +233,8 @@ namespace AssemblyCSharp
 
 		void parseCharInfo(int mode, ref Characters ch) {
 			string acc1, acc2, weapon, armor, wType, acc1Type, acc2Type;
-			int attack, magic, defense, hp, exp;
-			attack = magic = defense = hp = exp = 0;
+			int attack, magic, defense, hp, exp, lvl;
+			attack = magic = defense = hp = exp = lvl = 0;
 
 			string clName;
 			Skill[] skills;
@@ -215,6 +261,12 @@ namespace AssemblyCSharp
 					exp = int.Parse (sp [1]);
 
 				}
+
+				if (sp [0].Equals ("\"LVL\"")) {
+					lvl = int.Parse (sp [1]);
+
+				}
+
 				if (sp [0].Equals ("\"class\"")) {
 					className = sp [1].Substring (1, sp [1].Length - 2);
 					DoDebug (className);
@@ -256,7 +308,7 @@ namespace AssemblyCSharp
 			}
 
 			DoDebug ("ATTACK: " + attack);
-			ch = new Characters (className, attack, magic, defense, hp, exp);
+			ch = new Characters (className, attack, magic, defense, hp, exp, lvl);
 		}
 
 		public Enemy parseEnemy (string json) {
@@ -468,7 +520,7 @@ namespace AssemblyCSharp
 			}
 		}
 
-		public IEnumerable runAcc(string accName, string pass) {
+		public IEnumerator runAcc(string accName, string pass) {
 			getAccJson (accName);
 			DoDebug("WAITING");
 			yield return new WaitForSeconds (2f);
@@ -478,7 +530,22 @@ namespace AssemblyCSharp
 
 
 		}
+        
 
+        public IEnumerator runCreateChar(string name, string clName)
+        {
+            newChar(name, clName);
+            DoDebug("WAITING CHAR CREATE");
+            yield return new WaitForSeconds(5f);
+        }
+
+        public IEnumerator runCreateAcc(string name, string pass, string email)
+        {
+            newAcc(name, pass, email);
+            DoDebug("WAITING ACC");
+            yield return new WaitForSeconds(3f);
+        }
+        
 		public IEnumerator runChar(string charName) {
 			getCharInfo (charName);
 			//skillList = "Spin-Slash";
@@ -614,6 +681,7 @@ namespace AssemblyCSharp
 		}
 
 		private void getMonJson(string mName) {
+			DoDebug ("GETTING JSON FOR " + mName);
 			Firebase fb = Firebase.CreateNew ("coop-rpg.firebaseio.com/Enemies", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
 			Firebase chara = fb.Child (mName);
 			chara.OnGetSuccess += GetJson;
@@ -646,10 +714,12 @@ namespace AssemblyCSharp
 				string[] sp = s.Split (':');
 				if (String.Equals(sp[0], "\"HP\"")) {
 					hp = int.Parse (sp [1]);
+					DoDebug ("HP: " + hp);
 
 				}
 				if (sp [0].Equals ("\"bossTag\"")) {
 					bossTag = bool.Parse (sp [1]);
+					DoDebug ("BOSS: " + bossTag);
 
 				}
 				if (sp [0].Equals ("\"level\"")) {
@@ -704,7 +774,7 @@ namespace AssemblyCSharp
 		public IEnumerator runMon(string name) {
 			getMonJson (name);
 
-			yield return new WaitForSeconds (2f);
+			yield return new WaitForSeconds (3f);
 
 			parseMonJson (ref mon);
 
@@ -726,7 +796,7 @@ namespace AssemblyCSharp
 				////getInfo
 				getSkillInfo(sList[i]);
 				DoDebug("WAITING ON SKILL: " + sList[i]);
-				yield return new WaitForSeconds (2f);
+				yield return new WaitForSeconds (3f);
 				DoDebug("DONE");
 				////WAIT
 				////parse info
@@ -743,7 +813,7 @@ namespace AssemblyCSharp
 				getSPerkInfo(pList[i]);
 				/// WAIT
 				DoDebug("WAITING ON PERK: " + pList[i]);
-				yield return new WaitForSeconds (2f);
+				yield return new WaitForSeconds (3f);
 				DoDebug("DONE");
 
 				/// parseInfo
@@ -766,7 +836,89 @@ namespace AssemblyCSharp
 			return mon;
 		}
 
+		void newChar(string name, string clName)
+		{
+			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			fb.OnSetFailed += createFailed;
+			fb.OnSetSuccess += createSuccess;
+			fb.Child(name, true).SetValue("{ \"EXP\": \"1\", \"HP\": \"1\", \"class\": \"" + 
+				clName + "\", \"perks\": \"Spin-Slash1\", \"skills\":"+
+				" \"Spin-Slash\"}", true);
 
+
+
+
+			Firebase temp = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters/" + name, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			temp.Child("equipment", true).SetValue("{ \"acc1\": \"NONE\", \"acc2\": \"NONE\", \"armor\": \"rag\", \"weapon\": \"stick\"}", true);
+
+			Firebase temp2 = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters/" + name, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+
+
+			temp2.Child("stats", true).SetValue("{ \"attack\": \"1\", \"defense\": \"1\", \"magic\": \"1\"}", true);
+
+
+		}
+
+		public IEnumerator runCreateChar(string name, string clName, string aName)
+		{
+			newChar(name, clName);
+			DoDebug("WAITING CHAR CREATE");
+			accCharListJson(aName);
+			yield return new WaitForSeconds(5f);
+			string list = accCharList ();
+			list = list + ";" + name;
+			updateCharList (aName, list);
+			yield return new WaitForSeconds (5f);
+
+
+		}
+
+		void accCharListJson(string name) {
+			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Accounts/" + name, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			fb.OnGetSuccess += GetJson;
+			fb.GetValue ();
+		}
+
+		string accCharList() {
+			string ret = "";
+			tempJson = tempJson.Substring (1, tempJson.Length - 2);
+			string[] spl = tempJson.Split (',');
+			ret = spl [0].Split (':') [1];
+			ret = ret.Substring (1, ret.Length - 2);
+
+
+			return ret;
+		}
+
+		void updateCharList(string aName, string list) {
+			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Accounts/" + aName, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			Firebase cList = fb.Child ("characters");
+			cList.OnSetSuccess += createSuccess;
+			cList.SetValue (list);
+			DoDebug (list);
+
+		}
+
+
+		void getMonsterListJson(string cat) {
+			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/EnemyByLvl", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			Firebase monList = fb.Child (cat);
+			monList.OnGetSuccess += GetJson;
+			monList.GetValue ();
+		}
+
+		public string getMonsterList() {
+			return monList;
+		}
+
+		public IEnumerator runMonList(string cat) {
+			getMonsterListJson(cat);
+			yield return new WaitForSeconds(5f);
+			tempJson = tempJson.Substring (1, tempJson.Length - 2);
+			DoDebug (tempJson);
+			monList = tempJson;
+
+		}
 
 	}
 

@@ -1,14 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using AssemblyCSharp;
+using UnityEngine.Networking;
 // This is kind of the logic behind the GUI and the states that influence it. The logic for the damage and moves being done is in 
 // BattleAttackHandler.
+<<<<<<< HEAD
 using AssemblyCSharp;
 
 
 public class BattleLogic : MonoBehaviour
+=======
+public class BattleLogic : NetworkBehaviour
+>>>>>>> origin/Zack
 {
+    // Networking stuff. Used to synch values properly.
+    public OverworldBattle infoDump;
+    public int playerNum; // Is this player 0, 1, or 2 in a battle?
+
+    public delegate void PlayerDamageDelegate(float amount, int playerNum);
+    public delegate void EnemyDamageDelegate(float amount0, float amount1, float amount2);
+
+    [SyncEvent]
+    public event PlayerDamageDelegate EventPlayerDamage = delegate { };
+    [SyncEvent]
+    public event EnemyDamageDelegate EventEnemyDamage = delegate { };
+
+
     // Many of the following variables were needed for testing pre-firebase and should be removed.
     public int numEnemies = 0;
     public int whichSkill = -1;
@@ -41,10 +59,53 @@ public class BattleLogic : MonoBehaviour
     List<BattleScreenStates.FightStates> stateQueue;
 	private CommonEnemyAi enemyAi;
 
+    // Used by Zack to test Mulitplayer synching. Using this so don't have to try skills and all,
+    // since their use isn't completed in the battle code by Lex and Bob, don't want to spend hours porting it
+    // to the prefab and solving merge issues if I'm just going to have to do it again. 
+    [Command]
+    public void CmdTest()
+    {
+        if (infoDump == null)
+            return;
+        infoDump.CmdPlayerDamage(10, 0);
+        infoDump.CmdEnemyDamage(5, 0, 0);
+    }
+
+    void setEnemyHP()
+    {
+        if (infoDump == null)
+            return;
+        enemyHP = infoDump.info.enemyHP;
+        enemy2HP = infoDump.info.enemy2HP;
+        enemy3HP = infoDump.info.enemy3HP;
+
+    }
+
+    void setPlayerHP()
+    {
+        if (infoDump == null)
+            return;
+        switch (playerNum)
+        {
+            case 0:
+                playerHP = infoDump.info.player0HP;
+                break;
+            case 1:
+                playerHP = infoDump.info.player1HP;
+                break;
+            case 2:
+                playerHP = infoDump.info.player2HP;
+                break;
+            default:
+                break;
+        }
+    }
+
+
     void Start()
     {
         attack = GetComponent<BattleAttackHandler>();
-        character = GetComponent<Characters>();
+        //character = GetComponent<Characters>();
         state = GetComponent<BattleScreenStates>();
         selection = GetComponent<ArrowSelection>();
         stateQueue = new List<BattleScreenStates.FightStates>();
@@ -54,14 +115,24 @@ public class BattleLogic : MonoBehaviour
         enemyName = "Squawk-topus";
         playerName = "Harry";
         playerHP = 97;
+
+
         enemyHP = 30;
         fightMessage = enemyName + " slithers hither!";
         StartCoroutine(updateCharacter());
+
+        Invoke("CmdTest", 5f);
     }
 
-    void Update()
-    {
-        print(state.curState);
+    void Update() {
+        if (playerNum >= 0 || playerNum < 3)
+        {
+            setEnemyHP();
+            setPlayerHP();
+            if(infoDump != null)
+            infoDump.info.fightMessage = fightMessage;
+        }
+       // print(state.curState);
         checkBattleOver();
         stateCheck();
         if (Input.GetKeyDown("space"))
@@ -103,6 +174,8 @@ public class BattleLogic : MonoBehaviour
             enemy2ActiveTime.setEnemySeconds(0);
             enemy3ActiveTime.setEnemySeconds(0);
             enemyAttackFlag = true;
+            if (infoDump != null) ;
+            infoDump.info.enemyAttackFlag = true;
         }
         if (currentMoveSelected && enemyQuantity.getNumberOfEnemies() > 1 && state.curState == BattleScreenStates.FightStates.NEUTRAL && !playerAttackFlag)
         {
@@ -146,19 +219,31 @@ public class BattleLogic : MonoBehaviour
             //    playerHP += attack.giveDamage(whichSkill);
 
             // WHICH ENEMY GETS HURT?
-            if(selection.getArrowPos() == 0)
-                enemy2HP -= attack.giveDamage(whichSkill);
+            if (selection.getArrowPos() == 0)
+            {
+                if (EventEnemyDamage != null)
+                    EventEnemyDamage(0, attack.giveDamage(whichSkill), 0);
+            }
             if (selection.getArrowPos() == 1)
-                enemyHP -= attack.giveDamage(whichSkill);
+            {
+                if(EventEnemyDamage != null)
+                EventEnemyDamage(attack.giveDamage(whichSkill), 0, 0);
+            }
             if (selection.getArrowPos() == 2)
-                enemy3HP -= attack.giveDamage(whichSkill);
+            {
+                if(EventEnemyDamage != null)
+                EventEnemyDamage(0, 0, attack.giveDamage(whichSkill));
 
+            }
             fightMessage = attack.getFightMessage();
+            if(infoDump != null)
+            infoDump.info.fightMessage = fightMessage;
             playerAttackFlag = false;
             whichSkill = -1;
         }
         if (state.curState == BattleScreenStates.FightStates.ENEMYTURN && enemyAttackFlag == true)
         {
+<<<<<<< HEAD
 			int ai = enemyAi.AI ();
 			if (ai != -1) {
 				playerHP -= attack.enemyAttacks (ai);
@@ -168,6 +253,17 @@ public class BattleLogic : MonoBehaviour
 				fightMessage = "Enemy Missed!";
 				enemyAttackFlag = false;
 			}
+=======
+            if(EventPlayerDamage != null)
+                EventPlayerDamage(attack.enemyAttacks(), playerNum);
+            fightMessage = attack.getFightMessage();
+            if(infoDump != null)
+            infoDump.info.fightMessage = fightMessage;
+
+            enemyAttackFlag = false;
+            if(infoDump != null)
+            infoDump.info.enemyAttackFlag = false;
+>>>>>>> origin/Zack
         }
         if (state.curState == BattleScreenStates.FightStates.LOSE)
             fightMessage = playerName + " fainted. Try again.";
@@ -177,11 +273,22 @@ public class BattleLogic : MonoBehaviour
         {
             fightMessage = "Good grief! A " + enemyName + " joins in!";
             numEnemies = 2;
+            if (infoDump != null)
+            {
+                infoDump.info.numEnemies = 2;
+                infoDump.info.fightMessage = fightMessage;
+            }
         }
         if (state.curState == BattleScreenStates.FightStates.THIRDENEMYJOINS)
         {
             fightMessage = "Just my luck! it's a " + enemyName + "!";
             numEnemies = 3;
+            if (infoDump != null)
+            {
+                infoDump.info.numEnemies = 3;
+                infoDump.info.fightMessage = fightMessage;
+            }
+
         }
         if (state.curState == BattleScreenStates.FightStates.PICKANENEMY)
             fightMessage = "Select a target.";

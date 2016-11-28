@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-
+using AssemblyCSharp;
 public class BattleScreenGUI : MonoBehaviour
 {
     private bool nextState = true;

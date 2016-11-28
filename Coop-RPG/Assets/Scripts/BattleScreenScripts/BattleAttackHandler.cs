@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using AssemblyCSharp;
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/Zack
 /// <summary>
 ///  This will be the logic between the fight itself, that is to say the battle, how much damage is being taken, what kind of moves
 ///  are being done, etc.
@@ -30,7 +33,7 @@ public class BattleAttackHandler : MonoBehaviour
 
     void Start()
     {
-        character = new Characters("okay", 10, 10, 10, 10, 10);
+        character = new Characters("okay", 10, 10, 10, 10, 10, 1);
         db = GetComponent<DatabaseBattle>();
         selection = GetComponent<ArrowSelection>();
         logic = GetComponent<BattleLogic>();

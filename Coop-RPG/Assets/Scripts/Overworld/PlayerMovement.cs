@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
+using AssemblyCSharp;
 
 [NetworkSettings(channel = 0)]
 public class PlayerMovement : NetworkBehaviour
@@ -9,7 +10,9 @@ public class PlayerMovement : NetworkBehaviour
     public float speed = 2.25F;
 
     public GameObject battleFab;
+    public GameObject overworldBattle;
     public bool inBattle = false;
+
     // Use this for initialization
     void Start()
     {
@@ -96,8 +99,8 @@ public class PlayerMovement : NetworkBehaviour
 
 
     }
-    GameObject battle;
-    GameObject monster;
+    public GameObject battle;
+    public GameObject monster;
     void OnCollisionEnter2D(Collision2D coll)
     {
         if(coll.gameObject.tag == "Enemy")
@@ -106,9 +109,32 @@ public class PlayerMovement : NetworkBehaviour
             {
                 battle = (GameObject)Instantiate(battleFab, Vector3.zero, Quaternion.identity);
                 inBattle = true;
-                CmdPlayerToggle(false, coll.gameObject, gameObject);
                 monster = coll.gameObject;
                 battle.GetComponent<BattleHolderScript>().player = gameObject;
+
+                battleDump = (GameObject)Instantiate(overworldBattle, transform.position, Quaternion.identity);
+                OverworldBattle temp2 = battleDump.GetComponent<OverworldBattle>();
+                temp2.enemy0 = monster.GetComponent<Monster>(); // Make sure wandering monsters have this script
+                temp2.info.numPlayers = 1;
+                temp2.info.numEnemies = 1;
+                if (battle != null)
+                {
+                    battle.GetComponentInChildren<BattleLogic>().infoDump = temp2;
+                    battle.GetComponentInChildren<BattleLogic>().playerNum = temp2.info.numPlayers - 1;
+
+                    if (temp2.battle0 != null)
+                        if (temp2.battle1 != null)
+                            if (temp2.battle2 != null)
+                                return;
+                            else
+                                temp2.battle2 = battle.GetComponentInChildren<BattleLogic>();
+                        else
+                            temp2.battle1 = battle.GetComponentInChildren<BattleLogic>();
+                    temp2.battle0 = battle.GetComponentInChildren<BattleLogic>();
+
+                    CmdPlayerToggle(false, coll.gameObject, gameObject, battleDump);
+
+                }
             }
         }
         if(coll.gameObject.tag == "Player")
@@ -117,8 +143,30 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.tag == "DustCloud")
+        {
+            if (isLocalPlayer)
+            {
+                battle = (GameObject)Instantiate(battleFab, Vector3.zero, Quaternion.identity);
+                inBattle = true;
+                monster = null;
+                battle.GetComponent<BattleHolderScript>().player = gameObject;
+
+              
+
+
+                CmdPlayerToggle(false, null, gameObject, col.gameObject);
+
+            }
+        }
+    }
+
+    public GameObject battleDump;
+
     [Command]
-    public void CmdPlayerToggle(bool toggle, GameObject monster, GameObject player)
+    public void CmdPlayerToggle(bool toggle, GameObject monster, GameObject player, GameObject battleDumpThing)
     {
 
         player.GetComponent<Renderer>().enabled = toggle;
@@ -127,12 +175,30 @@ public class PlayerMovement : NetworkBehaviour
             monster.GetComponent<Renderer>().enabled = toggle;
             monster.GetComponent<BoxCollider2D>().enabled = toggle;
         }
+        // Battle?
+        if(toggle == false)
+        {
+           
+            NetworkServer.Spawn(battleDump);
+        }
+        else
+        {
+            // Destroy the overwold battle thing. Not pulling any data, should be done already.
+            Network.Destroy(battleDump);
+            player.GetComponent<PlayerMovement>().inBattle = false;
+        }
         RpcUpdatePlayer(toggle, monster, player);
     }
 
     [ClientRpc]
     public void RpcUpdatePlayer(bool toggle, GameObject monster, GameObject player)
     {
+        if (toggle)
+        {
+            player.GetComponent<PlayerMovement>().inBattle = false;
+
+        }
+
         player.GetComponent<Renderer>().enabled = toggle;
         player.GetComponent<BoxCollider2D>().enabled = toggle;
         if (monster != null)
@@ -140,5 +206,6 @@ public class PlayerMovement : NetworkBehaviour
             monster.GetComponent<Renderer>().enabled = toggle;
             monster.GetComponent<BoxCollider2D>().enabled = toggle;
         }
+
     }
 }
