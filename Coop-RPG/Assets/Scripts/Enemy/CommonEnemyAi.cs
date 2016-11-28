@@ -24,8 +24,8 @@ public class CommonEnemyAi : MonoBehaviour
      * 
      * **************************************************************************/
 
-	private Monster monster;
-	private BattleLogic logic;
+	//private Monster monster;
+	//private BattleLogic logic;
     //enemy stats assuming its a dragon type =p
     //private int sampleEnemySkill = 2;
     private int regularEnemySkill = -2;  			//indicate regular skill as -2 to avoid conflicts
@@ -68,7 +68,7 @@ public class CommonEnemyAi : MonoBehaviour
 		}
 
 		if (coolDownList[chosenSkill] == 0) {
-			if (Random.Range (0.00f, 1.00f) > monster.getMistakeChance()) {
+			if (Random.Range (0.00f, 1.00f) > enemy.getMistakeChance()) {
 				
 				//TODO: have cooldown timers for each skill instead of just one.
 				coolDownList[chosenSkill] = enemySkills[chosenSkill].getCooldown();
@@ -81,7 +81,7 @@ public class CommonEnemyAi : MonoBehaviour
              * example enemy regular skill. If all of enemy's skill are
              * in cooldown, use regular skill.
              *********************************************************/
-			if (Random.Range (0.00f, 1.00f) > monster.getMistakeChance()) { 
+			if (Random.Range (0.00f, 1.00f) > enemy.getMistakeChance()) { 
 				return regularEnemySkill;
 			} else {
 				return -1;
@@ -93,7 +93,7 @@ public class CommonEnemyAi : MonoBehaviour
     {
 		for (int i = 0; i < coolDownList.Length; i++) {
 			if (coolDownList[i] != 0) {
-				coolDownTimerAttack--;
+				coolDownList[i]--;
 			}
 		}
     }
