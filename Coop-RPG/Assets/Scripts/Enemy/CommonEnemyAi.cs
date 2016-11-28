@@ -27,24 +27,48 @@ public class CommonEnemyAi : MonoBehaviour
 	private Monster monster;
 	private BattleLogic logic;
     //enemy stats assuming its a dragon type =p
-    private int sampleEnemySkill = 2;
-    private int regularEnemySkill = 1;
+    //private int sampleEnemySkill = 2;
+    private int regularEnemySkill = -2;  			//indicate regular skill as -2 to avoid conflicts
     private int coolDownTimerAttack = 0;
 	private int[] player = { 1, 2, 3, 4 };
+	Skill[] enemySkills = new Skill[8];
 	private int randomPlayer = Random.Range (1, 5);
 
 
     //assuming the case of enemy not having any healing skills of its own
-	public int AI()
+	public int AI(Monster enemy)
     {
 		//compare if random player is still alive or not, if so, keep attacking the same one, or be completely random and attack
 		//random players.
 		//just an example for tonignt so I don't forget
+		int total = 0;
+		enemySkills = enemy.getSkills();		//sets the enemy skills
 		if (coolDownTimerAttack == 0) {
 			if (Random.Range (0.00f, 1.00f) > monster.getMistakeChance()) {
-				//add what ever it needs to do to attack here.
-				return sampleEnemySkill;
-				coolDownTimerAttack = 3;
+				//loops through to add the values of all enemy skills together
+				for (int i = 0; i < enemy.getSkills().Length; i++) {
+					total += enemySkills [i].getValue ();
+				}
+
+				//it then will trigger a random range, as well as initializing current value pointer and the current chosen skill
+				int ran = Random.Range (0, total);
+				int current = 0;
+				int chosenSkill = 0;
+
+				/**********************************************************************************************************************
+				 * loops through once more, but this time it tries to find the chosen skills by checking each skill's value with
+				 * random generator. The chosen skills value will not change unless the current pointer's skill is less than equal
+				 * to the random generator's value or greater than equal to the current pointer.
+				 * *******************************************************************************************************************/
+				for (int i = 0; i < enemy.getSkills().Length; i++) {
+					if (ran >= enemySkills [i].getValue () && current <= enemySkills [i].getValue ()) {
+						chosenSkill = i;
+						current = enemySkills [i].getValue ();
+					}
+				}
+
+				coolDownTimerAttack = enemySkills[chosenSkill].getCooldown();
+				return chosenSkill;
 			} else {
 				return -1;
 			}

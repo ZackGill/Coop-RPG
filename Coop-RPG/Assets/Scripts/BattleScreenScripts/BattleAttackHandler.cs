@@ -30,6 +30,7 @@ public class BattleAttackHandler : MonoBehaviour
     private BattleLogic logic;
     private ActiveTime activeTime;
     Skill[] skills = new Skill[8];
+	Skill[] eSkills = new Skill[8];
 
     void Start()
     {
@@ -49,19 +50,23 @@ public class BattleAttackHandler : MonoBehaviour
 
         character = db.getCharacter();
         //skills = character.getSkills();
+		//eSkills = enemy1.getSkills();
     }
 
 
     // For when the player's HP is being affected.
 	public int enemyAttacks(int enemySkill)
     {
-		print(enemySkill);
-		int damageDone = (int)logic.getEnemyHP () / 2;  //get the max hp of enemy that the player is fighting, this will be the regular skill / attack.
-		fightMessage = "You are attacked! -5 HP";
+		int damageDone = 0;
+		if(enemySkill == -2){
+			print(enemySkill);
+			damageDone = (int)logic.getEnemyHP () / 2;  //get the max hp of enemy that the player is fighting, this will be the regular skill / attack.
+			fightMessage = "You are attacked! -5 HP";
+		}
 
 		if(enemySkill >= 0)
 		{
-			damageDone = skills[enemySkill].getValue();
+			damageDone = eSkills[enemySkill].getValue();
 			fightMessage = "You cast " + skills[enemySkill].getName() + "! It does " + damageDone + " HP!";
 		}
 		return damageDone;
