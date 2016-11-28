@@ -34,7 +34,6 @@ public class CommonEnemyAi : MonoBehaviour
 	Skill[] enemySkills = new Skill[8];
 	private int randomPlayer = Random.Range (1, 5);
 
-
     //assuming the case of enemy not having any healing skills of its own
 	public int AI(Monster enemy)
     {
@@ -43,40 +42,43 @@ public class CommonEnemyAi : MonoBehaviour
 		//just an example for tonignt so I don't forget
 		int total = 0;
 		enemySkills = enemy.getSkills();		//sets the enemy skills
+
+		//loops through to add the values of all enemy skills together
+		for (int i = 0; i < enemy.getSkills().Length; i++) {
+			total += enemySkills [i].getValue ();
+		}
+
+		//it then will trigger a random range, as well as initializing current value pointer and the current chosen skill
+		int ran = Random.Range (0, total);
+		int current = 0;
+		int chosenSkill = 0;
+
+		/**********************************************************************************************************************
+		* loops through once more, but this time it tries to find the chosen skills by checking each skill's value with
+		* random generator. The chosen skills value will not change unless the current pointer's skill is less than equal
+		* to the random generator's value or greater than equal to the current pointer.
+		**********************************************************************************************************************/
+		for (int i = 0; i < enemy.getSkills().Length; i++) {
+			if (ran >= enemySkills [i].getValue () && current <= enemySkills [i].getValue ()) {
+				chosenSkill = i;
+				current = enemySkills [i].getValue ();
+			}
+		}
+
 		if (coolDownTimerAttack == 0) {
 			if (Random.Range (0.00f, 1.00f) > monster.getMistakeChance()) {
-				//loops through to add the values of all enemy skills together
-				for (int i = 0; i < enemy.getSkills().Length; i++) {
-					total += enemySkills [i].getValue ();
-				}
-
-				//it then will trigger a random range, as well as initializing current value pointer and the current chosen skill
-				int ran = Random.Range (0, total);
-				int current = 0;
-				int chosenSkill = 0;
-
-				/**********************************************************************************************************************
-				 * loops through once more, but this time it tries to find the chosen skills by checking each skill's value with
-				 * random generator. The chosen skills value will not change unless the current pointer's skill is less than equal
-				 * to the random generator's value or greater than equal to the current pointer.
-				 * *******************************************************************************************************************/
-				for (int i = 0; i < enemy.getSkills().Length; i++) {
-					if (ran >= enemySkills [i].getValue () && current <= enemySkills [i].getValue ()) {
-						chosenSkill = i;
-						current = enemySkills [i].getValue ();
-					}
-				}
-
+				
+				//TODO: have cooldown timers for each skill instead of just one.
 				coolDownTimerAttack = enemySkills[chosenSkill].getCooldown();
 				return chosenSkill;
 			} else {
 				return -1;
 			}
 		} else {
-			/* *********************************************************
+			/**********************************************************
              * example enemy regular skill. If all of enemy's skill are
              * in cooldown, use regular skill.
-             * ********************************************************/
+             *********************************************************/
 			if (Random.Range (0.00f, 1.00f) > monster.getMistakeChance()) { 
 				return regularEnemySkill;
 			} else {
