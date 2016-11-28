@@ -32,6 +32,8 @@ public class CommonEnemyAi : MonoBehaviour
     private int coolDownTimerAttack = 0;
 	private int[] player = { 1, 2, 3, 4 };
 	Skill[] enemySkills = new Skill[8];
+	int[] coolDownList = {0};
+
 	private int randomPlayer = Random.Range (1, 5);
 
     //assuming the case of enemy not having any healing skills of its own
@@ -45,7 +47,7 @@ public class CommonEnemyAi : MonoBehaviour
 
 		//loops through to add the values of all enemy skills together
 		for (int i = 0; i < enemy.getSkills().Length; i++) {
-			total += enemySkills [i].getValue ();
+			total += enemySkills [i].getValue (); 
 		}
 
 		//it then will trigger a random range, as well as initializing current value pointer and the current chosen skill
@@ -65,11 +67,11 @@ public class CommonEnemyAi : MonoBehaviour
 			}
 		}
 
-		if (coolDownTimerAttack == 0) {
+		if (coolDownList[chosenSkill] == 0) {
 			if (Random.Range (0.00f, 1.00f) > monster.getMistakeChance()) {
 				
 				//TODO: have cooldown timers for each skill instead of just one.
-				coolDownTimerAttack = enemySkills[chosenSkill].getCooldown();
+				coolDownList[chosenSkill] = enemySkills[chosenSkill].getCooldown();
 				return chosenSkill;
 			} else {
 				return -1;
@@ -89,9 +91,10 @@ public class CommonEnemyAi : MonoBehaviour
 
     void update()
     {
-        if (coolDownTimerAttack != 0)
-        {
-            coolDownTimerAttack--;
-        }
+		for (int i = 0; i < coolDownList.Length; i++) {
+			if (coolDownList[i] != 0) {
+				coolDownTimerAttack--;
+			}
+		}
     }
 }
