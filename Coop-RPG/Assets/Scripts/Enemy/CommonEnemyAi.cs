@@ -30,13 +30,9 @@ public class CommonEnemyAi : MonoBehaviour
     //private int sampleEnemySkill = 2;
     private int regularEnemySkill = -2;  			//indicate regular skill as -2 to avoid conflicts
     private int coolDownTimerAttack = 0;
-	private int[] player = { 1, 2, 3, 4 };
 	Skill[] enemySkills = new Skill[8];
 	int[] coolDownList = {0};
 
-	private int randomPlayer = Random.Range (1, 5);
-
-    //assuming the case of enemy not having any healing skills of its own
 	public int AI(Monster enemy)
     {
 		//compare if random player is still alive or not, if so, keep attacking the same one, or be completely random and attack
@@ -88,6 +84,10 @@ public class CommonEnemyAi : MonoBehaviour
 			}
 		}
     }
+
+	public int playerSelect(int playerTotal){
+		return Random.Range (1, playerTotal);
+	}
 
     void update()
     {
