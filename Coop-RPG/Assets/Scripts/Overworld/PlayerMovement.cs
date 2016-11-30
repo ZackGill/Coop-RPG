@@ -176,12 +176,7 @@ public class PlayerMovement : NetworkBehaviour
               battleDumpThing.GetComponentInChildren<CircleCollider2D>().enabled = true;
         }*/
 
-        player.GetComponent<Renderer>().enabled = toggle;
-        player.GetComponent<BoxCollider2D>().enabled = toggle;
-        if(monster != null){
-            monster.GetComponent<Renderer>().enabled = toggle;
-            monster.GetComponent<BoxCollider2D>().enabled = toggle;
-        }
+       
         // Battle?
         if(toggle == false)
         {
@@ -221,10 +216,40 @@ public class PlayerMovement : NetworkBehaviour
         else
         {
             // Destroy the overwold battle thing. Not pulling any data, should be done already.
+            if (battleDumpThing != null)
+            {
+                battleDumpThing.GetComponent<CircleCollider2D>().enabled = false;
+                battleDumpThing.GetComponent<SpriteRenderer>().enabled = false;
+          
+            }
+            else
+            {
+                print("batlte udmp thing null");
+
+            }
+            if (battleDump != null)
+            {
+                print("Destory battle dump");
+                battleDump.GetComponent<CircleCollider2D>().enabled = false;
+                Network.Destroy(battleDump);
+            }
+            print("Destroy battle dump thign");
             Network.Destroy(battleDumpThing);
             player.GetComponent<PlayerMovement>().inBattle = false;
         }
+
+        player.GetComponent<Renderer>().enabled = toggle;
+        player.GetComponent<BoxCollider2D>().enabled = toggle;
+        if (monster != null)
+        {
+            monster.GetComponent<Renderer>().enabled = toggle;
+            monster.GetComponent<BoxCollider2D>().enabled = toggle;
+        }
+
+
         RpcUpdatePlayer(toggle, monster, player, battleDumpThing);
+
+
     }
 
     [ClientRpc]
@@ -250,9 +275,11 @@ public class PlayerMovement : NetworkBehaviour
         if (toggle)
         {
             player.GetComponent<PlayerMovement>().inBattle = false;
-           /* if (battleDumpThing != null)
-                battleDumpThing.GetComponentInChildren<CircleCollider2D>().enabled = true;*/
-            
+            if (battleDumpThing != null)
+            {
+                battleDumpThing.GetComponentInChildren<CircleCollider2D>().enabled = false;
+                battleDumpThing.GetComponent<SpriteRenderer>().enabled = false;
+            }
         }
         else
         {
