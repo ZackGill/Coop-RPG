@@ -101,7 +101,7 @@ public class PlayerMovement : NetworkBehaviour
 
     void FixedUpdate()
     {
-
+        transform.rotation = Quaternion.Euler(Vector3.zero);
 
     }
     public GameObject battle;
@@ -113,6 +113,10 @@ public class PlayerMovement : NetworkBehaviour
             if (isLocalPlayer)
             {
                 // Set forces to 0 to be sure to stop motion.
+                GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+                GetComponent<Rigidbody2D>().angularVelocity = 0f;
+               // GetComponent<Rigidbody2D>().isKinematic = true;
+
                 speed = 0;
                 battle = (GameObject)Instantiate(battleFab, Vector3.zero, Quaternion.identity);
                 inBattle = true;
@@ -144,6 +148,8 @@ public class PlayerMovement : NetworkBehaviour
         {
             if (isLocalPlayer)
             {
+                if (inBattle)
+                    return;
                 print("Dustcloud hit");
                 battle = (GameObject)Instantiate(battleFab, Vector3.zero, Quaternion.identity);
                 inBattle = true;
@@ -164,11 +170,11 @@ public class PlayerMovement : NetworkBehaviour
     [Command]
     public void CmdPlayerToggle(bool toggle, GameObject monster, GameObject player, GameObject battleDumpThing, bool existingBattle)
     {
-        if (toggle)
+        /*if (toggle)
         {
             if(battleDumpThing != null)
               battleDumpThing.GetComponentInChildren<CircleCollider2D>().enabled = true;
-        }
+        }*/
 
         player.GetComponent<Renderer>().enabled = toggle;
         player.GetComponent<BoxCollider2D>().enabled = toggle;
@@ -193,10 +199,11 @@ public class PlayerMovement : NetworkBehaviour
 
                 if (temp2 == null)
                     print("Assigning a null to infodump");
-
+                if (player.GetComponent<PlayerMovement>().battle != null)
+                {
                     player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump = temp2;
                     player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().playerNum = temp2.info.numPlayers - 1;
-
+                }
                     if (temp2.battle0 != null)
                         if (temp2.battle1 != null)
                             if (temp2.battle2 != null)
@@ -223,12 +230,18 @@ public class PlayerMovement : NetworkBehaviour
     [ClientRpc]
     public void RpcUpdatePlayerDump(GameObject player, GameObject battleDump)
     {
+        if (battleDump == null)
+        {
+            print("BattleDump null");
+            return;
+        }
         if (battleDump.GetComponent<OverworldBattle>() == null)
             print("Battledump script is null");
-
-        player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump = battleDump.GetComponent<OverworldBattle>();
-        player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().playerNum = battleDump.GetComponent<OverworldBattle>().info.numPlayers -1;
-
+        if (player.GetComponent<PlayerMovement>().battle != null)
+        {
+            player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump = battleDump.GetComponent<OverworldBattle>();
+            player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().playerNum = battleDump.GetComponent<OverworldBattle>().info.numPlayers - 1;
+        }
     }
 
     [ClientRpc]
@@ -237,8 +250,8 @@ public class PlayerMovement : NetworkBehaviour
         if (toggle)
         {
             player.GetComponent<PlayerMovement>().inBattle = false;
-            if (battleDumpThing != null)
-                battleDumpThing.GetComponentInChildren<CircleCollider2D>().enabled = true;
+           /* if (battleDumpThing != null)
+                battleDumpThing.GetComponentInChildren<CircleCollider2D>().enabled = true;*/
             
         }
         else

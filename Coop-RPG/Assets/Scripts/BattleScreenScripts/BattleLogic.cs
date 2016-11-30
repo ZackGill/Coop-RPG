@@ -133,8 +133,10 @@ public class BattleLogic : NetworkBehaviour
             {
                 if (temp[i].transform.position.x >= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.x - .5f && temp[i].transform.position.x <= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.x + .5f)
                 {
-                    print("Assign infodump");
-                    infoDump = temp[i].GetComponent<OverworldBattle>();
+                    if (temp[i].transform.position.y >= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.y - .5f && temp[i].transform.position.y <= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.y + .5f) {
+                        print("Assign infodump");
+                        infoDump = temp[i].GetComponent<OverworldBattle>();
+                    }
                 }
             }
 

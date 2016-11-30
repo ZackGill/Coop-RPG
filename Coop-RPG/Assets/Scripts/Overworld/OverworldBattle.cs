@@ -27,6 +27,11 @@ public class OverworldBattle : NetworkBehaviour {
         public float enemy1Max;
         public float enemy2Sec;
         public float enemy2Max;
+
+        public float player0Threat;
+        public float player1Threat;
+        public float player2Threat;
+
     }
 
     [SyncVar(hook="OnInfo")]
@@ -35,6 +40,12 @@ public class OverworldBattle : NetworkBehaviour {
     public Monster enemy0;
     public Monster enemy1;
     public Monster enemy2;
+
+    public Characters player0;
+    public Characters player1;
+    public Characters player2;
+
+
 
     public BattleLogic battle0;
     public BattleLogic battle1;
@@ -46,7 +57,6 @@ public class OverworldBattle : NetworkBehaviour {
 
     public void OnInfo(BattleInfo value)
     {
-        Debug.Log("Hook called: OldPlayerHealth=" + info.player0HP + "New value=" + value.player0HP);
         info = value;
     }
 
