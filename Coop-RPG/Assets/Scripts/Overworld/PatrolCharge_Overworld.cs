@@ -150,6 +150,7 @@ public class PatrolCharge_Overworld : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        transform.rotation = Quaternion.Euler(Vector3.zero);
         if (playerPos == null)
         {
             playerPos = GameObject.FindGameObjectsWithTag("Player");
