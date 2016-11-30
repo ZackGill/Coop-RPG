@@ -58,26 +58,7 @@ public class OverworldBattle : NetworkBehaviour {
 
     // Update is called once per frame
     void Update () {
-        /*if (battle0 != null && !event0added)
-        {
-            print("Subscribing to events");
-            battle0.EventPlayerDamage += PlayerDamage;
-            battle0.EventEnemyDamage += EnemyDamage;
-            event0added = true;
 
-        }
-        if (battle1 != null && !event1added)
-        {
-            battle1.EventPlayerDamage += PlayerDamage;
-            battle1.EventEnemyDamage += EnemyDamage;
-            event1added = true;
-        }
-        if (battle2 != null && !event2added)
-        {
-            battle2.EventPlayerDamage += PlayerDamage;
-            battle2.EventEnemyDamage += EnemyDamage;
-            event2added = true;
-        }*/
     }
     [Command]
     public void CmdPlayerDamage(float amount, int playerNum)

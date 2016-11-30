@@ -93,7 +93,7 @@ public class WanderStalk_Overworld : NetworkBehaviour
         coord st = new coord(x, y);
         checkPos.Enqueue(st);
         steps = 0;
-        print("Pathing " + x + "," + y + " to " + tX + ',' + tY);
+       // print("Pathing " + x + "," + y + " to " + tX + ',' + tY);
         int tries = 0;
         coord cur = null;
         int queuesize = 1;
