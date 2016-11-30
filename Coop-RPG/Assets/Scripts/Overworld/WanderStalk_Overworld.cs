@@ -163,7 +163,7 @@ public class WanderStalk_Overworld : NetworkBehaviour
                         tY = Random.Range(0, map.GetLength(1));
                     } while (!map[tX, tY]);
                 }
-                else print("HUNTING");
+                else ;
                 makePathToTarg();
             }
             if (next == null)
