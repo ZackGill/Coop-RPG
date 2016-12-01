@@ -26,16 +26,16 @@ public class CommonEnemyAi : MonoBehaviour
 
 	//private Monster monster;
 	//private BattleLogic logic;
-    	//enemy stats assuming its a dragon type =p
+    //enemy stats assuming its a dragon type =p
    	//private int sampleEnemySkill = 2;
-    	private int regularEnemySkill = -2;  			//indicate regular skill as -2 to avoid conflicts
-    	private int coolDownTimerAttack = 0;
+    private int regularEnemySkill = -2;  			//indicate regular skill as -2 to avoid conflicts
+    private int coolDownTimerAttack = 0;
 	//private int[] playerThreat;
 	Skill[] enemySkills = new Skill[8];
-	int[] coolDownList = {0};
+	int[][] coolDownList;
 
-	public int AI(Monster enemy)
-    	{
+	public int AI(Monster enemy, int whichMonster)
+    {
 		//compare if random player is still alive or not, if so, keep attacking the same one, or be completely random and attack
 		//random players.
 		//just an example for tonignt so I don't forget
@@ -64,11 +64,11 @@ public class CommonEnemyAi : MonoBehaviour
 			}
 		}
 
-		if (coolDownList[chosenSkill] == 0) {
+		if (coolDownList[whichMonster][chosenSkill] == 0) {
 			if (Random.Range (0.00f, 1.00f) > enemy.getMistakeChance()) {
-				
 				//TODO: have cooldown timers for each skill instead of just one.
-				coolDownList[chosenSkill] = enemySkills[chosenSkill].getCooldown();
+
+				coolDownList[whichMonster][chosenSkill] = enemySkills[chosenSkill].getCooldown();
 				return chosenSkill;
 			} else {
 				return -1;
@@ -84,7 +84,7 @@ public class CommonEnemyAi : MonoBehaviour
 				return -1;
 			}
 		}
-    	}
+    }
 
 	//this is to select players at complete random. use if you want to.
 	public int playerSelect(int numberofPlayers){
@@ -92,17 +92,31 @@ public class CommonEnemyAi : MonoBehaviour
 	}
 	
 	//TODO: add the playerthreat inside the param by which skill a player uses. 
-	//	(suppose this can be done inside battle logic for simplicity, as update each player's threat everytime it uses a skill on their turn).
+	//	(suppose this can be done inside battle logic for simplicity, as to update each player's threat everytime it uses a skill on their turn).
 	//	if a player leaves or is dead, simply remove them from the threat array on the battle logic side.
-	//int numberofPlayers --> represents total number of players currently in battle, this is to make sure if playerThreat is 0 for all players
-	//			  it can use random generator to choose a player that way.
-	public int playerSelectWithThread(int numberofPlayers, int[] playerThreat){
+	//  int numberofPlayers --> represents total number of players currently in battle, this is to make sure if playerThreat is 0 for all players
+	//			                it can use random generator to choose a player that way.
+    //  If you want, you can also do it individually, for example, player0, player1, player2, but just add those to params, and loop over by number
+    //  of players and replace with highest threat. If both player's threat happens to be equal, choose the player with lowest health
+    //  wasn't sure how lists of Character Players were handled so just commented them inside the param
+	public int playerSelectWithThreat(int numberofPlayers, int[] playerThreat /* add lists of players here... ex. Characters[] player*/){
 		int highthreat = 0;
-		int selectedplayer = -1;
-		for(int i = 0; i < playerThreat.length; i++){
-			if(highthreat < playerThreat[i]){
-				selectedplayer = i;
-				highthreat = playerThreat[i];
+		int selectedplayer = -1;    //NOTE: you can also have global variable "currentTarget" to keep track of its current target
+		for(int i = 0; i < numberofPlayers; i++){
+			if(highthreat <= playerThreat[i] && selectedplayer != i){
+               // if (highthreat == playerThreat[i])
+               // {
+                    //possible route....
+                    //if(player[selectedplayer].getHP > player[i].getHP){
+                    //  selectedplayer = i;
+                    //  hightreat = playerThreat[i];
+                    //}
+               // }
+              //  else
+               // {
+                    selectedplayer = i;
+                    highthreat = playerThreat[i];
+               // }
 			}
 		}
 		
@@ -114,11 +128,16 @@ public class CommonEnemyAi : MonoBehaviour
 	}
 
    	void update()
-    	{
-		for (int i = 0; i < coolDownList.Length; i++) {
-			if (coolDownList[i] != 0) {
-				coolDownList[i]--;
-			}
-		}
-    	}
+    {
+        for (int j = 0; j < coolDownList.Length; j++)
+        {
+            for (int i = 0; i < coolDownList[j].Length; i++)
+            {
+                if (coolDownList[j][i] > 0)
+                {
+                    coolDownList[j][i]--;
+                }
+            }
+        }
+    }
 }
