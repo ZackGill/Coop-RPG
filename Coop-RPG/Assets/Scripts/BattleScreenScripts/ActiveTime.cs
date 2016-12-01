@@ -3,6 +3,7 @@ using System.Collections;
 
 public class ActiveTime : MonoBehaviour {
 
+    private bool enable;
     private float seconds;
     private float maxTime;
     private float enemySeconds;
@@ -10,6 +11,7 @@ public class ActiveTime : MonoBehaviour {
 
     void Start () {
         // maxTime is the amount of time a move needs to charge.
+        enable = true;
         seconds = 0;
         maxTime = 6;
 
@@ -36,6 +38,8 @@ public class ActiveTime : MonoBehaviour {
 
     public float GetEnemyRatio()
     {
+        if (enable == false)
+            return 0;
         return enemySeconds / enemyMaxTime;
     }
 
@@ -57,5 +61,15 @@ public class ActiveTime : MonoBehaviour {
     public void setMaxTime(float sec)
     {
         maxTime = sec;
+    }
+
+    public void setEnemyMaxTime(float sec)
+    {
+        enemyMaxTime = sec;
+    }
+
+    public void disable()
+    {
+        enable = false;
     }
 }

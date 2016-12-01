@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-
+using AssemblyCSharp;
 public class BattleScreenGUI : MonoBehaviour
 {
     private bool nextState = true;
@@ -32,9 +32,9 @@ public class BattleScreenGUI : MonoBehaviour
     // This is how we'll interact with the other scripts.
     private ActiveTime activeTime;
     private BattleScreenStates state;
-    private EnemyQuantity enemies;
     private BattleLogic battleLogic;
     private Characters character;
+    private Monster[] enemies;
     // To control enemy sprites
     private SpriteRenderer enemy1;
     private SpriteRenderer enemy2;
@@ -98,6 +98,7 @@ public class BattleScreenGUI : MonoBehaviour
         enemy3 = transform.FindChild("EnemyPanel/Enemy3").GetComponent<SpriteRenderer>();
         enemy2.enabled = false;
         enemy3.enabled = false;
+        enemies = new Monster[3];
 
         character = GetComponent<Characters>();
         StartCoroutine(updateFromDatabase());
@@ -106,13 +107,16 @@ public class BattleScreenGUI : MonoBehaviour
     void Update()
     {
 
-        playerHealthString.text = battleLogic.getPlayerHP().ToString();
-        playerHealthBar.fillAmount = (battleLogic.getPlayerHP()) / (100);
+        playerHealthString.text = (battleLogic.getPlayerHP()).ToString() + "/" + battleLogic.getPlayerMaxHP();
+        playerHealthBar.fillAmount = (battleLogic.getPlayerHP()) / battleLogic.getPlayerMaxHP();
         playerActiveTimerBar.fillAmount = activeTime.GetRatio();
 
         stateCheck();
 
         character = battleLogic.getCharacter();
+        enemies = battleLogic.getEnemies();
+
+        checkDeadEnemies();
     }
 
     IEnumerator updateFromDatabase()
@@ -157,6 +161,10 @@ public class BattleScreenGUI : MonoBehaviour
                 fightButtonsPanel.interactable = false;
                 enemy3.enabled = true;
                 break;
+            case (BattleScreenStates.FightStates.FRIENDJOINS):
+                fightMessage.text = battleLogic.getFightMessage();
+                fightButtonsPanel.interactable = false;
+                break;
             case (BattleScreenStates.FightStates.PLAYERTURN):
                 fightMessage.text = battleLogic.getFightMessage();
                 battleLogic.currentMoveSelected = false;
@@ -179,6 +187,29 @@ public class BattleScreenGUI : MonoBehaviour
                 optionsPanel.alpha = 0;
                 break;
         }
+    }
+
+    void checkDeadEnemies()
+    {
+        if (enemies[0].getDead())
+        {
+            enemy1.GetComponentInParent<Animator>().enabled = false;
+            enemy1.sprite = transform.Find("squak_defeated").GetComponent<SpriteRenderer>().sprite;
+            enemy1.color = new Color(.4f, .4f, .4f, 1);
+        }
+        if (battleLogic.getNumEnemies() >= 2 && enemies[1].getDead())
+        {
+            enemy2.GetComponentInParent<Animator>().enabled = false;
+            enemy2.sprite = transform.Find("squak_defeated").GetComponent<SpriteRenderer>().sprite;
+            enemy2.color = new Color(.4f, .4f, .4f, 1);
+        }
+        if (battleLogic.getNumEnemies() >= 3 && enemies[2].getDead())
+        {
+            enemy3.GetComponentInParent<Animator>().enabled = false;
+            enemy3.sprite = transform.Find("squak_defeated").GetComponent<SpriteRenderer>().sprite;
+            enemy3.color = new Color(.4f, .4f, .4f, 1);
+        }
+
     }
 
     void SkillButtonClicked()

@@ -4,6 +4,7 @@ using System;
 using SimpleFirebaseUnity;
 using SimpleFirebaseUnity.MiniJSON;
 using UnityEngine;
+using AssemblyCSharp;
 
 public class Character : MonoBehaviour
 {
