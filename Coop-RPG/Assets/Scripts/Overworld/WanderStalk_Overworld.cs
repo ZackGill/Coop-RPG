@@ -93,7 +93,7 @@ public class WanderStalk_Overworld : NetworkBehaviour
         coord st = new coord(x, y);
         checkPos.Enqueue(st);
         steps = 0;
-        print("Pathing " + x + "," + y + " to " + tX + ',' + tY);
+       // print("Pathing " + x + "," + y + " to " + tX + ',' + tY);
         int tries = 0;
         coord cur = null;
         int queuesize = 1;
@@ -139,6 +139,8 @@ public class WanderStalk_Overworld : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        transform.rotation = Quaternion.Euler(Vector3.zero);
+
         if (playerPos == null)
         {
             playerPos = GameObject.FindGameObjectsWithTag("Player");
@@ -161,7 +163,7 @@ public class WanderStalk_Overworld : NetworkBehaviour
                         tY = Random.Range(0, map.GetLength(1));
                     } while (!map[tX, tY]);
                 }
-                else print("HUNTING");
+                else ;
                 makePathToTarg();
             }
             if (next == null)

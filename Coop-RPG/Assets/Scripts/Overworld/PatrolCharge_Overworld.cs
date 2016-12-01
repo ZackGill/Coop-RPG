@@ -45,10 +45,10 @@ public class PatrolCharge_Overworld : NetworkBehaviour
             y = Random.Range(0, map.GetLength(1));
         } while (!map[x, y]);
         patrolRoute[3] = new coord(x, y);
-        print("Patrol is |" + patrolRoute[0].x + "," + patrolRoute[0].y + "| -> |"
+       /* print("Patrol is |" + patrolRoute[0].x + "," + patrolRoute[0].y + "| -> |"
             + patrolRoute[1].x + "," + patrolRoute[1].y + "| -> |"
             + patrolRoute[2].x + "," + patrolRoute[2].y + "| -> |"
-            + patrolRoute[3].x + "," + patrolRoute[3].y + "| -> |" + patrolRoute[0].x + "," + patrolRoute[0].y + "|");
+            + patrolRoute[3].x + "," + patrolRoute[3].y + "| -> |" + patrolRoute[0].x + "," + patrolRoute[0].y + "|");*/
     }
 
     bool canSeeEachOther(int x1, int y1, int x2, int y2)
@@ -105,7 +105,7 @@ public class PatrolCharge_Overworld : NetworkBehaviour
         coord st = new coord(x, y);
         checkPos.Enqueue(st);
         steps = 0;
-        print("Pathing " + x + "," + y + " to " + tX + ',' + tY);
+        //print("Pathing " + x + "," + y + " to " + tX + ',' + tY);
         int tries = 0;
         coord cur = null;
         int queuesize = 1;
@@ -150,6 +150,7 @@ public class PatrolCharge_Overworld : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        transform.rotation = Quaternion.Euler(Vector3.zero);
         if (playerPos == null)
         {
             playerPos = GameObject.FindGameObjectsWithTag("Player");
@@ -187,7 +188,7 @@ public class PatrolCharge_Overworld : NetworkBehaviour
                     if (hunting) i = 5;
                 }
                 //We saw the player! Pause for 2 seconds, then charge.
-                if (chargeTimer >= CHARGETIME) print("RAMMING SPEED");
+                if (chargeTimer >= CHARGETIME) ;
             }
             else
             {

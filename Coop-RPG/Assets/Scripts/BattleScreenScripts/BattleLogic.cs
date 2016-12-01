@@ -66,7 +66,10 @@ public class BattleLogic : NetworkBehaviour
     public void CmdTest()
     {
         if (infoDump == null)
+        {
+            print("InfoDump is null. Darn");
             return;
+        }
         infoDump.CmdPlayerDamage(10, 0);
         infoDump.CmdEnemyDamage(5, 0, 0);
     }
@@ -121,10 +124,31 @@ public class BattleLogic : NetworkBehaviour
         fightMessage = enemyName + " slithers hither!";
         StartCoroutine(updateCharacter());
 
+        
+       
+
+
         Invoke("CmdTest", 5f);
     }
 
     void Update() {
+        if (infoDump == null)
+        {
+            print("Infodump is null");
+            GameObject[] temp = GameObject.FindGameObjectsWithTag("DustCloud");
+
+            for (int i = 0; i < temp.Length; i++)
+            {
+                if (temp[i].transform.position.x >= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.x - .5f && temp[i].transform.position.x <= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.x + .5f)
+                {
+                    if (temp[i].transform.position.y >= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.y - .5f && temp[i].transform.position.y <= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.y + .5f) {
+                        print("Assign infodump");
+                        infoDump = temp[i].GetComponent<OverworldBattle>();
+                    }
+                }
+            }
+
+        }
         if (playerNum >= 0 || playerNum < 3)
         {
             setEnemyHP();
@@ -174,8 +198,8 @@ public class BattleLogic : NetworkBehaviour
             enemy2ActiveTime.setEnemySeconds(0);
             enemy3ActiveTime.setEnemySeconds(0);
             enemyAttackFlag = true;
-            if (infoDump != null) ;
-            infoDump.info.enemyAttackFlag = true;
+            if (infoDump != null) 
+             infoDump.info.enemyAttackFlag = true;
         }
         if (currentMoveSelected && enemyQuantity.getNumberOfEnemies() > 1 && state.curState == BattleScreenStates.FightStates.NEUTRAL && !playerAttackFlag)
         {

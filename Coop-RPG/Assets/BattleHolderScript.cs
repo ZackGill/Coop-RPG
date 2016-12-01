@@ -10,7 +10,7 @@ public class BattleHolderScript : NetworkBehaviour {
 	
     void die()
     {
-        player.GetComponent<PlayerMovement>().CmdPlayerToggle(true, null, player, player.GetComponent<PlayerMovement>().battleDump);
+        player.GetComponent<PlayerMovement>().CmdPlayerToggle(true, null, player, player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump.gameObject, false);
         Destroy(gameObject);
     }
 
