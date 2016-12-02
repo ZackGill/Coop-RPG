@@ -99,31 +99,45 @@ public class CommonEnemyAi : MonoBehaviour
     //  If you want, you can also do it individually, for example, player0, player1, player2, but just add those to params, and loop over by number
     //  of players and replace with highest threat. If both player's threat happens to be equal, choose the player with lowest health
     //  wasn't sure how lists of Character Players were handled so just commented them inside the param
-	public int playerSelectWithThreat(int numberofPlayers, int[] playerThreat /* add lists of players here... ex. Characters[] player*/){
+	public int playerSelectWithThreat(int numberofPlayers, int[] playerThreat){
 		int highthreat = 0;
+        //int secondHighThreat = 0;
 		int selectedplayer = -1;    //NOTE: you can also have global variable "currentTarget" to keep track of its current target
+        int secondTarget = 0;
 		for(int i = 0; i < numberofPlayers; i++){
 			if(highthreat <= playerThreat[i] && selectedplayer != i){
-               // if (highthreat == playerThreat[i])
-               // {
-                    //possible route....
-                    //if(player[selectedplayer].getHP > player[i].getHP){
-                    //  selectedplayer = i;
-                    //  hightreat = playerThreat[i];
-                    //}
-               // }
-              //  else
-               // {
+                if (highthreat == playerThreat[i])
+                {
+                    int check = Random.Range(0, 2);         //NOTE: changed to choose randomly if the current highest threat equals player threat. 
+                    if(check == 0)                          //      in this case if random number equals 0, then change, if not, then remain the same
+                    {
+                        secondTarget = selectedplayer;
+                        //secondHighThreat = highthreat;
+                        selectedplayer = i;
+                        highthreat = playerThreat[i];
+                    }
+                }
+                else
+                {
+                    secondTarget = selectedplayer;      //since the current selectedplayer had the highest threat, it now is the second highest threat
+                    //secondHighThreat = highthreat;
                     selectedplayer = i;
                     highthreat = playerThreat[i];
-               // }
+                }
 			}
 		}
 		
 		if(selectedplayer == -1){
 			return Random.Range(1, numberofPlayers);
 		}else{
-			return selectedplayer;
+            int a = Random.Range(0, 2);
+            if(a == 0)
+            {
+                return selectedplayer;   // player with highest threat
+            }else
+            {
+                return secondTarget;    //player with second highest threat
+            }
 		}
 	}
 
