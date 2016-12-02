@@ -91,14 +91,18 @@ public class CommonEnemyAi : MonoBehaviour
 		return Random.Range (1, numberofPlayers);
 	}
 	
-	//TODO: add the playerthreat inside the param by which skill a player uses. 
-	//	(suppose this can be done inside battle logic for simplicity, as to update each player's threat everytime it uses a skill on their turn).
-	//	if a player leaves or is dead, simply remove them from the threat array on the battle logic side.
-	//  int numberofPlayers --> represents total number of players currently in battle, this is to make sure if playerThreat is 0 for all players
-	//			                it can use random generator to choose a player that way.
-    //  If you want, you can also do it individually, for example, player0, player1, player2, but just add those to params, and loop over by number
-    //  of players and replace with highest threat. If both player's threat happens to be equal, choose the player with lowest health
-    //  wasn't sure how lists of Character Players were handled so just commented them inside the param
+	/************************************************************************************************************************************************
+     * TODO: add the playerthreat inside the param by which skill a player uses. 
+	 *	(suppose this can be done inside battle logic for simplicity, as to update each player's threat everytime it uses a skill on their turn).
+	 *	if a player leaves or is dead, simply remove them from the threat array on the battle logic side.
+	 *  int numberofPlayers --> represents total number of players currently in battle, this is to make sure if playerThreat is 0 for all players
+	 *       	                it can use random generator to choose a player that way.
+     *  If you want, you can also do it individually, for example, player0, player1, player2, but just add those to params, and loop over by number
+     *  of players and replace with highest threat. If both player's threat happens to be equal, choose the player with lowest health 
+     *  (NOTE: will need to call Characters player if we need to use this).
+     *  
+     *  Wasn't sure how lists of Character Players were handled so just commented them inside the param.
+     ************************************************************************************************************************************************/
 	public int playerSelectWithThreat(int numberofPlayers, int[] playerThreat){
 		int highthreat = 0;
         //int secondHighThreat = 0;
