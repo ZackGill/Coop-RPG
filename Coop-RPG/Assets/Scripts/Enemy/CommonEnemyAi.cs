@@ -134,8 +134,8 @@ public class CommonEnemyAi : MonoBehaviour
 		if(selectedplayer == -1){
 			return Random.Range(1, numberofPlayers);
 		}else{
-            int a = Random.Range(0, 2);
-            if(a == 0)
+            int a = Random.Range(0, 2);     //this is to prevent an enemy (assuming current battle has 2 or more monsters) from choosing the same player. 
+            if(a == 0)                      //by having random generator, those with the highest threat and the second highest threat will get choosen depending on the outcome of random. (50/50 chance).
             {
                 return selectedplayer;   // player with highest threat
             }else
