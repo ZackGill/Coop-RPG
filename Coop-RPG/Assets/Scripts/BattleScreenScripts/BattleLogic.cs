@@ -62,8 +62,12 @@ public class BattleLogic : NetworkBehaviour
             print("InfoDump is null. Darn");
             return;
         }
-        infoDump.CmdPlayerDamage(10, 0);
-        infoDump.CmdEnemyDamage(5, 0, 0);
+
+        transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdPlayerDamage(infoDump.gameObject, 0, 10);
+        transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdEnemyDamage(infoDump.gameObject, 5, 0, 0);
+
+       // infoDump.CmdPlayerDamage(10, 0);
+      //  infoDump.CmdEnemyDamage(5, 0, 0);
     }
 
     void setEnemyHP()
@@ -126,14 +130,12 @@ public class BattleLogic : NetworkBehaviour
     void Update() {
         if (infoDump == null)
         {
-            print("Infodump is null");
             GameObject[] temp = GameObject.FindGameObjectsWithTag("DustCloud");
-
             for (int i = 0; i < temp.Length; i++)
             {
-                if (temp[i].transform.position.x >= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.x - .5f && temp[i].transform.position.x <= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.x + .5f)
+                if (temp[i].transform.position.x >= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.x - .6f && temp[i].transform.position.x <= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.x + .6f)
                 {
-                    if (temp[i].transform.position.y >= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.y - .5f && temp[i].transform.position.y <= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.y + .5f) {
+                    if (temp[i].transform.position.y >= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.y - .6f && temp[i].transform.position.y <= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.y + .6f) {
                         print("Assign infodump");
                         infoDump = temp[i].GetComponent<OverworldBattle>();
                     }

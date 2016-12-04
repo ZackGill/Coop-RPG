@@ -5,7 +5,7 @@ public class BattleHolderScript : NetworkBehaviour {
     public GameObject player;
 	// Use this for initialization
 	void Start () {
-        Invoke("die", 15f);
+        Invoke("die", 60f);
 	}
 	
     void die()

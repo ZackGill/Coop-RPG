@@ -109,6 +109,14 @@ public class OverworldBattle : NetworkBehaviour {
         info = temp;
     }
 
+    [Command]
+    public void CmdAddPlayer()
+    {
+        print("Add player");
+        BattleInfo temp = info;
+        temp.numPlayers = temp.numPlayers + 1;
+        info = temp;
+    }
 
     // CMD and RPC to update the info of the non-synch vars.
 

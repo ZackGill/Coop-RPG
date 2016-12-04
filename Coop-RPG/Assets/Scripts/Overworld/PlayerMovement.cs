@@ -150,14 +150,13 @@ public class PlayerMovement : NetworkBehaviour
             {
                 if (inBattle)
                     return;
+                if (col.gameObject.GetComponent<OverworldBattle>().info.numPlayers >= 3)
+                    return;
                 print("Dustcloud hit");
                 battle = (GameObject)Instantiate(battleFab, Vector3.zero, Quaternion.identity);
                 inBattle = true;
                 monster = null;
                 battle.GetComponent<BattleHolderScript>().player = gameObject;
-
-              
-
 
                 CmdPlayerToggle(false, null, gameObject, col.gameObject, true);
 
@@ -192,6 +191,8 @@ public class PlayerMovement : NetworkBehaviour
                     temp2.info.numPlayers = 1;
                     temp2.info.numEnemies = 1;
 
+                //temp2.player0 = player.GetComponent<Characters>();
+
                 if (temp2 == null)
                     print("Assigning a null to infodump");
                 if (player.GetComponent<PlayerMovement>().battle != null)
@@ -204,14 +205,31 @@ public class PlayerMovement : NetworkBehaviour
                             if (temp2.battle2 != null)
                                 return;
                             else
-                                temp2.battle2 = battle.GetComponentInChildren<BattleLogic>();
+                                temp2.battle2 = player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>();
                         else
-                            temp2.battle1 = battle.GetComponentInChildren<BattleLogic>();
-                    temp2.battle0 = battle.GetComponentInChildren<BattleLogic>();
+                            temp2.battle1 = player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>();
 
-                RpcUpdatePlayerDump(player, battleDumpThing);
+                if (player.GetComponent<PlayerMovement>().battle != null)
+                    temp2.battle0 = player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>();
+                else
+                    print("battle is null");
                 
             }
+            else
+            {
+                battleDumpThing.GetComponent<OverworldBattle>().CmdAddPlayer();
+               /* if (battleDumpThing.GetComponent<OverworldBattle>().player0 == null)
+                    battleDump.GetComponent<OverworldBattle>().player0 = player.GetComponent<Characters>();
+                else if (battleDumpThing.GetComponent<OverworldBattle>().player1 == null)
+                    battleDump.GetComponent<OverworldBattle>().player1 = player.GetComponent<Characters>();
+                else if (battleDumpThing.GetComponent<OverworldBattle>().player2 == null)
+                    battleDump.GetComponent<OverworldBattle>().player2 = player.GetComponent<Characters>();
+                    */
+
+
+            }
+            RpcUpdatePlayerDump(player, battleDumpThing);
+
         }
         else
         {
@@ -245,7 +263,8 @@ public class PlayerMovement : NetworkBehaviour
             monster.GetComponent<Renderer>().enabled = toggle;
             monster.GetComponent<BoxCollider2D>().enabled = toggle;
         }
-
+        else
+            print("Null monsters");
 
         RpcUpdatePlayer(toggle, monster, player, battleDumpThing);
 
@@ -266,6 +285,14 @@ public class PlayerMovement : NetworkBehaviour
         {
             player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump = battleDump.GetComponent<OverworldBattle>();
             player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().playerNum = battleDump.GetComponent<OverworldBattle>().info.numPlayers - 1;
+
+          /*  if (battleDump.GetComponent<OverworldBattle>().player0 == null)
+                battleDump.GetComponent<OverworldBattle>().player0 = player.GetComponent<Characters>();
+            else if (battleDump.GetComponent<OverworldBattle>().player1 == null)
+                battleDump.GetComponent<OverworldBattle>().player1 = player.GetComponent<Characters>();
+            else if (battleDump.GetComponent<OverworldBattle>().player2 == null)
+                battleDump.GetComponent<OverworldBattle>().player2 = player.GetComponent<Characters>();*/
+
         }
     }
 
@@ -296,6 +323,27 @@ public class PlayerMovement : NetworkBehaviour
             monster.GetComponent<Renderer>().enabled = toggle;
             monster.GetComponent<BoxCollider2D>().enabled = toggle;
         }
+        else
+        {
+            print("monster is null");
+        }
+
+    }
+
+    [Command]
+    public void CmdPlayerDamage(GameObject battleDump, int player, float damage)
+    {
+        print("Player damage in player");
+        battleDump.GetComponent<OverworldBattle>().CmdPlayerDamage(damage, player);
+
+
+    }
+
+    [Command]
+    public void CmdEnemyDamage(GameObject battleDump, float enemy1HP, float enemy2HP, float enemy3HP)
+    {
+        print("Enemy damage in player");
+        battleDump.GetComponent<OverworldBattle>().CmdEnemyDamage(enemy1HP, enemy2HP, enemy3HP);
 
     }
 }
