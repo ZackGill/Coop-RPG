@@ -4,87 +4,109 @@ using SimpleFirebaseUnity;
 using UnityEngine;
 namespace AssemblyCSharp
 {
-	public class Monster : MonoBehaviour
-	{
 
-		float mistakeChance;
-		int attack, magic, defense, hp, level, sightRange;
-		bool bossTag = false;
-		float moveSpeed;
+    public class Monster
+    {
+        bool isDead = false;
+        float mistakeChance;
+        int attack, magic, defense, hp, level, sightRange;
+        bool bossTag = false;
+        float moveSpeed;
+        Skill[] skills;
 
-		Skill[] skills;
-		
 
-		public Monster(int atk, int mag, int def, int hp, int lvl, bool bt, int sr, float mis, float ms) {
-			attack = atk;
-			magic = mag;
-			defense = def;
-			this.hp = hp;
-			level = lvl;
-			sightRange = sr;
-			mistakeChance = mis;
-			bossTag = bt;
-			moveSpeed = ms;
-		
+        public Monster(int atk, int mag, int def, int hp, int lvl, bool bt, int sr, float mis, float ms)
+        {
+            attack = atk;
+            magic = mag;
+            defense = def;
+            this.hp = hp;
+            level = lvl;
+            sightRange = sr;
+            mistakeChance = mis;
+            bossTag = bt;
+            moveSpeed = ms;
 
-		}
 
-		public void setMS(float ms) {
-			moveSpeed = ms;
-		}
+        }
 
-		public void setMistakeChance(float mis) {
-			mistakeChance = mis;
-		}
+        public void setMS(float ms)
+        {
+            moveSpeed = ms;
+        }
 
-		public void setSightRange(int sr) {
-			sightRange = sr;
-		}
+        public void setMistakeChance(float mis)
+        {
+            mistakeChance = mis;
+        }
 
-		public int getSightRange() {
-			return sightRange;
-		}
+        public void setSightRange(int sr)
+        {
+            sightRange = sr;
+        }
 
-		public float getMS() {
-			return moveSpeed;
-		}
+        public int getSightRange()
+        {
+            return sightRange;
+        }
 
-		public int getHP() {
-			return hp;
-		}
+        public float getMS()
+        {
+            return moveSpeed;
+        }
 
-		public int getAttack() {
-			return attack;
-		}
+        public int getHP()
+        {
+            return hp;
+        }
 
-		public int getMagic() {
-			return magic;
-		}
+        public int getAttack()
+        {
+            return attack;
+        }
 
-		public bool getBossTag() {
-			return bossTag;
-		}
+        public int getMagic()
+        {
+            return magic;
+        }
 
-		public int getLevel() {
-			return level;
-		}
+        public bool getBossTag()
+        {
+            return bossTag;
+        }
 
-		public float getMistakeChance() {
-			return mistakeChance;
-		}
+        public int getLevel()
+        {
+            return level;
+        }
 
-		public int getDefense() {
-			return defense;
-		}
+        public float getMistakeChance()
+        {
+            return mistakeChance;
+        }
 
-		public Skill[] getSkills() {
-			return skills;
-		}
+        public int getDefense()
+        {
+            return defense;
+        }
 
-		public void setSkills(Skill[] sk) {
-			skills = sk;
+        public Skill[] getSkills()
+        {
+            return skills;
+        }
 
-		}
-	}
+        public void setSkills(Skill[] sk)
+        {
+            skills = sk;
+
+        }
+        public void setDead(bool dead)
+        {
+            isDead = dead;
+        }
+        public bool getDead()
+        {
+            return isDead;
+        }
+    }
 }
-

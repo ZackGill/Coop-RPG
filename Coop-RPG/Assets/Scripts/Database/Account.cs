@@ -9,7 +9,9 @@ namespace AssemblyCSharp
 {
 	public class Account : MonoBehaviour
 	{
+
         string uName, email, password;
+
 
 		/*
 		string name, email, password;

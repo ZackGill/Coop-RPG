@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using AssemblyCSharp;
+
 /// <summary>
 ///  This will be the logic between the fight itself, that is to say the battle, how much damage is being taken, what kind of moves
 ///  are being done, etc.
@@ -9,9 +10,11 @@ public class BattleAttackHandler : MonoBehaviour
 {
 
     private Characters character;
-    private Enemy enemy1;
-    private Enemy enemy2;
-    private Enemy enemy3;
+
+    private Monster enemy;
+    private Monster enemy1;
+    private Monster enemy2;
+    private Monster enemy3;
 
     private string fightMessage;
 
@@ -19,17 +22,24 @@ public class BattleAttackHandler : MonoBehaviour
     private float enemyBuffMultiplier = 1;
     private int playerMeleeDamage = 9;
 
+    private int targetPlayer = 0;
+
     private EnemyQuantity enemyQuantity;
     private BattleScreenStates state;
     private DatabaseBattle db;
     private ArrowSelection selection;
     private BattleLogic logic;
     private ActiveTime activeTime;
-    Skill[] skills = new Skill[8];
+
+
+    System.Random ran = new System.Random();
 
     void Start()
     {
-        character = new Characters("okay", 10, 10, 10, 10, 10, 1);
+        character = new Characters("okay", 10, 10, 10, 10, 10);
+        enemy = new Monster(1, 1, 1, 1, 1, false, 1, 1, 1);
+        enemy2 = new Monster(1, 1, 1, 1, 1, false, 1, 1, 1);
+        enemy3 = new Monster(1, 1, 1, 1, 1, false, 1, 1, 1);
         db = GetComponent<DatabaseBattle>();
         selection = GetComponent<ArrowSelection>();
         logic = GetComponent<BattleLogic>();
@@ -44,14 +54,15 @@ public class BattleAttackHandler : MonoBehaviour
         //activeTime.setMaxTime(200);
 
         character = db.getCharacter();
-        //skills = character.getSkills();
+
     }
 
 
     // For when the player's HP is being affected.
     public int enemyAttacks()
     {
-        fightMessage = "You are attacked! -5 HP";
+
+        fightMessage = "Player " + targetPlayer + " was attacked! -5 HP";
         return 5;
     }
 
@@ -59,7 +70,6 @@ public class BattleAttackHandler : MonoBehaviour
     // For when the enemy's HP is being affected.
     public int giveDamage(int whichSkill)
     {
-
         print(whichSkill);
 
         int damageDone = (int)(playerMeleeDamage * buffMultiplier);
@@ -67,16 +77,49 @@ public class BattleAttackHandler : MonoBehaviour
         fightMessage = "You attack " + selection.getArrowPos() + "! It does " + damageDone + " HP";
         if(whichSkill >= 0)
         {
-            damageDone = skills[whichSkill].getValue();
-            fightMessage = "You cast " + skills[whichSkill].getName() + "! It does " + damageDone + " HP!";
+            damageDone = character.getSkills()[whichSkill].getValues();
+            fightMessage = "You cast " + character.getSkills()[whichSkill].getName() + "! It does " + damageDone + " HP!";
         }
         return damageDone;
-
     }
 
     public Characters getCharacter()
     {
         return character;
+    }
+
+
+    public Monster getEnemy()
+    {
+        return enemy;
+    }
+
+    public Monster getEnemy2()
+    {
+        return enemy2;
+    }
+
+    public Monster getEnemy3()
+    {
+        return enemy3;
+    }
+
+    public int getTarget()
+    {
+        // Select a target player based on the number of players. Random for now.
+        if (logic.getNumPlayers() == 1)
+            targetPlayer = 0;
+        else if (logic.getNumPlayers() == 2)
+            targetPlayer = ran.Next(0, 2);
+        else if (logic.getNumPlayers() == 3)
+            targetPlayer = ran.Next(0, 3);
+
+        return targetPlayer;
+    }
+
+    public void setTarget(int target)
+    {
+        targetPlayer = target;
     }
 
     public string getFightMessage()
