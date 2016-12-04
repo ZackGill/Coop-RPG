@@ -24,6 +24,7 @@ namespace AssemblyCSharp
 		Monster mon = null;
 		bool logOnOk = false;
 		string monList;
+		string[] clPerkList;
 
 
 		public bool isDone = false;
@@ -157,7 +158,7 @@ namespace AssemblyCSharp
 			return sk;
 		}
 
-		void getSkills(ref Character ch, string sList, string pList) {
+		void getSkills(ref Characters ch, string sList, string pList) {
 			string[] skillList = sList.Split(';');
 			Skill[] temp = new Skill[skillList.Length];
 
@@ -186,7 +187,7 @@ namespace AssemblyCSharp
 			sk.applyPerk (type, value);
 		}
 
-		void parseCharInfo(int mode, ref Characters ch) {
+		void parseCharInfo(int mode, ref Characters ch, string charName) {
 			string acc1, acc2, weapon, armor, wType, acc1Type, acc2Type;
 			int attack, magic, defense, hp, exp, lvl;
 			attack = magic = defense = hp = exp = lvl = 0;
@@ -267,7 +268,7 @@ namespace AssemblyCSharp
 			}
 
 			DoDebug ("ATTACK: " + attack);
-			ch = new Characters (className, attack, magic, defense, hp, exp, lvl);
+			ch = new Characters (charName, className, attack, magic, defense, hp, exp, lvl);
 		}
 
 		void parseWeaponInfo() {
@@ -427,7 +428,7 @@ namespace AssemblyCSharp
 			DoDebug("WAITING");
 			yield return new WaitForSeconds (2f);
 			DoDebug("DONE");
-			parseCharInfo (0, ref x);
+			parseCharInfo (0, ref x, charName);
 
 			getClassInfo ();
 			DoDebug("WAITING");
@@ -484,7 +485,6 @@ namespace AssemblyCSharp
 			DoDebug ("SKILL LIST: " + skillList);
 			DoDebug ("PERK LIST: " + perkList);
 
-			int ind = 0;
 			string[] sList = skillList.Split (';');
 			DoDebug ("sListLen: " + sList.Length);
 			//split skill string
@@ -529,7 +529,7 @@ namespace AssemblyCSharp
 			DoDebug("WAITING ON CHAR INFO");
 			yield return new WaitForSeconds (2f);
 			DoDebug("DONE");
-			parseCharInfo (1, ref ch);
+			parseCharInfo (1, ref ch, charName);
 
 			ch.setSkills (sTemp);
 			ch.setAttack (ch.getAttack () + attackToAdd);
@@ -567,7 +567,6 @@ namespace AssemblyCSharp
 			attack = magic = defense = hp = level = sightRange = 0;
 			mistakeChance = 0.0f;
 		    moveSpeed = 0.0f;
-			Skill[] skills;
 
 			tempJson = tempJson.Substring (1, tempJson.Length - 2);
 			char[] chArr = new char[2];
@@ -656,7 +655,7 @@ namespace AssemblyCSharp
 
 			DoDebug ("SKILL LIST: " + skillList);
 
-			int ind = 0;
+
 			string[] sList = skillList.Split (';');
 			DoDebug ("sListLen: " + sList.Length);
 			//split skill string
@@ -818,6 +817,56 @@ namespace AssemblyCSharp
 			tempJson = tempJson.Substring (1, tempJson.Length - 2);
 			DoDebug (tempJson);
 			monList = tempJson;
+
+		}
+
+		void getClassPerks(string clName) {
+			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Classes/" + clName + "/perks", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			fb.OnGetSuccess += GetJson;
+			fb.GetValue ();
+		}
+
+		public string[] getClassPerkList() {
+
+			return clPerkList;
+		}
+
+		public IEnumerator runClPerks(string clName) {
+			getClassPerks (clName);
+			yield return new WaitForSeconds (2f);
+			tempJson = tempJson.Substring (1, tempJson.Length - 2);
+			clPerkList = tempJson.Split (',');
+
+		}
+
+		public IEnumerator runUpdateChar(string cName, int newExp, int newLevel, string stat, string perk) {
+			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters/" + cName, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
+			Firebase exp = fb.Child ("EXP");
+			exp.OnSetSuccess += createSuccess;
+			exp.SetValue (newExp);
+			if (newLevel != 0) {
+				Firebase lvl = fb.Child ("LVL");
+				lvl.OnSetSuccess += createSuccess;
+				lvl.SetValue (newLevel);
+			
+				Firebase stats = fb.Child ("stats");
+				Firebase mod = stats.Child (stat);
+				mod.OnSetSuccess += createSuccess;
+				mod.OnGetSuccess += GetJson;
+				mod.GetValue ();
+				yield return new WaitForSeconds (3f);
+				int temp = int.Parse (tempJson);
+				mod.SetValue (temp + 1);
+				Firebase perkFB = fb.Child ("perks");
+				perkFB.OnSetSuccess += createSuccess;
+				perkFB.OnGetSuccess += GetJson;
+				perkFB.GetValue ();
+				yield return new WaitForSeconds (3f);
+				tempJson = tempJson.Substring (1, tempJson.Length - 2);
+				perkFB.SetValue (tempJson + ";" + perk);
+			}
+
+
 
 		}
 

@@ -5,10 +5,12 @@ namespace AssemblyCSharp
 	public class Characters
 	{
 		int attack, magic, defense, hp, exp, level;
+		float threatLevel;
 		string clName;
 		Skill[] skills;
+		string name;
 
-		public Characters(string cl, int atk, int mg, int def, int hp, int exp, int lvl) {
+		public Characters(string n, string cl, int atk, int mg, int def, int hp, int exp, int lvl) {
 			clName = cl;
 			attack = atk;
 			magic = mg;
@@ -16,12 +18,15 @@ namespace AssemblyCSharp
 			this.hp = hp;
 			this.exp = exp;
 			level = lvl;
+			threatLevel = 0f;
+			name = n;
 
 
 		}
 
 		public Characters() {
 			clName = "";
+			name = "";
 			attack = 0;
 			magic = 0;
 			defense = 0;
@@ -29,7 +34,7 @@ namespace AssemblyCSharp
 			exp = 0;
 			skills = null;
 			level = 0;
-
+			threatLevel = 0f;
 		}
 
 		public int getAttack() {
@@ -88,6 +93,25 @@ namespace AssemblyCSharp
 			return level;
 		}
 
+		public float getThreat() {
+			return threatLevel;
+		}
+
+		public void setThreat(float t) {
+			threatLevel = t;
+		}
+
+		public void addThreat(float toAdd) {
+			threatLevel += toAdd;
+		}
+
+		public string getClass() {
+			return clName;
+		}
+
+		public string getName() {
+			return name;
+		}
 
 	}
 }
