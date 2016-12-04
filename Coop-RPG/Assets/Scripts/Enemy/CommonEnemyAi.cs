@@ -109,26 +109,10 @@ public class CommonEnemyAi : MonoBehaviour
         int secondTarget = -1;
 		for(int i = 0; i < numberofPlayers; i++){
 			if(highthreat <= playerThreat[i]){
-                if (highthreat == playerThreat[i])
-                {
-                    int check = Random.Range(0, 2);         //NOTE: changed to choose randomly if the current highest threat equals player threat. 
-					if (check == 0) {                          //      in this case if random number equals 0, then change, if not, then remain the same
-						secondTarget = selectedplayer;
-						//secondHighThreat = highthreat;
-						selectedplayer = i;
-						highthreat = playerThreat [i];
-					} else if (selectedplayer == -1) {
-						selectedplayer = i;
-						highthreat = playerThreat [i];
-					}
-                }
-                else
-                {
-                    secondTarget = selectedplayer;      //since the current selectedplayer had the highest threat, it now is the second highest threat
-                    //secondHighThreat = highthreat;
-                    selectedplayer = i;
-                    highthreat = playerThreat[i];
-                }
+            	secondTarget = selectedplayer;      //since the current selectedplayer had the highest threat, it now is the second highest threat
+        	    //secondHighThreat = highthreat;
+            	selectedplayer = i;
+            	highthreat = playerThreat[i];
 			}
 		}
 		
@@ -141,12 +125,8 @@ public class CommonEnemyAi : MonoBehaviour
                 return selectedplayer;   // player with highest threat
             }else
             {
-				if (secondTarget == -1) {
 					return selectedplayer;
-				}
-				else{
-                	return secondTarget;    //player with second highest threat
-				}
+				return selectedplayer;
             }
 		}
 	}
