@@ -29,7 +29,6 @@ public class CommonEnemyAi : MonoBehaviour
     //enemy stats assuming its a dragon type =p
    	//private int sampleEnemySkill = 2;
     private int regularEnemySkill = -2;  			//indicate regular skill as -2 to avoid conflicts
-    private int coolDownTimerAttack = 0;
 	//private int[] playerThreat;
 	Skill[] enemySkills = new Skill[8];
 	int[,] coolDownList;
@@ -107,19 +106,21 @@ public class CommonEnemyAi : MonoBehaviour
 		int highthreat = 0;
         //int secondHighThreat = 0;
 		int selectedplayer = -1;    //NOTE: you can also have global variable "currentTarget" to keep track of its current target
-        int secondTarget = 0;
+        int secondTarget = -1;
 		for(int i = 0; i < numberofPlayers; i++){
-			if(highthreat <= playerThreat[i] && selectedplayer != i){
+			if(highthreat <= playerThreat[i]){
                 if (highthreat == playerThreat[i])
                 {
                     int check = Random.Range(0, 2);         //NOTE: changed to choose randomly if the current highest threat equals player threat. 
-                    if(check == 0)                          //      in this case if random number equals 0, then change, if not, then remain the same
-                    {
-                        secondTarget = selectedplayer;
-                        //secondHighThreat = highthreat;
-                        selectedplayer = i;
-                        highthreat = playerThreat[i];
-                    }
+					if (check == 0) {                          //      in this case if random number equals 0, then change, if not, then remain the same
+						secondTarget = selectedplayer;
+						//secondHighThreat = highthreat;
+						selectedplayer = i;
+						highthreat = playerThreat [i];
+					} else if (selectedplayer == -1) {
+						selectedplayer = i;
+						highthreat = playerThreat [i];
+					}
                 }
                 else
                 {
@@ -132,7 +133,7 @@ public class CommonEnemyAi : MonoBehaviour
 		}
 		
 		if(selectedplayer == -1){
-			return Random.Range(1, numberofPlayers);
+			return Random.Range(0, numberofPlayers +1);
 		}else{
             int a = Random.Range(0, 2);     //this is to prevent an enemy (assuming current battle has 2 or more monsters) from choosing the same player. 
             if(a == 0)                      //by having random generator, those with the highest threat and the second highest threat will get choosen depending on the outcome of random. (50/50 chance).
@@ -140,7 +141,12 @@ public class CommonEnemyAi : MonoBehaviour
                 return selectedplayer;   // player with highest threat
             }else
             {
-                return secondTarget;    //player with second highest threat
+				if (secondTarget == -1) {
+					return selectedplayer;
+				}
+				else{
+                	return secondTarget;    //player with second highest threat
+				}
             }
 		}
 	}
