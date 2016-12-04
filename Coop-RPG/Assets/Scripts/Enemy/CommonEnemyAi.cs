@@ -104,13 +104,11 @@ public class CommonEnemyAi : MonoBehaviour
      ************************************************************************************************************************************************/
 	public int playerSelectWithThreat(int numberofPlayers, int[] playerThreat){
 		int highthreat = 0;
-        //int secondHighThreat = 0;
 		int selectedplayer = -1;    //NOTE: you can also have global variable "currentTarget" to keep track of its current target
         int secondTarget = -1;
 		for(int i = 0; i < numberofPlayers; i++){
 			if(highthreat <= playerThreat[i]){
             	secondTarget = selectedplayer;      //since the current selectedplayer had the highest threat, it now is the second highest threat
-        	    //secondHighThreat = highthreat;
             	selectedplayer = i;
             	highthreat = playerThreat[i];
 			}
@@ -125,7 +123,11 @@ public class CommonEnemyAi : MonoBehaviour
                 return selectedplayer;   // player with highest threat
             }else
             {
-				return secondTarget;
+				if (secondTarget == -1) {
+					return selectedplayer;
+				} else {
+					return secondTarget;
+				}
             }
 		}
 	}
