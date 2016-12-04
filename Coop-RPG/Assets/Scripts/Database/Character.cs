@@ -138,7 +138,7 @@ namespace AssemblyCSharp
 		IEnumerator wait() {
 			DatabaseManager db = new DatabaseManager();
 			Characters test = null;
-			StartCoroutine(db.runCreateChar("apple", null, "Test"));
+			//StartCoroutine(db.runCreateChar("apple", null, "Test"));
 			yield return new WaitForSeconds (35f);
 			//test = db.getChar ();
 			//DoDebug ("-AFTER-\nAttack: " + test.getAttack () + "\nDefense: " + test.getDefense ());

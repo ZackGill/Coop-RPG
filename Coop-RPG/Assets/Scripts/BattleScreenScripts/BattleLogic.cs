@@ -20,14 +20,7 @@ public class BattleLogic : NetworkBehaviour
     public event EnemyDamageDelegate EventEnemyDamage = delegate { };
 
 
-    // Many of the following variables were needed for testing pre-firebase and should be removed.
-    public int numEnemies = 0;
-=======
 
-// This is kind of the logic behind the GUI and the states that influence it. The logic for the damage and moves being done is in 
-// BattleAttackHandler.
-public class BattleLogic : MonoBehaviour
-{
     // Many of the following variables were needed for testing pre-firebase and should be removed.
     public int numPlayers;
     public int numEnemies;
@@ -340,12 +333,12 @@ public class BattleLogic : MonoBehaviour
         if (state.curState == BattleScreenStates.FightStates.SECONDENEMYJOINS)
         {
 
-		fightmessage = "Good grief! A new enemy joins in";
+		fightMessage = "Good grief! A new enemy joins in";
 		// Update message and num enemies with Command
         }
         if (state.curState == BattleScreenStates.FightStates.THIRDENEMYJOINS)
         {
-		fightmessage = "Just my luck! It's another enemy!";
+		fightMessage = "Just my luck! It's another enemy!";
 		// Update message and possibly num enemies with Command.
         }
         if (state.curState == BattleScreenStates.FightStates.FRIENDJOINS)
