@@ -104,7 +104,7 @@ public class BattleScreenGUI : MonoBehaviour
         enemies = new Monster[3];
 
 
-        character = GetComponent<Characters>();
+        //character = GetComponent<Characters>(); // Replace with Holder that has copy
         StartCoroutine(updateFromDatabase());
     }
 

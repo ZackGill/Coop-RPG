@@ -5,6 +5,8 @@ public class BattleHolderScript : NetworkBehaviour {
     public GameObject player;
 	// Use this for initialization
 	void Start () {
+        //GetComponentInChildren<Canvas>().worldCamera = Camera.main;
+
         Invoke("die", 60f);
 	}
 	

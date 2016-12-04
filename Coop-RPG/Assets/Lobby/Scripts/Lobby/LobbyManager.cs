@@ -326,6 +326,12 @@ namespace Prototype.NetworkLobby
 
         public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
         {
+
+            LobbyPlayer player = lobbyPlayer.GetComponent<LobbyPlayer>();
+            PlayerMovement gamePlayerObject = gamePlayer.GetComponent<PlayerMovement>();
+
+            gamePlayerObject.charName = player.playerName;
+
             //This hook allows you to apply state data from the lobby-player to the game-player
             //just subclass "LobbyHook" and add it to the lobby object.
 

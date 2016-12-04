@@ -26,7 +26,10 @@ public class LoadingScript : MonoBehaviour {
 
 		IEnumerator run() {
 			int mean = 0;
-			string[] charList = { "Lex", "Example" };
+
+
+
+            string[] charList = { "Lex", "Example" };
 			chList = new Characters[charList.Length];
 
 			for (int i = 0; i < charList.Length; i++) {

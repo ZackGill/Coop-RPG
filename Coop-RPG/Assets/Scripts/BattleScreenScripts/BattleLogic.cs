@@ -104,7 +104,7 @@ public class BattleLogic : NetworkBehaviour
     void Start()
     {
         attack = GetComponent<BattleAttackHandler>();
-        character = GetComponent<Characters>();
+        //character = GetComponent<Characters>(); // Replace with pulling from a holder gameobject
         state = GetComponent<BattleScreenStates>();
         selection = GetComponent<ArrowSelection>();
         stateQueue = new List<BattleScreenStates.FightStates>();

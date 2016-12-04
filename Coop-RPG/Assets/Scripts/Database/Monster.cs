@@ -4,7 +4,7 @@ using SimpleFirebaseUnity;
 using UnityEngine;
 namespace AssemblyCSharp
 {
-
+    [Serializable]
     public class Monster
     {
         bool isDead = false;

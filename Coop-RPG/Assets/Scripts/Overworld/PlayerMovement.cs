@@ -3,21 +3,35 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 using AssemblyCSharp;
-
+using Prototype.NetworkLobby;
 [NetworkSettings(channel = 0)]
 public class PlayerMovement : NetworkBehaviour
 {
+    [SyncVar]
+    public string charName;
+
     public float speed = 2.25F;
+
+
 
     public GameObject battleFab;
     public GameObject overworldBattle;
     public bool inBattle = false;
 
+    public Characters characterInfo;
     // Use this for initialization
     void Start()
     {
-        if(isLocalPlayer)
-          Invoke("startPos", .1f); 
+        if (isLocalPlayer)
+        {
+            Invoke("startPos", .1f);
+            GameObject[] temp = GameObject.FindGameObjectsWithTag("LobbyPlayer");
+            for(int i = 0; i < temp.Length; i++)
+            {
+                
+
+            }
+        }
     }
 
     void startPos()
@@ -187,11 +201,11 @@ public class PlayerMovement : NetworkBehaviour
                     NetworkServer.SpawnWithClientAuthority(tempB, connectionToClient);
 
                     OverworldBattle temp2 = tempB.GetComponent<OverworldBattle>();
-                    temp2.enemy0 = monster.GetComponent<Monster>(); // Make sure wandering monsters have this script
+                    temp2.enemy0 = monster.GetComponent<MonsterStorage>().monster; // Make sure wandering monsters have this script
                     temp2.info.numPlayers = 1;
                     temp2.info.numEnemies = 1;
 
-                //temp2.player0 = player.GetComponent<Characters>();
+                temp2.player0 = player.GetComponent<PlayerMovement>().characterInfo;
 
                 if (temp2 == null)
                     print("Assigning a null to infodump");
@@ -255,7 +269,7 @@ public class PlayerMovement : NetworkBehaviour
             Network.Destroy(battleDumpThing);
             player.GetComponent<PlayerMovement>().inBattle = false;
         }
-
+        print("Player hitbox and stuff setting " + toggle);
         player.GetComponent<Renderer>().enabled = toggle;
         player.GetComponent<BoxCollider2D>().enabled = toggle;
         if (monster != null)

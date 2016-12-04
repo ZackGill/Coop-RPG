@@ -36,7 +36,7 @@ public class BattleAttackHandler : MonoBehaviour
 
     void Start()
     {
-        character = new Characters("okay", 10, 10, 10, 10, 10);
+        character = new Characters("okay", "Test", 10, 10, 10, 10, 1, 1);
         enemy = new Monster(1, 1, 1, 1, 1, false, 1, 1, 1);
         enemy2 = new Monster(1, 1, 1, 1, 1, false, 1, 1, 1);
         enemy3 = new Monster(1, 1, 1, 1, 1, false, 1, 1, 1);
@@ -77,7 +77,7 @@ public class BattleAttackHandler : MonoBehaviour
         fightMessage = "You attack " + selection.getArrowPos() + "! It does " + damageDone + " HP";
         if(whichSkill >= 0)
         {
-            damageDone = character.getSkills()[whichSkill].getValues();
+            damageDone = character.getSkills()[whichSkill].getValue();
             fightMessage = "You cast " + character.getSkills()[whichSkill].getName() + "! It does " + damageDone + " HP!";
         }
         return damageDone;

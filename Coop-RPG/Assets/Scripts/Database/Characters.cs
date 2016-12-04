@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-using namespace AssemblyCSharp{
+namespace AssemblyCSharp{
+    [Serializable]
 	public class Characters
 	{
 		int attack, magic, defense, hp, exp, level;
