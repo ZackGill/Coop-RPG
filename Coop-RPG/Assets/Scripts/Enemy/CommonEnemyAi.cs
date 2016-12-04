@@ -125,7 +125,6 @@ public class CommonEnemyAi : MonoBehaviour
                 return selectedplayer;   // player with highest threat
             }else
             {
-					return selectedplayer;
 				return selectedplayer;
             }
 		}
