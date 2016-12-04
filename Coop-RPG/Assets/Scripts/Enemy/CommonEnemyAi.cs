@@ -32,7 +32,7 @@ public class CommonEnemyAi : MonoBehaviour
     private int coolDownTimerAttack = 0;
 	//private int[] playerThreat;
 	Skill[] enemySkills = new Skill[8];
-	int[][] coolDownList;
+	int[,] coolDownList;
 
 	public int AI(Monster enemy, int whichMonster)
     {
@@ -64,11 +64,11 @@ public class CommonEnemyAi : MonoBehaviour
 			}
 		}
 
-		if (coolDownList[whichMonster][chosenSkill] == 0) {
+		if (coolDownList[whichMonster,chosenSkill] == 0) {
 			if (Random.Range (0.00f, 1.00f) > enemy.getMistakeChance()) {
 				//TODO: have cooldown timers for each skill instead of just one.
 
-				coolDownList[whichMonster][chosenSkill] = enemySkills[chosenSkill].getCooldown();
+				coolDownList[whichMonster,chosenSkill] = enemySkills[chosenSkill].getCooldown();
 				return chosenSkill;
 			} else {
 				return -1;
@@ -147,13 +147,13 @@ public class CommonEnemyAi : MonoBehaviour
 
    	void update()
     {
-        for (int j = 0; j < coolDownList.Length; j++)
+		for (int j = 0; j < coolDownList.GetLength(0); j++)
         {
-            for (int i = 0; i < coolDownList[j].Length; i++)
+			for (int i = 0; i < coolDownList.GetLength(1); i++)
             {
-                if (coolDownList[j][i] > 0)
+                if (coolDownList[j,i] > 0)
                 {
-                    coolDownList[j][i]--;
+                    coolDownList[j,i]--;
                 }
             }
         }
