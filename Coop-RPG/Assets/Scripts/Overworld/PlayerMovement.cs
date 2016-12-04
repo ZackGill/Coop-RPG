@@ -12,7 +12,8 @@ public class PlayerMovement : NetworkBehaviour
 
     public float speed = 2.25F;
 
-
+    [SyncVar]
+    public int health;
 
     public GameObject battleFab;
     public GameObject overworldBattle;
@@ -358,6 +359,15 @@ public class PlayerMovement : NetworkBehaviour
     {
         print("Enemy damage in player");
         battleDump.GetComponent<OverworldBattle>().CmdEnemyDamage(enemy1HP, enemy2HP, enemy3HP);
+
+    }
+
+    [Command]
+    public void CmdFightMessage(GameObject battleDump, string fightMessage)
+    {
+
+        print("setting fight Message");
+        battleDump.GetComponent<OverworldBattle>().CmdFightMessage(fightMessage);
 
     }
 }

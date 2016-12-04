@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using AssemblyCSharp;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 // This is kind of the logic behind the GUI and the states that influence it. The logic for the damage and moves being done is in 
 // BattleAttackHandler.
 public class BattleLogic : NetworkBehaviour
@@ -11,13 +12,13 @@ public class BattleLogic : NetworkBehaviour
     public OverworldBattle infoDump;
     public int playerNum; // Is this player 0, 1, or 2 in a battle?
 
-    public delegate void PlayerDamageDelegate(float amount, int playerNum);
+ /*   public delegate void PlayerDamageDelegate(float amount, int playerNum);
     public delegate void EnemyDamageDelegate(float amount0, float amount1, float amount2);
 
     [SyncEvent]
     public event PlayerDamageDelegate EventPlayerDamage = delegate { };
     [SyncEvent]
-    public event EnemyDamageDelegate EventEnemyDamage = delegate { };
+    public event EnemyDamageDelegate EventEnemyDamage = delegate { };*/
 
 
 
@@ -67,8 +68,30 @@ public class BattleLogic : NetworkBehaviour
         transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdPlayerDamage(infoDump.gameObject, 0, 10);
         transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdEnemyDamage(infoDump.gameObject, 5, 0, 0);
 
-       // infoDump.CmdPlayerDamage(10, 0);
-      //  infoDump.CmdEnemyDamage(5, 0, 0);
+        transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdFightMessage(infoDump.gameObject, "Did the fight Message work");
+
+
+        // infoDump.CmdPlayerDamage(10, 0);
+        //  infoDump.CmdEnemyDamage(5, 0, 0);
+    }
+
+    public void sendFightMessage(string message)
+    {
+        transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdFightMessage(infoDump.gameObject, message);
+
+    }
+
+   public void sendEnemyDamage(float enemy0, float enemy1, float enemy2)
+    {
+
+        transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdEnemyDamage(infoDump.gameObject, enemy0, enemy1, enemy2);
+
+    }
+
+   public void sendPlayerDamage(float damage)
+    {
+        transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdPlayerDamage(infoDump.gameObject, playerNum, damage);
+
     }
 
     void setEnemyHP()
@@ -101,7 +124,18 @@ public class BattleLogic : NetworkBehaviour
         }
     }
 
-    void Start()
+    void setFightMessage()
+    {
+        if (infoDump == null)
+            return;
+        fightMessage = infoDump.info.fightMessage;
+
+    }
+    
+
+    // Instead of start function, call this with a little delay (maybe .1s). 
+    // This will assign everything from infoDump. Delay is used to make sure Info dump has been assigned.
+    void startFromDump()
     {
         attack = GetComponent<BattleAttackHandler>();
         //character = GetComponent<Characters>(); // Replace with pulling from a holder gameobject
@@ -110,26 +144,61 @@ public class BattleLogic : NetworkBehaviour
         stateQueue = new List<BattleScreenStates.FightStates>();
         stateQueue.Add(BattleScreenStates.FightStates.BEGINNING);
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
-       
-
-	enemies = new Monster[3];
-
-	playerMaxHP = 100;
-	playerHP = 97;
 
 
-        enemies[0] = new Monster(5, 1, 1, 1, 1, false, 1, 1, 1);
-	enemyHP = enemies[0].getHP();
+        enemies = new Monster[3];
+        if (infoDump != null)
+        {
+            enemies[0] = infoDump.enemy0;
+            enemies[1] = infoDump.enemy1;
+            enemies[2] = infoDump.enemy2;
+            activeTime.setEnemyMaxTime(infoDump.info.enemy0Max);
+            activeTime.setEnemySeconds(infoDump.info.enemy0Sec);
 
-	fightMessage = "Squaktopus silthers hither";
-        StartCoroutine(updateCharacter());
+            if(infoDump.info.numEnemies > 2)
+            {
+                enemy2ActiveTime.setEnemyMaxTime(infoDump.info.enemy1Max);
+                enemy2ActiveTime.setEnemySeconds(infoDump.info.enemy1Sec);
+                enemy3ActiveTime.setEnemyMaxTime(infoDump.info.enemy2Max);
+                enemy3ActiveTime.setEnemySeconds(infoDump.info.enemy2Sec);
+            }
+            else if(infoDump.info.numEnemies > 1)
+            {
+                enemy2ActiveTime.setEnemyMaxTime(infoDump.info.enemy1Max);
+                enemy2ActiveTime.setEnemySeconds(infoDump.info.enemy1Sec);
+            }
 
-        numEnemies = 1;
-	numPlayers = 1;
-       
 
+            setEnemyHP();
 
-        //Invoke("CmdTest", 5f);
+            switch (playerNum)
+            {
+                case 0:
+                    character = infoDump.player0;
+                    break;
+                case 1:
+                    character = infoDump.player1;
+                    break;
+                case 2:
+                    character = infoDump.player2;
+                    break;
+            }
+            playerMaxHP = character.getHP();
+            setPlayerHP();
+            numPlayers = infoDump.info.numPlayers;
+            enemyAttackFlag = infoDump.info.enemyAttackFlag;
+        }
+        else
+        {
+            print("infoDUmp null");
+        }
+
+    }
+
+    // TODO: Replace new monsters and characters with pulling references from collided objects.
+    void Start()
+    {
+        Invoke("startFromDump", .1f);
     }
 
     void Update() {
@@ -152,8 +221,7 @@ public class BattleLogic : NetworkBehaviour
         {
             setEnemyHP();
             setPlayerHP();
-            if(infoDump != null)
-            infoDump.info.fightMessage = fightMessage; // Need to call command for this.
+            setFightMessage();
         }
        // print(state.curState);
 
@@ -176,6 +244,7 @@ public class BattleLogic : NetworkBehaviour
 		morePlayers();
 		toggleState();
 	}
+        stateCheck();
     }
 
 	// This is fetching data from database. Could probably not do that now that
@@ -217,6 +286,8 @@ public class BattleLogic : NetworkBehaviour
 
     void checkIfAllAreDead()
     {
+        if (enemies == null)
+            return;
         switch (numEnemies)
         {
             case 1:
@@ -236,8 +307,11 @@ public class BattleLogic : NetworkBehaviour
 
     void stateCheck()
     {
+        if (activeTime == null)
+            return;
         if (activeTime.GetEnemyRatio() == 1)
         {
+            print("Enemy attacking");
             stateQueue.Add(BattleScreenStates.FightStates.ENEMYTURN);
             activeTime.setEnemySeconds(0);
             enemyAttackFlag = true;
@@ -298,19 +372,19 @@ public class BattleLogic : NetworkBehaviour
         {
 
             if ((whichSkill >= 0) && character.getSkills()[whichSkill].getType() == "heal")
-                playerHP += attack.giveDamage(whichSkill); // Replace with Command
+                sendPlayerDamage(-attack.giveDamage(whichSkill)); // Replace with Command
 
             //WHICH ENEMY GETS HURT?
-            else if(selection.getArrowPos() == 0)
-                enemy2HP -= attack.giveDamage(whichSkill); // Replace with Command
+            else if (selection.getArrowPos() == 0)
+                sendEnemyDamage(0, attack.giveDamage(whichSkill), 0);
             else if (selection.getArrowPos() == 1)
-                enemyHP -= attack.giveDamage(whichSkill);	// Replace with Command
+                sendEnemyDamage(attack.giveDamage(whichSkill), 0, 0);
             else if (selection.getArrowPos() == 2)
-                enemy3HP -= attack.giveDamage(whichSkill);	// Replace with Command
+                sendEnemyDamage(0, 0, attack.giveDamage(whichSkill));
 
             playerAttackFlag = false;
             currentMoveSelected = false;
-            fightMessage = attack.getFightMessage();
+            sendFightMessage(attack.getFightMessage());
             whichSkill = -1;
         }
 
@@ -318,35 +392,44 @@ public class BattleLogic : NetworkBehaviour
         {
 
             // Check Target. Random for now. Refer to BattleAttackHandler.cs
-            if(attack.getTarget() == 0)
-                playerHP -= attack.enemyAttacks(); // Replace with Command
+            if(attack.getTarget() == playerNum)
+                sendPlayerDamage(attack.enemyAttacks()); // Replace with Command
             else
                 print(attack.enemyAttacks());
 
             enemyAttackFlag = false; // Update dump with Command
-            fightMessage = attack.getFightMessage(); // Update from Command if wanted same message network wide.
+            sendFightMessage(attack.getFightMessage());
         }
         if (state.curState == BattleScreenStates.FightStates.LOSE)
-            fightMessage = playerName + " fainted. Try again."; // Update from Command
+        {
+            sendFightMessage(playerName + " fainted. Try again."); // Update from Command
+            // When lose, just send back to lobby.
+            SceneManager.LoadScene("Lobby");
+        }
         if (state.curState == BattleScreenStates.FightStates.WIN)
-            fightMessage = "Enemy was defeated! " + playerName + " wins!"; // Update from Command
+        {
+            sendFightMessage("Enemy was defeated! " + playerName + " wins!"); // Update from Command
+            // On win, call die in battle Holder. Will handle showing player again and all.
+            transform.GetComponentInParent<BattleHolderScript>().die();
+        }
         if (state.curState == BattleScreenStates.FightStates.SECONDENEMYJOINS)
         {
 
-		fightMessage = "Good grief! A new enemy joins in";
+		sendFightMessage("Good grief! A new enemy joins in");
 		// Update message and num enemies with Command
         }
         if (state.curState == BattleScreenStates.FightStates.THIRDENEMYJOINS)
         {
-		fightMessage = "Just my luck! It's another enemy!";
+		sendFightMessage("Just my luck! It's another enemy!");
 		// Update message and possibly num enemies with Command.
         }
         if (state.curState == BattleScreenStates.FightStates.FRIENDJOINS)
         {
-            fightMessage = "Good news! Help has arrived!"; // Replace with command if want network wide message
+            print("FriendJoins");
+            sendFightMessage("Good news! Help has arrived!"); // Replace with command if want network wide message
         }
         if (state.curState == BattleScreenStates.FightStates.PICKANENEMY)
-            fightMessage = "Select a target.";
+            sendFightMessage("Select a target.");
     }
 
     void moreEnemies()

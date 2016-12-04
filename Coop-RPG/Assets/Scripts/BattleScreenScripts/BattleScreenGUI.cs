@@ -99,7 +99,9 @@ public class BattleScreenGUI : MonoBehaviour
         enemy2 = transform.FindChild("EnemyPanel/Enemy2").GetComponent<SpriteRenderer>();
         enemy3 = transform.FindChild("EnemyPanel/Enemy3").GetComponent<SpriteRenderer>();
         enemy2.enabled = false;
+        enemy2.gameObject.GetComponent<Image>().enabled = false;
         enemy3.enabled = false;
+        enemy3.gameObject.GetComponent<Image>().enabled = false;
 
         enemies = new Monster[3];
 
@@ -162,11 +164,15 @@ public class BattleScreenGUI : MonoBehaviour
                 fightMessage.text = battleLogic.getFightMessage();
                 fightButtonsPanel.interactable = false;
                 enemy2.enabled = true;
+                enemy2.gameObject.GetComponent<Image>().enabled = true;
+
                 break;
             case (BattleScreenStates.FightStates.THIRDENEMYJOINS):
                 fightMessage.text = battleLogic.getFightMessage();
                 fightButtonsPanel.interactable = false;
                 enemy3.enabled = true;
+                enemy3.gameObject.GetComponent<Image>().enabled = true;
+
                 break;
             case (BattleScreenStates.FightStates.FRIENDJOINS):
                 fightMessage.text = battleLogic.getFightMessage();
@@ -198,23 +204,35 @@ public class BattleScreenGUI : MonoBehaviour
 
     void checkDeadEnemies()
     {
+        if (enemies == null)
+            return;
         if (enemies[0].getDead())
         {
             enemy1.GetComponentInParent<Animator>().enabled = false;
             enemy1.sprite = transform.Find("squak_defeated").GetComponent<SpriteRenderer>().sprite;
+            enemy1.gameObject.GetComponent<Image>().sprite = transform.Find("squak_defeated").GetComponent<SpriteRenderer>().sprite;
             enemy1.color = new Color(.4f, .4f, .4f, 1);
+            enemy1.gameObject.GetComponent<Image>().color = new Color(.4f, .4f, .4f, 1);
         }
         if (battleLogic.getNumEnemies() >= 2 && enemies[1].getDead())
         {
             enemy2.GetComponentInParent<Animator>().enabled = false;
             enemy2.sprite = transform.Find("squak_defeated").GetComponent<SpriteRenderer>().sprite;
+            enemy2.gameObject.GetComponent<Image>().sprite = transform.Find("squak_defeated").GetComponent<SpriteRenderer>().sprite;
+
             enemy2.color = new Color(.4f, .4f, .4f, 1);
+            enemy2.gameObject.GetComponent<Image>().color = new Color(.4f, .4f, .4f, 1);
+
         }
         if (battleLogic.getNumEnemies() >= 3 && enemies[2].getDead())
         {
             enemy3.GetComponentInParent<Animator>().enabled = false;
             enemy3.sprite = transform.Find("squak_defeated").GetComponent<SpriteRenderer>().sprite;
+            enemy3.gameObject.GetComponent<Image>().sprite = transform.Find("squak_defeated").GetComponent<SpriteRenderer>().sprite;
+
             enemy3.color = new Color(.4f, .4f, .4f, 1);
+            enemy3.gameObject.GetComponent<Image>().color = new Color(.4f, .4f, .4f, 1);
+
         }
 
     }

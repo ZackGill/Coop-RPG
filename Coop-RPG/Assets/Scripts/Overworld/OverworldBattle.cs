@@ -120,7 +120,16 @@ public class OverworldBattle : NetworkBehaviour {
 
     // CMD and RPC to update the info of the non-synch vars.
 
+    [Command]
+    public void CmdFightMessage(string message)
+    {
 
+        print("fight message");
+        BattleInfo temp = info;
+        temp.fightMessage = message;
+        info = temp;
+
+    }
 
 
 }
