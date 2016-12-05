@@ -25,18 +25,15 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            Invoke("startPos", .1f);
-            GameObject[] temp = GameObject.FindGameObjectsWithTag("LobbyPlayer");
-            for(int i = 0; i < temp.Length; i++)
-            {
-                
+            InvokeRepeating("startPos", .1f, 1f);
 
-            }
         }
     }
 
     void startPos()
     {
+        if (LoadingScript.Instance.loading)
+            return;
         if (!isLocalPlayer)
             return;
         GenerateDungeon temp = GameObject.Find("DungeonGen").GetComponent<GenerateDungeon>();
@@ -55,11 +52,15 @@ public class PlayerMovement : NetworkBehaviour
                 transform.position = temp.spawnLocal3.transform.position;
                 break;
         }
+        CancelInvoke();
+
 
     }
     // Update is called once per frame
     void Update()
     {
+        if (LoadingScript.Instance.loading)
+            return;
         if (!isLocalPlayer)
         {
 
@@ -67,6 +68,7 @@ public class PlayerMovement : NetworkBehaviour
         }
         else
         {
+
             if (inBattle)
             {
                 speed = 0;
@@ -112,6 +114,19 @@ public class PlayerMovement : NetworkBehaviour
 			dir = 1;
 		}
 		GetComponent<Animator> ().SetInteger ("Dir", dir);
+
+        if(characterInfo == null)
+        {
+
+            for(int i = 0; i < LoadingScript.Instance.chList.Length; i++)
+            {
+                if(LoadingScript.Instance.chList[i].getName().CompareTo(charName) == 0)
+                {
+                    characterInfo = LoadingScript.Instance.chList[i];
+                }
+            }
+
+        }
     }
 
     void FixedUpdate()
@@ -167,6 +182,8 @@ public class PlayerMovement : NetworkBehaviour
                     return;
                 if (col.gameObject.GetComponent<OverworldBattle>().info.numPlayers >= 3)
                     return;
+                if (col.gameObject.GetComponent<OverworldBattle>().info.numEnemies <= 0)
+                    return;
                 print("Dustcloud hit");
                 battle = (GameObject)Instantiate(battleFab, Vector3.zero, Quaternion.identity);
                 inBattle = true;
@@ -202,19 +219,13 @@ public class PlayerMovement : NetworkBehaviour
                     NetworkServer.SpawnWithClientAuthority(tempB, connectionToClient);
 
                     OverworldBattle temp2 = tempB.GetComponent<OverworldBattle>();
-                    temp2.enemy0 = monster.GetComponent<MonsterStorage>().monster; // Make sure wandering monsters have this script
-                    temp2.info.numPlayers = 1;
-                    temp2.info.numEnemies = 1;
+                    temp2.CmdAddMonster(monster); // Make sure wandering monsters have this script
 
-                temp2.player0 = player.GetComponent<PlayerMovement>().characterInfo;
+                temp2.CmdAddPlayer(player);
 
                 if (temp2 == null)
                     print("Assigning a null to infodump");
-                if (player.GetComponent<PlayerMovement>().battle != null)
-                {
-                    player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump = temp2;
-                    player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().playerNum = temp2.info.numPlayers - 1;
-                }
+
                     if (temp2.battle0 != null)
                         if (temp2.battle1 != null)
                             if (temp2.battle2 != null)
@@ -228,32 +239,27 @@ public class PlayerMovement : NetworkBehaviour
                     temp2.battle0 = player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>();
                 else
                     print("battle is null");
-                
+                RpcUpdatePlayerDump(player, tempB);
+
             }
             else
             {
-                battleDumpThing.GetComponent<OverworldBattle>().CmdAddPlayer();
-               /* if (battleDumpThing.GetComponent<OverworldBattle>().player0 == null)
-                    battleDump.GetComponent<OverworldBattle>().player0 = player.GetComponent<Characters>();
-                else if (battleDumpThing.GetComponent<OverworldBattle>().player1 == null)
-                    battleDump.GetComponent<OverworldBattle>().player1 = player.GetComponent<Characters>();
-                else if (battleDumpThing.GetComponent<OverworldBattle>().player2 == null)
-                    battleDump.GetComponent<OverworldBattle>().player2 = player.GetComponent<Characters>();
-                    */
+                battleDumpThing.GetComponent<OverworldBattle>().CmdAddPlayer(player);
 
+                RpcUpdatePlayerDump(player, battleDumpThing);
 
             }
-            RpcUpdatePlayerDump(player, battleDumpThing);
 
         }
         else
         {
-            // Destroy the overwold battle thing. Not pulling any data, should be done already.
+            // Destroy the overwold battle thing. Not pulling any data, should be done already. Not doing network, seeing if that 
+            // avoids issues from slow leaving.
             if (battleDumpThing != null)
             {
-                battleDumpThing.GetComponent<CircleCollider2D>().enabled = false;
+                /*battleDumpThing.GetComponent<CircleCollider2D>().enabled = false;
                 battleDumpThing.GetComponent<SpriteRenderer>().enabled = false;
-          
+                */
             }
             else
             {
@@ -262,12 +268,11 @@ public class PlayerMovement : NetworkBehaviour
             }
             if (battleDump != null)
             {
-                print("Destory battle dump");
-                battleDump.GetComponent<CircleCollider2D>().enabled = false;
-                Network.Destroy(battleDump);
+                //battleDump.GetComponent<CircleCollider2D>().enabled = false;
+                //Destroy(battleDump);
             }
-            print("Destroy battle dump thign");
-            Network.Destroy(battleDumpThing);
+           // Destroy(battleDumpThing);
+          // battleDumpThing.GetComponent<OverworldBattle>().cmdR
             player.GetComponent<PlayerMovement>().inBattle = false;
         }
         print("Player hitbox and stuff setting " + toggle);
@@ -286,18 +291,26 @@ public class PlayerMovement : NetworkBehaviour
 
     }
 
+    [Command]
+    public void CmdDestroyDump(GameObject dump)
+    {
+        Network.Destroy(dump);
+    }
+
     [ClientRpc]
     public void RpcUpdatePlayerDump(GameObject player, GameObject battleDump)
     {
         if (battleDump == null)
         {
             print("BattleDump null");
+            Destroy(player.GetComponent<PlayerMovement>().battle);
             return;
         }
         if (battleDump.GetComponent<OverworldBattle>() == null)
             print("Battledump script is null");
         if (player.GetComponent<PlayerMovement>().battle != null)
         {
+            print("Battle Logic should be getting info dumped now");
             player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump = battleDump.GetComponent<OverworldBattle>();
             player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().playerNum = battleDump.GetComponent<OverworldBattle>().info.numPlayers - 1;
 
@@ -377,4 +390,17 @@ public class PlayerMovement : NetworkBehaviour
         print("Setting attack flag");
         battleDump.GetComponent<OverworldBattle>().CmdAttackFlag(flag);
     }
+
+    [Command]
+    public void CmdEnemyTime(GameObject battleDump, float one, float two, float three)
+    {
+        battleDump.GetComponent<OverworldBattle>().CmdEnemyTimes(one, two, three);
+    }
+
+    [Command]
+    public void CmdEnemyMaxTime(GameObject battleDump, float one, float two, float three)
+    {
+        battleDump.GetComponent<OverworldBattle>().CmdEnemyMaxTimes(one, two, three);
+    }
+
 }

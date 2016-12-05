@@ -5,7 +5,7 @@ using SimpleFirebaseUnity;
 using SimpleFirebaseUnity.MiniJSON;
 using UnityEngine;
 
-
+[Serializable]
 public class Skill
 {
 		

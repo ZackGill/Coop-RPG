@@ -7,12 +7,21 @@ public class BattleHolderScript : NetworkBehaviour {
 	void Start () {
         //GetComponentInChildren<Canvas>().worldCamera = Camera.main;
 
-        Invoke("die", 60f);
+        //Invoke("die", 60f);
 	}
 	
     public void die()
     {
-        player.GetComponent<PlayerMovement>().CmdPlayerToggle(true, null, player, player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump.gameObject, false);
+        if (player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump != null)
+        {
+            player.GetComponent<PlayerMovement>().CmdPlayerToggle(true, null, player, player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump.gameObject, false);
+            player.GetComponent<PlayerMovement>().CmdDestroyDump(player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump.gameObject);
+        }
+        else
+        {
+            player.GetComponent<PlayerMovement>().CmdPlayerToggle(true, null, player, null, false);
+
+        }
         Destroy(gameObject);
     }
 

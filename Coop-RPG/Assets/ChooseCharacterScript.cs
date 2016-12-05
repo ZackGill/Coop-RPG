@@ -36,6 +36,7 @@ public class ChooseCharacterScript : MonoBehaviour {
     public void Click()
     {
         print("MouseDown");
-        StartCoroutine(chooseChar());
+        character.charName = charName.text;
+        play();
     }
 }

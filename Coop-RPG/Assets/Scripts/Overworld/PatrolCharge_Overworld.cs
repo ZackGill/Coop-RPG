@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using AssemblyCSharp;
 public class PatrolCharge_Overworld : NetworkBehaviour
 {
     private GameObject[] playerPos = null;
@@ -150,6 +151,8 @@ public class PatrolCharge_Overworld : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (LoadingScript.Instance.loading)
+            return;
         transform.rotation = Quaternion.Euler(Vector3.zero);
         if (playerPos == null)
         {

@@ -73,4 +73,14 @@ public class ActiveTime : MonoBehaviour {
         enable = false;
     }
 
+    public float getEnemySec()
+    {
+        return enemySeconds;
+    }
+
+    public float getEnemyMax()
+    {
+        return enemyMaxTime;
+    }
+
 }

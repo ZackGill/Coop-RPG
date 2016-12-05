@@ -122,7 +122,8 @@ using AssemblyCSharp;
 
     public void play()
     {
-        StartCoroutine(chooseChar());
+        character.charName = charName.text;
+        playGo();
     }
 
     public IEnumerator chooseChar()

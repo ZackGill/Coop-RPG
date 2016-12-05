@@ -51,7 +51,9 @@ public class BattleLogic : NetworkBehaviour
     private ActiveTime enemy2ActiveTime;
     private ActiveTime enemy3ActiveTime;
     private BattleAttackHandler attack;
-    List<BattleScreenStates.FightStates> stateQueue;
+    public List<BattleScreenStates.FightStates> stateQueue;
+
+    bool dumpLoad = true;
 
     // Used by Zack to test Mulitplayer synching. Using this so don't have to try skills and all,
     // since their use isn't completed in the battle code by Lex and Bob, don't want to spend hours porting it
@@ -77,27 +79,74 @@ public class BattleLogic : NetworkBehaviour
 
     public void sendFightMessage(string message)
     {
+        if (infoDump == null)
+            return;
         transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdFightMessage(infoDump.gameObject, message);
 
     }
 
    public void sendEnemyDamage(float enemy0, float enemy1, float enemy2)
     {
-
+        if (infoDump == null)
+            return;
         transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdEnemyDamage(infoDump.gameObject, enemy0, enemy1, enemy2);
 
     }
 
    public void sendPlayerDamage(float damage)
     {
+        if (infoDump == null)
+            return;
         transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdPlayerDamage(infoDump.gameObject, playerNum, damage);
 
     }
 
     public void sendAttackFlag(bool flag)
     {
+        if (infoDump == null)
+            return;
         enemyAttackFlag = flag;
         transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdAttackFlag(infoDump.gameObject, flag);
+    }
+
+
+    void sendEnemyTime()
+    {
+        if (infoDump == null)
+            return;
+        transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdEnemyTime(infoDump.gameObject, activeTime.getEnemySec(), enemy2ActiveTime.getEnemySec(), enemy3ActiveTime.getEnemySec());
+    }
+
+    void sendEnemyMaxTime()
+    {
+        if (infoDump == null)
+            return;
+        transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdEnemyMaxTime(infoDump.gameObject, activeTime.getEnemyMax(), enemy2ActiveTime.getEnemyMax(), enemy3ActiveTime.getEnemyMax());
+    }
+
+    void setEnemyTime()
+    {
+        if (infoDump == null)
+            return;
+        if(activeTime != null)
+        activeTime.setEnemySeconds(infoDump.info.enemy0Sec);
+        if(enemy2ActiveTime != null)
+        enemy2ActiveTime.setEnemySeconds(infoDump.info.enemy1Sec);
+        if(enemy3ActiveTime != null)
+        enemy3ActiveTime.setEnemySeconds(infoDump.info.enemy2Sec);
+
+    }
+
+    void setEnemyMaxTime()
+    {
+        if (infoDump == null)
+            return;
+        activeTime.setEnemyMaxTime(infoDump.info.enemy0Max);
+        if(enemy2ActiveTime != null)
+            enemy2ActiveTime.setEnemyMaxTime(infoDump.info.enemy1Max);
+        if(enemy3ActiveTime != null)
+            enemy3ActiveTime.setEnemyMaxTime(infoDump.info.enemy2Max);
+
     }
 
     void setEnemyHP()
@@ -137,14 +186,13 @@ public class BattleLogic : NetworkBehaviour
         fightMessage = infoDump.info.fightMessage;
 
     }
-    
+
 
     // Instead of start function, call this with a little delay (maybe .1s). 
     // This will assign everything from infoDump. Delay is used to make sure Info dump has been assigned.
     void startFromDump()
     {
         attack = GetComponent<BattleAttackHandler>();
-        //character = GetComponent<Characters>(); // Replace with pulling from a holder gameobject
         state = GetComponent<BattleScreenStates>();
         selection = GetComponent<ArrowSelection>();
         stateQueue = new List<BattleScreenStates.FightStates>();
@@ -174,9 +222,11 @@ public class BattleLogic : NetworkBehaviour
                 enemy2ActiveTime.setEnemySeconds(infoDump.info.enemy1Sec);
             }
 
-
+            numPlayers = infoDump.info.numPlayers;
+            numEnemies = infoDump.info.numEnemies;
+            playerNum = infoDump.info.numPlayers - 1;
             setEnemyHP();
-
+            
             switch (playerNum)
             {
                 case 0:
@@ -188,23 +238,32 @@ public class BattleLogic : NetworkBehaviour
                 case 2:
                     character = infoDump.player2;
                     break;
+                default:
+                    print("Character still null in Battle Logic");
+                    break;
             }
             playerMaxHP = character.getHP();
             setPlayerHP();
-            numPlayers = infoDump.info.numPlayers;
+
             enemyAttackFlag = infoDump.info.enemyAttackFlag;
+
+
+            setEnemyMaxTime();
+            setEnemyTime();
+            GetComponent<BattleScreenGUI>().fillSkillButtons();
         }
         else
         {
             print("infoDUmp null");
         }
+        dumpLoad = false;
 
     }
 
     // TODO: Replace new monsters and characters with pulling references from collided objects.
     void Start()
     {
-        Invoke("startFromDump", .1f);
+        Invoke("startFromDump", 2f);
     }
 
     void Update() {
@@ -250,6 +309,8 @@ public class BattleLogic : NetworkBehaviour
 		morePlayers();
 		toggleState();
 	}
+        if(!dumpLoad)
+            checkBattleOver();
         stateCheck();
     }
 
@@ -269,23 +330,28 @@ public class BattleLogic : NetworkBehaviour
     {
         if (playerHP <= 0)
             stateQueue.Add(BattleScreenStates.FightStates.LOSE);
-        if (enemyHP <= 0)
+        if (enemyHP <= 0 && !enemies[0].getDead())
         {
             enemies[0].setDead(true);
             activeTime.disable();
             checkIfAllAreDead();
+           // transform.GetComponentInParent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdRemoveEnemy(infoDump.gameObject);
         }
-        if (numEnemies >= 2 && enemy2HP <= 0)
+        if (numEnemies >= 2 && enemy2HP <= 0 && !enemies[1].getDead())
         {
             enemies[1].setDead(true);
             enemy2ActiveTime.disable();
             checkIfAllAreDead();
+           // transform.GetComponentInParent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdRemoveEnemy(infoDump.gameObject);
+
         }
-        if (numEnemies == 3 && enemy3HP <= 0)
+        if (numEnemies == 3 && enemy3HP <= 0 && !enemies[2].getDead())
         {
             enemies[2].setDead(true);
             enemy3ActiveTime.disable();
             checkIfAllAreDead();
+          //  transform.GetComponentInParent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdRemoveEnemy(infoDump.gameObject);
+
         }
 
     }
@@ -294,6 +360,7 @@ public class BattleLogic : NetworkBehaviour
     {
         if (enemies == null)
             return;
+
         switch (numEnemies)
         {
             case 1:
@@ -393,6 +460,9 @@ public class BattleLogic : NetworkBehaviour
             currentMoveSelected = false;
             sendFightMessage(attack.getFightMessage());
             whichSkill = -1;
+
+            checkBattleOver();
+
         }
 
         if (state.curState == BattleScreenStates.FightStates.ENEMYTURN && enemyAttackFlag == true)
@@ -407,15 +477,23 @@ public class BattleLogic : NetworkBehaviour
             if (infoDump != null)
                 sendAttackFlag(false); // Need Command to do this
             sendFightMessage(attack.getFightMessage());
+
+            checkBattleOver();
+
         }
         if (state.curState == BattleScreenStates.FightStates.LOSE)
         {
             sendFightMessage(playerName + " fainted. Try again."); // Update from Command
             // When lose, just send back to lobby.
-            SceneManager.LoadScene("Lobby");
+            if(!transform.GetComponentInParent<BattleHolderScript>().isServer) // Make it so if Server dies, game goes on. Tough crap server player, get gid scrub. Or we could be nice.
+                SceneManager.LoadScene("Menu");
+            else if(Network.connections.Length <= 1)
+                SceneManager.LoadScene("Menu");
+
         }
         if (state.curState == BattleScreenStates.FightStates.WIN)
         {
+            print("Battle Win");
             sendFightMessage("Enemy was defeated! " + playerName + " wins!"); // Update from Command
             // On win, call die in battle Holder. Will handle showing player again and all.
             transform.GetComponentInParent<BattleHolderScript>().die();

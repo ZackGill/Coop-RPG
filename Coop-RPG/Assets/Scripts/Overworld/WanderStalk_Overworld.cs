@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using AssemblyCSharp;
 class coord
 {
     public int x, y;
@@ -139,6 +140,8 @@ public class WanderStalk_Overworld : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (LoadingScript.Instance.loading)
+            return;
         transform.rotation = Quaternion.Euler(Vector3.zero);
 
         if (playerPos == null)

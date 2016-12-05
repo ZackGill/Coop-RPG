@@ -591,8 +591,11 @@ namespace AssemblyCSharp
                 DoDebug("DONE");
 
                 /// parseInfo
-                parsePerk(ref sTemp[i], tempJson);
-                DoDebug(sTemp[i].toString());
+                if (i < sTemp.Length)
+                {
+                    parsePerk(ref sTemp[i], tempJson);
+                    DoDebug(sTemp[i].toString());
+                }
                 /// call skill addperk function with parsed info
                 /// end loop
             }

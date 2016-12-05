@@ -12,8 +12,8 @@ public class DatabaseBattle : MonoBehaviour {
 
         //character = GetComponent<Characters>(); // Replace with holder and pull copy
 
-        enemy = new Monster(5, 1, 1, 1, 1, false, 1, 1, 1);
-        StartCoroutine(wait()); // Might not be needed since everything should be pulled already by Cameron
+        //enemy = new Monster(5, 1, 1, 1, 1, false, 1, 1, 1);
+       // StartCoroutine(wait()); // Might not be needed since everything should be pulled already by Cameron
     }
 	
 	// Update is called once per frame
