@@ -94,6 +94,12 @@ public class BattleLogic : NetworkBehaviour
 
     }
 
+    public void sendAttackFlag(bool flag)
+    {
+        enemyAttackFlag = flag;
+        transform.parent.GetComponent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdAttackFlag(infoDump.gameObject, flag);
+    }
+
     void setEnemyHP()
     {
         if (infoDump == null)
@@ -314,22 +320,23 @@ public class BattleLogic : NetworkBehaviour
             print("Enemy attacking");
             stateQueue.Add(BattleScreenStates.FightStates.ENEMYTURN);
             activeTime.setEnemySeconds(0);
-            enemyAttackFlag = true;
-            if (infoDump != null) 
-             infoDump.info.enemyAttackFlag = true; // Need Command to do this
+            if (infoDump != null)
+                sendAttackFlag(true); // Need Command to do this
         }
 
         if(numEnemies == 2 && enemy2ActiveTime.GetEnemyRatio() == 1)
         {
             stateQueue.Add(BattleScreenStates.FightStates.ENEMYTURN);
             enemy2ActiveTime.setEnemySeconds(5);
-            enemyAttackFlag = true;
+            if (infoDump != null)
+                sendAttackFlag(true); // Need Command to do this
         }
         if (numEnemies == 3 && enemy3ActiveTime.GetEnemyRatio() == 1)
         {
             stateQueue.Add(BattleScreenStates.FightStates.ENEMYTURN);
             enemy3ActiveTime.setEnemySeconds(10);
-            enemyAttackFlag = true;
+            if (infoDump != null)
+                sendAttackFlag(true); // Need Command to do this
         }
 
         if (currentMoveSelected && numEnemies > 1 && state.curState == BattleScreenStates.FightStates.NEUTRAL && !playerAttackFlag)
@@ -397,7 +404,8 @@ public class BattleLogic : NetworkBehaviour
             else
                 print(attack.enemyAttacks());
 
-            enemyAttackFlag = false; // Update dump with Command
+            if (infoDump != null)
+                sendAttackFlag(false); // Need Command to do this
             sendFightMessage(attack.getFightMessage());
         }
         if (state.curState == BattleScreenStates.FightStates.LOSE)

@@ -131,5 +131,14 @@ public class OverworldBattle : NetworkBehaviour {
 
     }
 
+    [Command]
+    public void CmdAttackFlag(bool flag)
+    {
+        print("flag");
+        BattleInfo temp = info;
+        temp.enemyAttackFlag = flag;
+        info = temp;
+    }
+
 
 }

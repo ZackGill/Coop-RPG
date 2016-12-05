@@ -370,4 +370,11 @@ public class PlayerMovement : NetworkBehaviour
         battleDump.GetComponent<OverworldBattle>().CmdFightMessage(fightMessage);
 
     }
+
+    [Command]
+    public void CmdAttackFlag(GameObject battleDump, bool flag)
+    {
+        print("Setting attack flag");
+        battleDump.GetComponent<OverworldBattle>().CmdAttackFlag(flag);
+    }
 }
