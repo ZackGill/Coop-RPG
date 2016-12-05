@@ -127,6 +127,7 @@ namespace Prototype.NetworkLobby
             nameInput.onEndEdit.RemoveAllListeners();
             nameInput.onEndEdit.AddListener(OnNameChanged);
 
+            if((GameObject.Find("CharacterInfo") != null))
             OnNameChanged(GameObject.Find("CharacterInfo").GetComponent<CharacterInfo>().charName);
 
             colorButton.onClick.RemoveAllListeners();
@@ -291,6 +292,7 @@ namespace Prototype.NetworkLobby
         [Command]
         public void CmdNameChanged(string name)
         {
+            print("Name changed");
             playerName = name;
         }
 

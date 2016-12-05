@@ -85,7 +85,7 @@ using AssemblyCSharp;
 
         DatabaseManager db = new DatabaseManager();
         StartCoroutine(db.runAcc(LoginName.text, LoginPass.text));
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(7f);
         loginCheck = db.getLogOnOk();
         chars = db.getCharList();
         checkLogin();
@@ -97,7 +97,7 @@ using AssemblyCSharp;
         DatabaseManager db = new DatabaseManager();
         StartCoroutine(db.runCreateAcc(LoginName.text, LoginPass.text, email.text));
         yield return new WaitForSeconds(5f);
-        createAccCheck = db.createAccGood();
+        createAccCheck = db.createGood;
         err = db.error;
         checkCreate();
     }
@@ -122,7 +122,8 @@ using AssemblyCSharp;
 
     public void play()
     {
-        StartCoroutine(chooseChar());
+        character.charName = charName.text;
+        playGo();
     }
 
     public IEnumerator chooseChar()
@@ -166,7 +167,7 @@ using AssemblyCSharp;
         temp = temp.Substring(1, temp.IndexOf('\"', 1)-1);
         print(temp);
         DatabaseManager db = new DatabaseManager();
-        StartCoroutine(db.runCreateChar(charName.text, temp));
+        StartCoroutine(db.runCreateChar(charName.text, temp, LoginName.text));
         yield return new WaitForSeconds(5f);
         play();
         // Put error checks here, will do later.

@@ -1,32 +1,64 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using UnityEngine.Networking;
 namespace AssemblyCSharp{
-public class LoadingScript : MonoBehaviour {
+public class LoadingScript : NetworkBehaviour {
 		DatabaseManager db = new DatabaseManager();
-		Characters ch;
-		Monster mon;
+		public Characters ch;
+		public Monster mon;
 		string monList;
-		Characters[] chList;
-		Monster[] monsterList;
+		public Characters[] chList;
+		public Monster[] monsterList;
+
+        [SyncVar]
+        public bool loading = true;
+
+        static LoadingScript _instance;
+
+        public static LoadingScript Instance
+        {
+            get
+            {
+                if(_instance == null)
+                {
+                    _instance = FindObjectOfType<LoadingScript>();
+                }
+                return _instance;
+            }
+        }
+
 
 		static int debug_idx = 0;
 		[SerializeField]
 		TextMesh txt;
 	// Use this for initialization
 	void Start () {
-			StartCoroutine (run ());
 
+            Invoke("help", 1f);
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    void help()
+        {
+            StartCoroutine(run());
+
+        }
+
+        // Update is called once per frame
+        void Update () {
 	
 	}
 
 		IEnumerator run() {
 			int mean = 0;
-			string[] charList = { "Lex", "Example" };
+
+
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+            string[] charList = new string [players.Length];
+            for(int i = 0; i < players.Length; i++)
+            {
+                charList[i] = players[i].GetComponent<PlayerMovement>().charName;
+            }
 			chList = new Characters[charList.Length];
 
 			for (int i = 0; i < charList.Length; i++) {
@@ -49,7 +81,43 @@ public class LoadingScript : MonoBehaviour {
 				yield return  StartCoroutine (loadMon (mList [i]));
 				monsterList [i] = mon;
 			}
-			//getMons (monList);
+
+
+            // Assign Monsters and Characters to everything
+
+            for (int i = 0; i < players.Length; i++)
+            {
+                players[i].GetComponent<PlayerMovement>().characterInfo = chList[i];
+                players[i].GetComponent<PlayerMovement>().health = chList[i].getHP();
+            }
+            // Note: When Assigning monsters, going based on monster list on Firebase
+            // Goes Patrol Charge, Boss, Wander Stalk.
+
+
+                PatrolCharge_Overworld[] temp = GameObject.FindObjectsOfType<PatrolCharge_Overworld>();
+                for(int a = 0; a < temp.Length; a++)
+                {
+                    temp[a].gameObject.GetComponent<MonsterStorage>().monster = monsterList[0];
+                }
+
+
+            WanderStalk_Overworld[] temp2 = GameObject.FindObjectsOfType<WanderStalk_Overworld>();
+            for (int a = 0; a < temp.Length; a++)
+            {
+                temp[a].gameObject.GetComponent<MonsterStorage>().monster = monsterList[2];
+            }
+
+
+            TotallyABossOverworld[] temp3 = GameObject.FindObjectsOfType<TotallyABossOverworld>();
+            for (int a = 0; a < temp.Length; a++)
+            {
+                temp[a].gameObject.GetComponent<MonsterStorage>().monster = monsterList[1];
+            }
+
+
+            //getMons (monList);
+            // See if this runs once all done. It should.
+            loading = false;
 			yield return new WaitForSeconds (1f);
 		}
 
