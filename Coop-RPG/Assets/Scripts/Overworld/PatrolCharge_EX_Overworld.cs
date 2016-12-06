@@ -16,6 +16,7 @@ public class PatrolCharge_EX_Overworld : NetworkBehaviour
     private coord next;
     bool exists = false, hunting = false;
     //why changes no push
+
     // Use this for initialization
     void Start()
     {

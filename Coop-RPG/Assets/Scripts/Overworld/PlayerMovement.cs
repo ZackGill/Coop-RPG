@@ -7,6 +7,9 @@ using Prototype.NetworkLobby;
 [NetworkSettings(channel = 0)]
 public class PlayerMovement : NetworkBehaviour
 {
+
+    public GameObject levelUp; // Prefab that is used to spawn level up holder.
+
     [SyncVar]
     public string charName;
 
@@ -21,6 +24,39 @@ public class PlayerMovement : NetworkBehaviour
 
     public Characters characterInfo;
     // Use this for initialization
+
+    public void loadMenu()
+    {
+        if (!isLocalPlayer)
+            return;
+        if (!isServer)
+        {
+            SceneManager.LoadScene("Menu");
+        }
+        else if (Network.connections.Length <= 1)
+        { // 1 means just server still?
+            SceneManager.LoadScene("Menu");
+        }
+    }
+
+    public void levelUpFunc()
+    {
+        if(!isLocalPlayer)
+            return;
+        GameObject tempLevel = (GameObject)Instantiate(levelUp, Vector3.zero, Quaternion.identity);
+        DungeonEnd end = tempLevel.GetComponent<DungeonEnd>();
+        if (end.charLeveled(characterInfo))
+        {
+            end.getClassPerks(characterInfo.getClass()); // calling as function? Should be good
+            string perks = end.perksForLevel(end.checkLevel(characterInfo.getExp() + end.dungeonExp));
+            print(perks); // Assuming perks are comma delimited
+        }
+        else // Didn't level, go back to menu after updating Firebase.
+        {
+            end.levelUp(characterInfo, "", "");
+        }
+    }
+
     void Start()
     {
         if (isLocalPlayer)
@@ -197,6 +233,24 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     public GameObject battleDump;
+
+    // Used to force level up calls on all clients
+    [ClientRpc]
+    public void RpcLevelUp()
+    {
+        levelUpFunc();
+    }
+
+    [Command]
+    public void CmdKillMonster(GameObject monster)
+    {
+        if (monster.GetComponent<TotallyABoss_Overworld>() != null)
+        {
+            levelUpFunc();
+            RpcLevelUp();
+        }
+        Network.Destroy(monster);
+    }
 
     [Command]
     public void CmdPlayerToggle(bool toggle, GameObject monster, GameObject player, GameObject battleDumpThing, bool existingBattle)

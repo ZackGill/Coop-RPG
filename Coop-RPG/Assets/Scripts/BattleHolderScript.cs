@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 public class BattleHolderScript : NetworkBehaviour {
     public GameObject player;
+    public GameObject monster;
 	// Use this for initialization
 	void Start () {
         //GetComponentInChildren<Canvas>().worldCamera = Camera.main;
@@ -22,6 +23,8 @@ public class BattleHolderScript : NetworkBehaviour {
             player.GetComponent<PlayerMovement>().CmdPlayerToggle(true, null, player, null, false);
 
         }
+        if (monster != null)
+            player.GetComponent<PlayerMovement>().CmdKillMonster(monster);
         Destroy(gameObject);
     }
 

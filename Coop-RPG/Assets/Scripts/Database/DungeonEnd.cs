@@ -3,51 +3,61 @@ using System.Collections;
 
 namespace AssemblyCSharp{
 public class DungeonEnd : MonoBehaviour {
-		int dungeonExp = 0;
+		public int dungeonExp = 0;
 		DatabaseManager db = new DatabaseManager();
-		string[] clPList;
-		Characters[] cList;
-		string tempStat;
-		string tempPerk;
+		public string[] clPList;
+		public Characters[] cList;
+		public string tempStat;
+		public string tempPerk;
 
 	// Use this for initialization
 	void Start () {
-			foreach (Characters ch in cList) {
-				if (charLeveled (ch)) {
-					int newExp = ch.getExp() + dungeonExp;
-					int newLevel = checkLevel (newExp);
-					StartCoroutine (db.runUpdateChar (ch.getName(), newExp, newLevel, tempStat, tempPerk));
-				} else {
-					StartCoroutine (db.runUpdateChar(ch.getName(), ch.getExp() + dungeonExp, 0, "", ""));
-				}
 
-			}
-	}
+    }
+
+    public void updateChars()
+        {
+            foreach (Characters ch in cList)
+            {
+                if (charLeveled(ch))
+                {
+                    int newExp = ch.getExp() + dungeonExp;
+                    int newLevel = checkLevel(newExp);
+                    StartCoroutine(db.runUpdateChar(ch.getName(), newExp, newLevel, tempStat, tempPerk));
+                }
+                else
+                {
+                    StartCoroutine(db.runUpdateChar(ch.getName(), ch.getExp() + dungeonExp, checkLevel(ch.getExp() + dungeonExp), "", ""));
+                }
+
+            }
+        }
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
-		IEnumerator getClassPerks(string clName) {
+		public IEnumerator getClassPerks(string clName) {
 			yield return StartCoroutine (db.runClPerks (clName));
 			clPList = db.getClassPerkList();
 		}
 
-		string perksForLevel(int level) {
+		public string perksForLevel(int level) {
 			return clPList [level];
 		}
 
-		void levelUp(Characters ch, string stat, string perk) {
-			
-		}
 
-		bool charLeveled(Characters ch) {
+		public void levelUp(Characters ch, string stat, string perk) {
+            StartCoroutine(db.runUpdateChar(ch.getName(), ch.getExp() + dungeonExp, checkLevel(ch.getExp() + dungeonExp), stat, perk));
+        }
+
+        public bool charLeveled(Characters ch) {
 			int exp = ch.getExp ();
 			exp += dungeonExp;
 			return (checkLevel (exp) > ch.getLevel ());
 		}
 
-		int checkLevel(int exp) {
+		public int checkLevel(int exp) {
 			if (exp < 100) {
 				return 1;
 			} else if (exp < 250) {
