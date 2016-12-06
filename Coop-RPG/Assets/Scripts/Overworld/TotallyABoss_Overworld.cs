@@ -1,12 +1,8 @@
 using UnityEngine;
 using System.Collections;
-<<<<<<< HEAD:Coop-RPG/Assets/Scripts/Overworld/TotallyABossOverworld.cs
 using AssemblyCSharp;
-public class TotallyABossOverworld : MonoBehaviour
-=======
-
-public class TotallyABoss_Overworld : MonoBehaviour
->>>>>>> refs/remotes/origin/JT:Coop-RPG/Assets/Scripts/Overworld/TotallyABoss_Overworld.cs
+using UnityEngine.Networking;
+public class TotallyABoss_Overworld : NetworkBehaviour
 {
     private GameObject[] playerPos = null;
     public int sightRange = 30;

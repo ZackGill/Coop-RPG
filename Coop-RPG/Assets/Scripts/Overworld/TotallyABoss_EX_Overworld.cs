@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
-
-public class TotallyABoss_EX_Overworld : MonoBehaviour
+using UnityEngine.Networking;
+public class TotallyABoss_EX_Overworld : NetworkBehaviour
 {
     private GameObject[] playerPos = null;
     public int sightRange = 30;

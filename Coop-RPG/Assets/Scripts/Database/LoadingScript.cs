@@ -108,7 +108,7 @@ public class LoadingScript : NetworkBehaviour {
             }
 
 
-            TotallyABossOverworld[] temp3 = GameObject.FindObjectsOfType<TotallyABossOverworld>();
+            TotallyABoss_Overworld[] temp3 = GameObject.FindObjectsOfType<TotallyABoss_Overworld>();
             for (int a = 0; a < temp.Length; a++)
             {
                 temp[a].gameObject.GetComponent<MonsterStorage>().monster = monsterList[1];
