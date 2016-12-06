@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
-using AssemblyCSharp;
-public class TotallyABossOverworld : MonoBehaviour
+
+public class TotallyABoss_EX_Overworld : MonoBehaviour
 {
     private GameObject[] playerPos = null;
     public int sightRange = 30;
@@ -121,10 +121,6 @@ public class TotallyABossOverworld : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (LoadingScript.Instance.loading)
-            return;
-        transform.rotation = Quaternion.Euler(Vector3.zero);
-
         if (playerPos == null)
         {
             playerPos = GameObject.FindGameObjectsWithTag("Player");
