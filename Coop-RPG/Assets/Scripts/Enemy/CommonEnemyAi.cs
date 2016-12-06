@@ -102,8 +102,8 @@ public class CommonEnemyAi : MonoBehaviour
      *  
      *  Wasn't sure how lists of Character Players were handled so just commented them inside the param.
      ************************************************************************************************************************************************/
-	public int playerSelectWithThreat(int numberofPlayers, int[] playerThreat){
-		int highthreat = 0;
+	public int playerSelectWithThreat(int numberofPlayers, float[] playerThreat){
+		float highthreat = 0;
 		int selectedplayer = -1;    //NOTE: you can also have global variable "currentTarget" to keep track of its current target
         int secondTarget = -1;
 		for(int i = 0; i < numberofPlayers; i++){
@@ -115,7 +115,7 @@ public class CommonEnemyAi : MonoBehaviour
 		}
 		
 		if(selectedplayer == -1){
-			return Random.Range(0, numberofPlayers +1);
+			return Random.Range(0, numberofPlayers);
 		}else{
             int a = Random.Range(0, 2);     //this is to prevent an enemy (assuming current battle has 2 or more monsters) from choosing the same player. 
             if(a == 0)                      //by having random generator, those with the highest threat and the second highest threat will get choosen depending on the outcome of random. (50/50 chance).

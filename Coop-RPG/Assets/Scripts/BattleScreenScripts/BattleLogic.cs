@@ -52,6 +52,7 @@ public class BattleLogic : NetworkBehaviour
     private ActiveTime enemy3ActiveTime;
     private BattleAttackHandler attack;
     public List<BattleScreenStates.FightStates> stateQueue;
+    private float[] playerThreat;
 
     bool dumpLoad = true;
 
@@ -199,7 +200,7 @@ public class BattleLogic : NetworkBehaviour
         stateQueue.Add(BattleScreenStates.FightStates.BEGINNING);
         activeTime = transform.FindChild("PlayerInfo/ActiveTimeBar").GetComponent<ActiveTime>();
 
-
+        playerThreat = new float[3];
         enemies = new Monster[3];
         if (infoDump != null)
         {
@@ -225,6 +226,9 @@ public class BattleLogic : NetworkBehaviour
             numPlayers = infoDump.info.numPlayers;
             numEnemies = infoDump.info.numEnemies;
             playerNum = infoDump.info.numPlayers - 1;
+            playerThreat[0] = infoDump.info.player0Threat;
+            playerThreat[1] = infoDump.info.player1Threat;
+            playerThreat[2] = infoDump.info.player2Threat;
             setEnemyHP();
             
             switch (playerNum)
@@ -446,15 +450,15 @@ public class BattleLogic : NetworkBehaviour
         {
 
             if ((whichSkill >= 0) && character.getSkills()[whichSkill].getType() == "heal")
-                sendPlayerDamage(-attack.giveDamage(whichSkill)); // Replace with Command
+                sendPlayerDamage(-attack.giveDamage(whichSkill, playerNum)); // Replace with Command
 
             //WHICH ENEMY GETS HURT?
             else if (selection.getArrowPos() == 0)
-                sendEnemyDamage(0, attack.giveDamage(whichSkill), 0);
+                sendEnemyDamage(0, attack.giveDamage(whichSkill, playerNum), 0);
             else if (selection.getArrowPos() == 1)
-                sendEnemyDamage(attack.giveDamage(whichSkill), 0, 0);
+                sendEnemyDamage(attack.giveDamage(whichSkill, playerNum), 0, 0);
             else if (selection.getArrowPos() == 2)
-                sendEnemyDamage(0, 0, attack.giveDamage(whichSkill));
+                sendEnemyDamage(0, 0, attack.giveDamage(whichSkill, playerNum));
 
             playerAttackFlag = false;
             currentMoveSelected = false;
@@ -576,6 +580,16 @@ public class BattleLogic : NetworkBehaviour
     public int getNumPlayers()
     {
         return numPlayers;
+    }
+
+    public void setPlayerThreat(int whichPlayer, float threatAmount)
+    {
+        playerThreat[whichPlayer] = playerThreat[whichPlayer] + threatAmount;
+    }
+
+    public float[] getPlayerThreat()
+    {
+        return playerThreat;
     }
 
 }
