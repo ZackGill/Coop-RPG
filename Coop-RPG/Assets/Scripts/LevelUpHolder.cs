@@ -8,9 +8,9 @@ public class LevelUpHolder : MonoBehaviour {
 
     public Text victoryText;
 
-    public GameObject perkOption;
-    public GameObject perk2Option;
-    public GameObject perk3Option;
+    public Button perkOption;
+    public Button perk2Option;
+    public Button perk3Option;
 
 	// Use this for initialization
 	void Start () {

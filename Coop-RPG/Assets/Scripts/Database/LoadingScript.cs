@@ -94,24 +94,31 @@ public class LoadingScript : NetworkBehaviour {
             // Goes Patrol Charge, Boss, Wander Stalk.
 
 
-                PatrolCharge_Overworld[] temp = GameObject.FindObjectsOfType<PatrolCharge_Overworld>();
+            GameObject[] temp = GameObject.FindGameObjectsWithTag("PatrolEnemy");
                 for(int a = 0; a < temp.Length; a++)
                 {
                     temp[a].gameObject.GetComponent<MonsterStorage>().monster = monsterList[0];
-                }
+                    temp[a].gameObject.GetComponent<MonsterStorage>().health = monsterList[0].getHP();
 
-
-            WanderStalk_Overworld[] temp2 = GameObject.FindObjectsOfType<WanderStalk_Overworld>();
-            for (int a = 0; a < temp.Length; a++)
-            {
-                temp[a].gameObject.GetComponent<MonsterStorage>().monster = monsterList[2];
             }
 
 
-            TotallyABoss_Overworld[] temp3 = GameObject.FindObjectsOfType<TotallyABoss_Overworld>();
-            for (int a = 0; a < temp.Length; a++)
+            GameObject[] temp2 = GameObject.FindGameObjectsWithTag("WanderEnemy");
+
+            for (int a = 0; a < temp2.Length; a++)
             {
-                temp[a].gameObject.GetComponent<MonsterStorage>().monster = monsterList[1];
+                temp2[a].gameObject.GetComponent<MonsterStorage>().monster = monsterList[2];
+                temp2[a].gameObject.GetComponent<MonsterStorage>().health = monsterList[2].getHP();
+
+            }
+
+
+            GameObject[] temp3 = GameObject.FindGameObjectsWithTag("BossEnemy");
+            for (int a = 0; a < temp3.Length; a++)
+            {
+                temp3[a].gameObject.GetComponent<MonsterStorage>().monster = monsterList[1];
+                temp3[a].gameObject.GetComponent<MonsterStorage>().health = monsterList[1].getHP();
+
             }
 
 

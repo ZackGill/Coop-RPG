@@ -43,6 +43,7 @@ public class DungeonEnd : MonoBehaviour {
 	
 	}
 		public IEnumerator getClassPerks(string clName) {
+            print("GetClassPerks");
 			yield return StartCoroutine (db.runClPerks (clName));
 			clPList = db.getClassPerkList();
 		}
@@ -51,6 +52,10 @@ public class DungeonEnd : MonoBehaviour {
 			return clPList [level];
 		}
 
+        public void classPerkHelper(string clName)
+        {
+            StartCoroutine(getClassPerks(clName));
+        }
 
 		public void levelUp(Characters ch, string stat, string perk) {
             StartCoroutine(db.runUpdateChar(ch.getName(), ch.getExp() + dungeonExp, checkLevel(ch.getExp() + dungeonExp), stat, perk));

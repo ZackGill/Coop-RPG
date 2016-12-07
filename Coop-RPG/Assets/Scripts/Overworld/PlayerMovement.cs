@@ -4,11 +4,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 using AssemblyCSharp;
 using Prototype.NetworkLobby;
+using UnityEngine.UI;
 [NetworkSettings(channel = 0)]
 public class PlayerMovement : NetworkBehaviour
 {
 
     public GameObject levelUp; // Prefab that is used to spawn level up holder.
+
 
     [SyncVar]
     public string charName;
@@ -33,32 +35,107 @@ public class PlayerMovement : NetworkBehaviour
             return;
         if (!isServer)
         {
+            print("loading menu");
+            Network.CloseConnection(Network.connections[0], true);
             SceneManager.LoadScene("Menu");
         }
-        else if (Network.connections.Length <= 1)
-        { // 1 means just server still?
-            SceneManager.LoadScene("Menu");
-        }
+
     }
     DungeonEnd end;
+    GameObject tempLevel;
     public void levelUpFunc()
     {
+        if (end != null)
+            return;
         if(!isLocalPlayer)
             return;
-        GameObject tempLevel = (GameObject)Instantiate(levelUp, Vector3.zero, Quaternion.identity);
+
+        
+
+        // Will try to implement this later. Too tired to do right now.
+        /*tempLevel = (GameObject)Instantiate(levelUp, Vector3.zero, Quaternion.identity);
          end = tempLevel.GetComponent<DungeonEnd>();
         if (end.charLeveled(characterInfo))
         {
-            end.getClassPerks(characterInfo.getClass()); // calling as function? Should be good
-            string perks = end.perksForLevel(end.checkLevel(characterInfo.getExp() + end.dungeonExp));
-            print(perks); // Assuming perks are comma delimited
+            end.classPerkHelper(characterInfo.getClass()); // calling as function? Should be good
+            Invoke("PerkDisplay", 10f);
         }
         else // Didn't level, go back to menu after updating Firebase.
         {
+            tempLevel.GetComponent<LevelUpHolder>().perkOption.enabled = false;
+            tempLevel.GetComponent<LevelUpHolder>().perk2Option.enabled = false;
+            tempLevel.GetComponent<LevelUpHolder>().perk3Option.enabled = false;
+
             end.levelUp(characterInfo, "", "");
             // Make sure to check if done before loading menu.
             InvokeRepeating("loadMenu", 5f, 1f);
+        }*/
+
+    }
+
+    public string perkChoice;
+
+    [Command]
+    public void CmdQuit()
+    {
+        print("Trying to dissconnect");
+        Network.Disconnect();
+        SceneManager.LoadScene("Menu");
+    }
+
+    public void button0Click()
+    {
+        if (perkOptions.Length >= 1)
+        {
+            perkChoice = perkOptions[0];
+            optionLevelUp();
         }
+        else
+            end.levelUp(characterInfo, "", "");
+
+    }
+
+    public void button1Click()
+    {
+        if (perkOptions.Length >= 2)
+        {
+            perkChoice = perkOptions[1];
+            optionLevelUp();
+        }
+        else
+            end.levelUp(characterInfo, "", "");
+    }
+
+    public void button2Click()
+    {
+        if (perkOptions.Length >= 3)
+        {
+            perkChoice = perkOptions[2];
+            optionLevelUp();
+        }
+        else
+            end.levelUp(characterInfo, "", "");
+
+    }
+
+    public void optionLevelUp()
+    {
+        end.levelUp(characterInfo, "", perkChoice);
+    }
+
+    string[] perkOptions;
+    public void PerkDisplay()
+    {
+        string perks = end.perksForLevel(end.checkLevel(characterInfo.getExp() + end.dungeonExp));
+        perkOptions = perks.Split(';');
+        if (perkOptions.Length >= 2)
+        {
+            levelUp.GetComponent<LevelUpHolder>().perkOption.GetComponentInChildren<Text>().text = perkOptions[0];
+            levelUp.GetComponent<LevelUpHolder>().perk2Option.GetComponentInChildren<Text>().text = perkOptions[0];
+            levelUp.GetComponent<LevelUpHolder>().perk3Option.GetComponentInChildren<Text>().text = perkOptions[0];
+        }
+        else
+            end.levelUp(characterInfo, "", "");
 
     }
 
@@ -179,7 +256,7 @@ public class PlayerMovement : NetworkBehaviour
     public GameObject monster;
     void OnCollisionEnter2D(Collision2D coll)
     {
-        if(coll.gameObject.tag == "Enemy")
+        if(coll.gameObject.tag.Contains("Enemy"))
         {
             if (isLocalPlayer)
             {
@@ -249,16 +326,33 @@ public class PlayerMovement : NetworkBehaviour
         levelUpFunc();
     }
 
+    [ClientRpc]
+    public void RpcMenu()
+    {
+
+        Network.Disconnect();
+
+        SceneManager.LoadScene("Menu");
+    }
+
     [Command]
     public void CmdKillMonster(GameObject monster)
     {
         if (monster.GetComponent<TotallyABoss_Overworld>() != null)
         {
-            print("Level UP");
+            /*print("Level UP");
             levelUpFunc();
-            RpcLevelUp();
+            RpcLevelUp();*/
+
+            Network.Disconnect();
+
+            SceneManager.LoadScene("Menu");
+
+            RpcMenu();
         }
         print("\"Destroying\" monster");
+
+
 
     }
 
