@@ -17,6 +17,13 @@ public class PatrolCharge_Overworld : NetworkBehaviour
     private coord next;
     bool exists = false, hunting = false;
     //why changes no push
+
+    void OnDestroy()
+    {
+        print("PatrolCharge destroyed");
+    }
+
+
     // Use this for initialization
     void Start()
     {

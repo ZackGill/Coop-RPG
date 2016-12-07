@@ -29,7 +29,7 @@ public class WanderStalk_Overworld : NetworkBehaviour
     public float speed = 2.25F;
     private int x, y, tX, tY, lX, lY, steps, NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3, dir = 0;
     private float stuckInc = 0F;
-    private Stack  myPath;
+    private Stack myPath;
     private Queue checkPos;
     public bool[,] map;
     bool[,] visited;
@@ -84,6 +84,12 @@ public class WanderStalk_Overworld : NetworkBehaviour
 
         return true;
     }
+
+    void OnDestroy()
+    {
+        print("WanderStalk Destroyed");
+    }
+
     void makePathToTarg()
     {
         x = Mathf.FloorToInt(transform.position.x);

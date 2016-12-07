@@ -24,6 +24,12 @@ public class TotallyABoss_Overworld : NetworkBehaviour
         homeX = Mathf.FloorToInt(transform.position.x);
         homeY = Mathf.FloorToInt(transform.position.y);
     }
+
+    void OnDestroy()
+    {
+        print("Boss is being destroyed. Why?");
+    }
+
     bool canSeeEachOther(int x1, int y1, int x2, int y2)
     {
         if (Mathf.Abs(x2 - x1) < Mathf.Abs(y2 - y1))
@@ -77,7 +83,7 @@ public class TotallyABoss_Overworld : NetworkBehaviour
         coord st = new coord(x, y);
         checkPos.Enqueue(st);
         steps = 0;
-        print("Pathing " + x + "," + y + " to " + tX + ',' + tY);
+        //print("Pathing " + x + "," + y + " to " + tX + ',' + tY);
         int tries = 0;
         coord cur = null;
         int queuesize = 1;
@@ -163,7 +169,7 @@ public class TotallyABoss_Overworld : NetworkBehaviour
             }
             else
             {
-                print("CHASE");
+               // print("CHASE");
                 //A player has been spotted at some point. Hunt down a player!
                 try
                 {

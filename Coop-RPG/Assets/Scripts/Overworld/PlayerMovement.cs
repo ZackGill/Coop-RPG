@@ -29,6 +29,8 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!isLocalPlayer)
             return;
+        if (!end.Done())
+            return;
         if (!isServer)
         {
             SceneManager.LoadScene("Menu");
@@ -38,13 +40,13 @@ public class PlayerMovement : NetworkBehaviour
             SceneManager.LoadScene("Menu");
         }
     }
-
+    DungeonEnd end;
     public void levelUpFunc()
     {
         if(!isLocalPlayer)
             return;
         GameObject tempLevel = (GameObject)Instantiate(levelUp, Vector3.zero, Quaternion.identity);
-        DungeonEnd end = tempLevel.GetComponent<DungeonEnd>();
+         end = tempLevel.GetComponent<DungeonEnd>();
         if (end.charLeveled(characterInfo))
         {
             end.getClassPerks(characterInfo.getClass()); // calling as function? Should be good
@@ -54,7 +56,10 @@ public class PlayerMovement : NetworkBehaviour
         else // Didn't level, go back to menu after updating Firebase.
         {
             end.levelUp(characterInfo, "", "");
+            // Make sure to check if done before loading menu.
+            InvokeRepeating("loadMenu", 5f, 1f);
         }
+
     }
 
     void Start()
@@ -178,6 +183,8 @@ public class PlayerMovement : NetworkBehaviour
         {
             if (isLocalPlayer)
             {
+                if (LoadingScript.Instance.loading)
+                    return;
                 // Set forces to 0 to be sure to stop motion.
                 GetComponent<Rigidbody2D>().velocity = Vector3.zero;
                 GetComponent<Rigidbody2D>().angularVelocity = 0f;
@@ -188,6 +195,7 @@ public class PlayerMovement : NetworkBehaviour
                 inBattle = true;
                 monster = coll.gameObject;
                 battle.GetComponent<BattleHolderScript>().player = gameObject;
+                battle.GetComponent<BattleHolderScript>().monster = coll.gameObject;
                 if (battle != null)
                 {
                     
@@ -225,7 +233,7 @@ public class PlayerMovement : NetworkBehaviour
                 inBattle = true;
                 monster = null;
                 battle.GetComponent<BattleHolderScript>().player = gameObject;
-
+                battle.GetComponent<BattleHolderScript>().monster = null;
                 CmdPlayerToggle(false, null, gameObject, col.gameObject, true);
 
             }
@@ -246,10 +254,12 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (monster.GetComponent<TotallyABoss_Overworld>() != null)
         {
+            print("Level UP");
             levelUpFunc();
             RpcLevelUp();
         }
-        Network.Destroy(monster);
+        print("\"Destroying\" monster");
+
     }
 
     [Command]
@@ -348,7 +358,8 @@ public class PlayerMovement : NetworkBehaviour
     [Command]
     public void CmdDestroyDump(GameObject dump)
     {
-        Network.Destroy(dump);
+        print("Destroy Dump");
+        //Network.Destroy(dump);
     }
 
     [ClientRpc]

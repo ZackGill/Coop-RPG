@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using AssemblyCSharp;
-public class MonsterStorage : MonoBehaviour {
+using UnityEngine.Networking;
+public class MonsterStorage : NetworkBehaviour {
 
     public Monster monster;
 
@@ -14,6 +15,11 @@ public class MonsterStorage : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    void OnDestroy()
+    {
+        print("Monster Holder Destroyed");
+    }
 
 
 }

@@ -13,8 +13,10 @@ public class BattleHolderScript : NetworkBehaviour {
 	
     public void die()
     {
+        print("Battle Holder die");
         if (player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump != null)
         {
+            print("Killing Dump");
             player.GetComponent<PlayerMovement>().CmdPlayerToggle(true, null, player, player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump.gameObject, false);
             player.GetComponent<PlayerMovement>().CmdDestroyDump(player.GetComponent<PlayerMovement>().battle.GetComponentInChildren<BattleLogic>().infoDump.gameObject);
         }

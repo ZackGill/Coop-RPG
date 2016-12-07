@@ -15,6 +15,11 @@ public class DungeonEnd : MonoBehaviour {
 
     }
 
+    public bool Done()
+        {
+            return db.createGood;
+        }
+
     public void updateChars()
         {
             foreach (Characters ch in cList)

@@ -971,8 +971,9 @@ namespace AssemblyCSharp
                 mod.OnGetSuccess += GetJson;
                 mod.GetValue();
                 yield return new WaitForSeconds(3f);
-                int temp = int.Parse(tempJson);
-                mod.SetValue(temp + 1);
+                //Debug.Log(tempJson);
+                //int temp = int.Parse(tempJson); // Why is this here? It'll just cause FormatExceptions if parsing letters or invalid numbers
+                //mod.SetValue(temp + 1);
                 Firebase perkFB = fb.Child("perks");
                 perkFB.OnSetSuccess += createSuccess;
                 perkFB.OnGetSuccess += GetJson;
