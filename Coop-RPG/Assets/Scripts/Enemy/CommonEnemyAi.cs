@@ -31,7 +31,12 @@ public class CommonEnemyAi : MonoBehaviour
     private int regularEnemySkill = -2;  			//indicate regular skill as -2 to avoid conflicts
 	//private int[] playerThreat;
 	Skill[] enemySkills = new Skill[8];
-	int[,] coolDownList;
+	int[,] coolDownList = new int[,]
+	{
+		{0,0,0},
+		{0,0,0},
+		{0,0,0}
+	};
 
 	public int AI(Monster enemy, int whichMonster)
     {

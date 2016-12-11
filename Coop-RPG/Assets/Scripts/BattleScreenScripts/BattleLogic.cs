@@ -53,6 +53,7 @@ public class BattleLogic : NetworkBehaviour
     private BattleAttackHandler attack;
     public List<BattleScreenStates.FightStates> stateQueue;
     private float[] playerThreat;
+	private CommonEnemyAi enemyAi = new CommonEnemyAi();
 
     bool dumpLoad = true;
 
@@ -471,12 +472,13 @@ public class BattleLogic : NetworkBehaviour
 
         if (state.curState == BattleScreenStates.FightStates.ENEMYTURN && enemyAttackFlag == true)
         {
-
+			int whichMonster = 0;
+			int ai = enemyAi.AI (enemies [0], whichMonster);
             // Check Target. Random for now. Refer to BattleAttackHandler.cs
             if(attack.getTarget() == playerNum)
-                sendPlayerDamage(attack.enemyAttacks()); // Replace with Command
+				sendPlayerDamage(attack.enemyAttacks(ai, enemies[0])); // Replace with Command
             else
-                print(attack.enemyAttacks());
+				print(attack.enemyAttacks(ai, enemies[0]));
 
             if (infoDump != null)
                 sendAttackFlag(false); // Need Command to do this

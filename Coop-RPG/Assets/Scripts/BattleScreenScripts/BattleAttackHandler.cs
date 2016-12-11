@@ -90,11 +90,22 @@ public class BattleAttackHandler : MonoBehaviour
 
 
     // For when the player's HP is being affected.
-    public int enemyAttacks()
+	public int enemyAttacks(int enemySkill, Monster e)
     {
+		int damageDone = 0;
+		if (enemySkill == -2) {
+			damageDone = 5;
+			fightMessage = "Player " + targetPlayer + " was attacked! -5 HP";
+		}
+		if (enemySkill == -1) {
+			fightMessage = "Enemy Missed!";
+		}
 
-        fightMessage = "Player " + targetPlayer + " was attacked! -5 HP";
-        return 5;
+		if (enemySkill >= 0) {
+			damageDone = e.getSkills () [enemySkill].getValue ();
+			fightMessage = "Enemy casts " + e.getSkills () [enemySkill].getName () + "! It does " + damageDone + " damage!";
+		}
+        return damageDone;
     }
 
 
