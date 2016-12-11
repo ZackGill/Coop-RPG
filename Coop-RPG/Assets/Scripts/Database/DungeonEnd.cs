@@ -3,6 +3,12 @@ using System.Collections;
 
 namespace AssemblyCSharp{
 public class DungeonEnd : MonoBehaviour {
+
+		static int debug_idx = 0;
+		[SerializeField]
+		TextMesh txt;
+
+
 		int dungeonExp = 0;
 		DatabaseManager db = new DatabaseManager();
 		string[] clPList;
@@ -12,22 +18,31 @@ public class DungeonEnd : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-			foreach (Characters ch in cList) {
-				if (charLeveled (ch)) {
-					int newExp = ch.getExp() + dungeonExp;
-					int newLevel = checkLevel (newExp);
-					StartCoroutine (db.runUpdateChar (ch.getName(), newExp, newLevel, tempStat, tempPerk));
-				} else {
-					StartCoroutine (db.runUpdateChar(ch.getName(), ch.getExp() + dungeonExp, 0, "", ""));
-				}
-
-			}
+			StartCoroutine(run ());
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+		IEnumerator run() {
+			foreach (Characters ch in cList) {
+				DoDebug (ch.getName ());
+				//Checks if player leveled to know how to use Database manager
+				if (charLeveled (ch)) {
+					//HERE WE NEED TO SET tempStat AND tempPerk
+					//INFO FROM UI
+					int newExp = ch.getExp() + dungeonExp;
+					int newLevel = checkLevel (newExp);
+					yield return StartCoroutine (db.runUpdateChar (ch.getName(), newExp, newLevel, tempStat, tempPerk));
+				} else {
+					yield return StartCoroutine (db.runUpdateChar(ch.getName(), ch.getExp() + dungeonExp, 0, "", ""));
+				}
+
+			}
+		}
+
+
 		IEnumerator getClassPerks(string clName) {
 			yield return StartCoroutine (db.runClPerks (clName));
 			clPList = db.getClassPerkList();
@@ -36,10 +51,7 @@ public class DungeonEnd : MonoBehaviour {
 		string perksForLevel(int level) {
 			return clPList [level];
 		}
-
-		void levelUp(Characters ch, string stat, string perk) {
 			
-		}
 
 		bool charLeveled(Characters ch) {
 			int exp = ch.getExp ();
@@ -60,6 +72,15 @@ public class DungeonEnd : MonoBehaviour {
 				return 5;
 			}
 			return 0;
+		}
+
+		void DoDebug(string str)
+		{
+			Debug.Log(str);
+			if (txt != null)
+			{
+				txt.text += (++debug_idx + ". " + str) + "\n";
+			}
 		}
 
 }

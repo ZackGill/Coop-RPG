@@ -842,6 +842,7 @@ namespace AssemblyCSharp
 		public IEnumerator runUpdateChar(string cName, int newExp, int newLevel, string stat, string perk) {
 			Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters/" + cName, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
 			Firebase exp = fb.Child ("EXP");
+			DoDebug ("IN DBMANAGER");
 			exp.OnSetSuccess += createSuccess;
 			exp.SetValue (newExp);
 			if (newLevel != 0) {
