@@ -40,6 +40,29 @@ public class CommonEnemyAi : MonoBehaviour
 
 	public int AI(Monster enemy, int whichMonster)
     {
+		//subtracts the cooldown each  enemy turn. not too efficient, but for now this will work, perhaps move this onto its separate
+		//fucntion, and call in both player's turn and enemy turn to subtract each turn.
+		for (int j = 0; j < coolDownList.GetLength(0); j++)
+		{
+			for (int i = 0; i < coolDownList.GetLength(1); i++)
+			{
+				if (coolDownList[j,i] > 0)
+				{
+					coolDownList[j,i]--;
+				}
+			}
+		}
+
+		//this is to test for cooldown list
+		for (int j = 0; j < coolDownList.GetLength(0); j++)
+		{
+			for (int i = 0; i < coolDownList.GetLength(1); i++)
+			{
+				Debug.Log (coolDownList [j, i] + "\t");
+			}
+			Debug.Log ("\n");
+		}
+
 		//compare if random player is still alive or not, if so, keep attacking the same one, or be completely random and attack
 		//random players.
 		//just an example for tonignt so I don't forget
@@ -139,15 +162,5 @@ public class CommonEnemyAi : MonoBehaviour
 
    	void update()
     {
-		for (int j = 0; j < coolDownList.GetLength(0); j++)
-        {
-			for (int i = 0; i < coolDownList.GetLength(1); i++)
-            {
-                if (coolDownList[j,i] > 0)
-                {
-                    coolDownList[j,i]--;
-                }
-            }
-        }
     }
 }
