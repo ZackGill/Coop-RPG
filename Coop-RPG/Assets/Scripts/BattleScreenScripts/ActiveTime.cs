@@ -53,6 +53,11 @@ public class ActiveTime : MonoBehaviour {
         enemySeconds = sec;
     }
 
+	public void setEnemyMaxTime(float sec)
+	{
+		enemyMaxTime = sec;
+	}
+
     public float getMaxTime()
     {
         return maxTime;
@@ -63,13 +68,19 @@ public class ActiveTime : MonoBehaviour {
         maxTime = sec;
     }
 
-    public void setEnemyMaxTime(float sec)
-    {
-        enemyMaxTime = sec;
-    }
-
     public void disable()
     {
         enable = false;
     }
+
+    public float getEnemySec()
+    {
+        return enemySeconds;
+    }
+
+    public float getEnemyMax()
+    {
+        return enemyMaxTime;
+    }
+
 }

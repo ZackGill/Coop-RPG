@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using AssemblyCSharp;
-
 public class DatabaseBattle : MonoBehaviour {
 
     private Characters character;
@@ -11,9 +10,10 @@ public class DatabaseBattle : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        character = GetComponent<Characters>();
-        enemy = new Monster(5, 1, 1, 1, 1, false, 1, 1, 1);
-        StartCoroutine(wait());
+        //character = GetComponent<Characters>(); // Replace with holder and pull copy
+
+        //enemy = new Monster(5, 1, 1, 1, 1, false, 1, 1, 1);
+       // StartCoroutine(wait()); // Might not be needed since everything should be pulled already by Cameron
     }
 	
 	// Update is called once per frame
@@ -25,6 +25,7 @@ public class DatabaseBattle : MonoBehaviour {
     {
         character = null;
         StartCoroutine(db.runChar("Lex"));
+
         //StartCoroutine(db.runMon("Squawktopus"));
         yield return new WaitForSeconds(35f);
         character = db.getChar();
@@ -34,6 +35,5 @@ public class DatabaseBattle : MonoBehaviour {
     {
         return character;
     }
-
 
 }

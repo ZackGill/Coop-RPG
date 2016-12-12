@@ -1,7 +1,10 @@
 ﻿using System;
-
+using System.Collections.Generic;
+using SimpleFirebaseUnity;
+using UnityEngine;
 namespace AssemblyCSharp
 {
+    [Serializable]
     public class Monster
     {
         bool isDead = false;

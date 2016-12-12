@@ -1,8 +1,12 @@
 using UnityEngine;
 using System.Collections;
-public class moveCamera : MonoBehaviour
+using UnityEngine.Networking;
+public class moveCamera : NetworkBehaviour
 {
     private int speed = 30;
+
+    public GameObject player;
+
     // Use this for initialization
     void Start()
     {
@@ -12,22 +16,12 @@ public class moveCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            transform.Translate(new Vector3(speed * Time.deltaTime, 0, 0));
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            transform.Translate(new Vector3(-speed * Time.deltaTime, 0, 0));
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            transform.Translate(new Vector3(0, -speed * Time.deltaTime, 0));
-        }
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            transform.Translate(new Vector3(0, speed * Time.deltaTime, 0));
-        }
+
+        if (player == null)
+            return;
+        transform.position = new Vector3(player.transform.position.x, player.transform.position.y, -1f);
+
+
         if (Input.GetKey(KeyCode.Equals))
         {
             speed -= 1;
@@ -42,5 +36,6 @@ public class moveCamera : MonoBehaviour
             else
                 Camera.main.orthographicSize *= (float)1.05;
         }
+
     }
 }

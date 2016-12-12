@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class ArrowSelection : MonoBehaviour
 {
+
     private int whichSkill;
     private int arrowPos = 1;
     private Characters character;
@@ -15,7 +16,7 @@ public class ArrowSelection : MonoBehaviour
     private BattleScreenStates state;
 
     private Image playerImage;
-    private SpriteRenderer arrow;
+    public SpriteRenderer arrow;
     private SpriteRenderer enemy1;
     private SpriteRenderer enemy2;
     private SpriteRenderer enemy3;
@@ -39,22 +40,16 @@ public class ArrowSelection : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        character = battleLogic.getCharacter();
         whichSkill = battleLogic.whichSkill;
+        enemies = battleLogic.getEnemies();
+
         if (state.curState == BattleScreenStates.FightStates.PICKANENEMY)
         {
-            if ((whichSkill >= 0 && character.getSkills()[whichSkill].getType() == "heal"))
-            {
-                selectPlayer();
-            }
-            else
-            {
+            if (!(whichSkill >= 0 && character.getSkills()[whichSkill].getType() == "heal"))
                 selectEnemy();
-            }
         }
         else
             arrow.enabled = false;
-        enemies = battleLogic.getEnemies();
     }
 
 
@@ -84,6 +79,12 @@ public class ArrowSelection : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             arrowPos++;
+
+        if (arrowPos == numEnemies)
+            arrowPos = 0;
+        if (arrowPos == -1)
+            arrowPos = numEnemies - 1;
+
             if (numEnemies == 2 && arrowPos == 0 && enemies[1].getDead())
                 arrowPos++;
             if (arrowPos == 1 && enemies[0].getDead())
@@ -91,6 +92,7 @@ public class ArrowSelection : MonoBehaviour
             if (numEnemies == 3 && arrowPos == 2 && enemies[2].getDead())
                 arrowPos++;
         }
+
         drawArrow();
         arrow.enabled = true;
     }

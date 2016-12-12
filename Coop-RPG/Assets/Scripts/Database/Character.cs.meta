@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 6e023a8e61300e645bb0e10be8990598
 timeCreated: 1478483799
+=======
+guid: 978197e8192084565b77ed7df0fc6470
+timeCreated: 1480875582
+>>>>>>> refs/remotes/origin/Cameron
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
