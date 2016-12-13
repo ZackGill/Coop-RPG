@@ -109,6 +109,8 @@ namespace AssemblyCSharp
 
         public string[] getClassDesc()
         {
+            setClassDesc();
+            Debug.Log(classDesc.Length + "classDesc DB Manager");
             return classDesc;
         }
 
@@ -236,13 +238,14 @@ namespace AssemblyCSharp
             chArr[1] = '}';
             string[] splJson = tempJson.Split(chArr);
             equipJson = splJson[1];
-            string statJson = splJson[3];
+
             for (int i = 0; i < 3; i++)
             {
                 DoDebug(splJson[i]);
             }
 
 
+            string statJson = splJson[1];
 
             string[] fBlock = splJson[0].Split(',');
             foreach (string s in fBlock)
@@ -250,18 +253,18 @@ namespace AssemblyCSharp
                 string[] sp = s.Split(':');
                 if (String.Equals(sp[0], "\"HP\""))
                 {
-                    hp = int.Parse(sp[1]);
+                    hp = int.Parse(sp[1].Substring(1, 1));
 
                 }
                 if (sp[0].Equals("\"EXP\""))
                 {
-                    exp = int.Parse(sp[1]);
+                    exp = int.Parse(sp[1].Substring(1, 1));
 
                 }
 
                 if (sp[0].Equals("\"LVL\""))
                 {
-                    lvl = int.Parse(sp[1]);
+                    lvl = int.Parse(sp[1].Substring(1, 1));
 
                 }
 
@@ -344,6 +347,8 @@ namespace AssemblyCSharp
         void parseArmorInfo()
         {
             tempJson = tempJson.Substring(1, tempJson.Length - 2);
+            if (tempJson.Split(':').Length < 2)
+                return;
             int stat = int.Parse(tempJson.Split(':')[1]);
 
             defenseToAdd += stat;
@@ -353,6 +358,12 @@ namespace AssemblyCSharp
         {
             tempJson = tempJson.Substring(1, tempJson.Length - 2);
             string[] list = tempJson.Split(',');
+
+            if (list.Length <= 0)
+                return;
+            if (list[0].Split(':').Length <= 1)
+                return;
+
             string stat = list[0].Split(':')[1];
             stat = stat.Substring(1, stat.Length - 2);
             int val = int.Parse(list[1].Split(':')[1]);
@@ -532,13 +543,18 @@ namespace AssemblyCSharp
             DoDebug("DONE");
             parseArmorInfo();
 
-            temp = e[3].Split(':')[1];
-            temp = temp.Substring(1, temp.Length - 2);
-            getWeapInfo(temp);
-            DoDebug("WAITING ON " + temp);
-            yield return new WaitForSeconds(2f);
-            DoDebug("DONE");
-            parseWeaponInfo();
+            if (e.Length >= 4)
+            {
+                if(e[3].Split(':').Length >= 2)
+
+                temp = e[3].Split(':')[1];
+                temp = temp.Substring(1, temp.Length - 2);
+                getWeapInfo(temp);
+                DoDebug("WAITING ON " + temp);
+                yield return new WaitForSeconds(2f);
+                DoDebug("DONE");
+                parseWeaponInfo();
+            }
             /*
 			getClassInfo ();
 			DoDebug("WAITING ON " + className);
@@ -811,20 +827,25 @@ namespace AssemblyCSharp
             Firebase fb = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
             fb.OnSetFailed += createFailed;
             fb.OnSetSuccess += createSuccess;
-            fb.Child(name, true).SetValue("{ \"EXP\": \"1\", \"HP\": \"1\", \"class\": \"" +
+            fb.Child(name, true).SetValue("{ \"EXP\": \"1\", \"HP\": \"50\", \"LVL\": \"1\", \"class\": \"" +
                 clName + "\", \"perks\": \"Spin-Slash1\", \"skills\":" +
                 " \"Spin-Slash\"}", true);
 
-
+            Debug.Log("basic char stuff should be firebased");
 
 
             Firebase temp = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters/" + name, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
             temp.Child("equipment", true).SetValue("{ \"acc1\": \"NONE\", \"acc2\": \"NONE\", \"armor\": \"rag\", \"weapon\": \"stick\"}", true);
 
+            Debug.Log("equipment should be added");
+
+
             Firebase temp2 = Firebase.CreateNew("coop-rpg.firebaseio.com/Characters/" + name, "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
 
 
             temp2.Child("stats", true).SetValue("{ \"attack\": \"1\", \"defense\": \"1\", \"magic\": \"1\"}", true);
+
+            Debug.Log("stats should be added");
 
 
         }

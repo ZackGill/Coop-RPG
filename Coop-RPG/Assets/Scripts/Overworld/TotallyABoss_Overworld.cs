@@ -27,7 +27,7 @@ public class TotallyABoss_Overworld : NetworkBehaviour
 
     void OnDestroy()
     {
-        print("Boss is being destroyed. Why?");
+        print("Boss is being destroyed.");
     }
 
     bool canSeeEachOther(int x1, int y1, int x2, int y2)

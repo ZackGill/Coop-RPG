@@ -6,14 +6,14 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using AssemblyCSharp;
-    public class MenuScript : MonoBehaviour
-    {
+public class MenuScript : MonoBehaviour
+{
 
     public CharacterInfo character;
 
     public InputField LoginName, LoginPass, email;
-        public GameObject loginCanvas, charactersCanvas, newCharCanvas;
-        public CharacterInfo charToUse;
+    public GameObject loginCanvas, charactersCanvas, newCharCanvas;
+    public CharacterInfo charToUse;
     public GameObject characterList;
     public GameObject characterButton;
 
@@ -23,32 +23,32 @@ using AssemblyCSharp;
 
     public Text error;
 
-        static int debug_idx = 0;
-        string userName, password;
+    static int debug_idx = 0;
+    string userName, password;
 
-        Firebase fire;
+    Firebase fire;
 
-        // Use this for initialization
-        void Start()
-        {
+    // Use this for initialization
+    void Start()
+    {
         fire = Firebase.CreateNew("coop-rpg.firebaseio.com/Accounts", "nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1");
         // TODO: Firebase stuff here, mainly to set it up so once login or create is clicked, can do firebase stuff.
         // Also call character list stuff. Do as much as possible at a time, elminate waiting latter.
     }
 
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
+    // Update is called once per frame
+    void Update()
+    {
 
-        public void checkLogin()
+    }
+
+    public void checkLogin()
     {
         // Do Character list stuff here if true
         if (loginCheck)
         {
             charactersCanvas.gameObject.SetActive(true);
-            for(int i = 0; i < chars.Length; i++)
+            for (int i = 0; i < chars.Length; i++)
             {
                 GameObject temp = (GameObject)Instantiate(characterButton, characterList.transform);
                 temp.GetComponentInChildren<Text>().text = chars[i];
@@ -77,7 +77,7 @@ using AssemblyCSharp;
 
     bool loginCheck = false;
     string[] chars;
-    string[] classes;
+    public string[] classes;
     bool createAccCheck = false;
     string err = "";
     public IEnumerator logIn()
@@ -102,8 +102,8 @@ using AssemblyCSharp;
         checkCreate();
     }
 
-        public void CreateClicked()
-      {
+    public void CreateClicked()
+    {
         if (LoginName.text == null || LoginPass.text == null || LoginName.text.Length <= 0 || LoginPass.text.Length <= 0)
         {
             error.text = "Please Enter a Username and password";
@@ -141,7 +141,7 @@ using AssemblyCSharp;
     {
         newCharCanvas.SetActive(true);
         loginCanvas.SetActive(false);
-        foreach(string s in classes)
+        foreach (string s in classes)
         {
             classesSel.options.Add(new Dropdown.OptionData(s));
         }
@@ -150,7 +150,7 @@ using AssemblyCSharp;
 
     public void createAndPlay()
     {
-        if(charName.text == null)
+        if (charName.text == null)
         {
             error.text = "Please enter in a name";
             return;
@@ -164,27 +164,30 @@ using AssemblyCSharp;
         print("Before getting the drop down");
         print(classesSel.value + "");
         string temp = classesSel.options[classesSel.value].text;
-        temp = temp.Substring(1, temp.IndexOf('\"', 1)-1);
+        temp = temp.Substring(1, temp.IndexOf('\"', 1) - 1);
         print(temp);
         DatabaseManager db = new DatabaseManager();
         StartCoroutine(db.runCreateChar(charName.text, temp, LoginName.text));
         yield return new WaitForSeconds(5f);
-        play();
+
         // Put error checks here, will do later.
+        play();
+
     }
 
     public IEnumerator createCharScreen()
     {
         DatabaseManager db = new DatabaseManager();
         StartCoroutine(db.runClassDesc());
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(10f);
         classes = db.getClassDesc();
+        print(classes.Length);
         charScreen();
     }
 
     public void LoginClicked()
     {
-        if(LoginName.text == null || LoginPass.text == null || LoginName.text.Length == 0 || LoginPass.text.Length == 0)
+        if (LoginName.text == null || LoginPass.text == null || LoginName.text.Length == 0 || LoginPass.text.Length == 0)
         {
             error.text = "Please Enter Username and Password";
             return;
@@ -193,4 +196,4 @@ using AssemblyCSharp;
         StartCoroutine(logIn());
     }
 
-    }
+}
