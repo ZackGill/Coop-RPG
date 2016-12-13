@@ -498,6 +498,11 @@ public class BattleLogic : NetworkBehaviour
             // On win, call die in battle Holder. Will handle showing player again and all.
             transform.GetComponentInParent<BattleHolderScript>().die();
         }
+		if (state.curState == BattleScreenStates.FightStates.RUN) {
+			print ("Player Ran");
+			sendFightMessage (playerName + " scrambles away from the fight!");
+			transform.GetComponentInParent<BattleHolderScript>().die();
+		}
         if (state.curState == BattleScreenStates.FightStates.SECONDENEMYJOINS)
         {
 

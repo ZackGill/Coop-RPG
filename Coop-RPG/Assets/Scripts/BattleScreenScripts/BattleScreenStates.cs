@@ -16,7 +16,8 @@ public class BattleScreenStates : MonoBehaviour {
         FRIENDJOINS,
         PICKANENEMY,
         LOSE,
-        WIN
+        WIN,
+		RUN
     }
 
     public FightStates curState;

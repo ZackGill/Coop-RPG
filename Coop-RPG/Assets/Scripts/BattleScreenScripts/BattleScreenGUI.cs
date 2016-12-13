@@ -298,6 +298,38 @@ public class BattleScreenGUI : MonoBehaviour
 
         // Toggle the visibility of the Options Menu.
         optionsPanel.alpha = 0;
+		int playerRun = Random.Range (1, 101);
+		int enemymistake;
+		int runVal;
+		switch (battleLogic.getNumEnemies()) {
+		case (1):
+			enemymistake = (int)((1 - enemies [0].getMistakeChance ()) * 100);
+			runVal = (enemies [0].getLevel () / character.getLevel ()) * enemymistake;
+			if (runVal < playerRun) {
+				print ("Player got away");
+			} else {
+				print ("Player didn't escape");
+			}
+			break;
+		case (2):
+			enemymistake = (int)(1 - (enemies [0].getMistakeChance () + enemies [1].getMistakeChance () / 2)) * 100;
+			runVal = ((enemies [0].getLevel () + enemies [1].getLevel ()) / character.getLevel ()) * enemymistake;
+			if (runVal < playerRun) {
+				print ("Player got away");
+			} else {
+				print ("Player didn't escape");
+			}
+			break;
+		case (3):
+			enemymistake = (int)(1 - (enemies [0].getMistakeChance () + enemies [1].getMistakeChance () + enemies [2].getMistakeChance () / 3)) * 100;
+			runVal = ((enemies [0].getLevel () + enemies [1].getLevel () + enemies [2].getLevel ()) / character.getLevel ()) * enemymistake;
+			if (runVal < playerRun) {
+				print ("Player got away");
+			} else {
+				print ("Player didn't escape");
+			}
+			break;
+		}
     }
 
     public void fillSkillButtons()

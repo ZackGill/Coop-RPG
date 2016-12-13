@@ -10,6 +10,8 @@ public class OverworldBattle : NetworkBehaviour {
         public int numPlayers;
         // Flags so we don't attack more than once per turn.
         public bool enemyAttackFlag;
+		// Did the player run from the battle?
+		public bool playerRunFlag;
         // Information about the player.
         public float player0HP;
         public float player1HP;
@@ -235,6 +237,14 @@ public class OverworldBattle : NetworkBehaviour {
         info = temp;
     }
 
+	[Command]
+	public void CmdRunFlag(bool flag)
+	{
+		print("run");
+		BattleInfo temp = info;
+		temp.playerRunFlag = flag;
+		info = temp;
+	}
 
     [Command]
     public void CmdAddMonster(GameObject monsterHolder)
