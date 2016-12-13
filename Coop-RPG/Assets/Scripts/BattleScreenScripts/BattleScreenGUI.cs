@@ -202,6 +202,12 @@ public class BattleScreenGUI : MonoBehaviour
                 battleOver = true;
                 optionsPanel.alpha = 0;
                 break;
+			case(BattleScreenStates.FightStates.RUN):
+				fightMessage.text = battleLogic.getFightMessage ();
+				battleLogic.currentMoveSelected = false;
+				battleOver = true;
+				optionsPanel.alpha = 0;
+				break;
         }
     }
 
