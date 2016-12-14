@@ -257,7 +257,10 @@ public class BattleLogic : NetworkBehaviour
             print("infoDUmp null");
         }
         dumpLoad = false;
-
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            enemies[i].setDead(false);
+        }
     }
 
     // TODO: Replace new monsters and characters with pulling references from collided objects.
@@ -275,8 +278,10 @@ public class BattleLogic : NetworkBehaviour
                 if (temp[i].transform.position.x >= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.x - .6f && temp[i].transform.position.x <= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.x + .6f)
                 {
                     if (temp[i].transform.position.y >= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.y - .6f && temp[i].transform.position.y <= transform.parent.GetComponent<BattleHolderScript>().player.transform.position.y + .6f) {
-                        print("Assign infodump");
-                        infoDump = temp[i].GetComponent<OverworldBattle>();
+                        if (temp[i].GetComponent<SpriteRenderer>().enabled) {
+                            print("Assign infodump");
+                            infoDump = temp[i].GetComponent<OverworldBattle>();
+                        }
                     }
                 }
             }
@@ -335,6 +340,7 @@ public class BattleLogic : NetworkBehaviour
             enemies[0].setDead(true);
             activeTime.disable();
             checkIfAllAreDead();
+            print("Setting Enemy Dead");
            // transform.GetComponentInParent<BattleHolderScript>().player.GetComponent<PlayerMovement>().CmdRemoveEnemy(infoDump.gameObject);
         }
         if (numEnemies >= 2 && enemy2HP <= 0 && !enemies[1].getDead())
@@ -365,7 +371,10 @@ public class BattleLogic : NetworkBehaviour
         {
             case 1:
                 if (enemies[0].getDead() == true)
+                {
+                    print("Set Win");
                     stateQueue.Add(BattleScreenStates.FightStates.WIN);
+                }
                 break;
             case 2:
                 if (enemies[0].getDead() == true && enemies[1].getDead() == true)

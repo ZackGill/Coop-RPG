@@ -76,6 +76,10 @@ public class PatrolCharge_Overworld : NetworkBehaviour
             {
                 for (int yPos = y2; yPos < y1; yPos++)
                 {
+                    if (map.Length < y1 + Mathf.RoundToInt((yPos - y2) * invSlope))
+                    {
+                        continue;
+                    }
                     if (!map[y1 + Mathf.RoundToInt((yPos - y2) * invSlope), yPos]) return false;
                 }
             }
