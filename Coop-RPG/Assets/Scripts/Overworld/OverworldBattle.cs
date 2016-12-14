@@ -79,6 +79,7 @@ public class OverworldBattle : NetworkBehaviour {
             print("Set enemy0 health");
             BattleInfo temp = info;
             temp.enemyHP = enemy0.getHP();
+            temp.fightMessage = "An enemy draws near!";
             info = temp;
             startMonster0Health = true;
         }

@@ -259,7 +259,7 @@ public class BattleLogic : NetworkBehaviour
         dumpLoad = false;
         for (int i = 0; i < enemies.Length; i++)
         {
-            enemies[i].setDead(false);
+            //enemies[i].setDead(false);
         }
     }
 
@@ -505,6 +505,13 @@ public class BattleLogic : NetworkBehaviour
             print("Battle Win");
             sendFightMessage("Enemy was defeated! " + playerName + " wins!"); // Update from Command
             // On win, call die in battle Holder. Will handle showing player again and all.
+
+            for(int i = 0; i < enemies.Length; i++)
+            {
+                enemies[i].setDead(false);
+            }
+
+
             transform.GetComponentInParent<BattleHolderScript>().die();
         }
         if (state.curState == BattleScreenStates.FightStates.SECONDENEMYJOINS)

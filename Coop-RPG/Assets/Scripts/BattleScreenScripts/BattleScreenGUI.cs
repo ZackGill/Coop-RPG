@@ -108,7 +108,6 @@ public class BattleScreenGUI : MonoBehaviour
 
         enemies = new Monster[3];
 
-
         //character = GetComponent<Characters>(); // Replace with Holder that has copy
         //StartCoroutine(updateFromDatabase());
     }
@@ -294,6 +293,9 @@ public class BattleScreenGUI : MonoBehaviour
 
     void RunButtonClicked()
     {
+        // This should be so all players run, or one player runs but the battle continues.
+        transform.GetComponentInParent<BattleHolderScript>().die();
+
         fightButtonsPanel.interactable = false;
 
         // Toggle the visibility of the Options Menu.

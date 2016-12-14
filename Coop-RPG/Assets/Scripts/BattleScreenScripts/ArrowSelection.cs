@@ -16,7 +16,7 @@ public class ArrowSelection : MonoBehaviour
     private BattleScreenStates state;
 
     private Image playerImage;
-    private SpriteRenderer arrow;
+    public SpriteRenderer arrow;
     private SpriteRenderer enemy1;
     private SpriteRenderer enemy2;
     private SpriteRenderer enemy3;
@@ -44,20 +44,16 @@ public class ArrowSelection : MonoBehaviour
         character = battleLogic.getCharacter();
         whichSkill = battleLogic.whichSkill;
 
+        enemies = battleLogic.getEnemies();
+
+
         if (state.curState == BattleScreenStates.FightStates.PICKANENEMY)
         {
-            if ((whichSkill >= 0 && character.getSkills()[whichSkill].getType() == "heal"))
-            {
-                selectPlayer();
-            }
-            else
-            {
+            if (!(whichSkill >= 0 && character.getSkills()[whichSkill].getType() == "heal"))
                 selectEnemy();
-            }
         }
         else
             arrow.enabled = false;
-        enemies = battleLogic.getEnemies();
     }
 
 
