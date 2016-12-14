@@ -1,30 +1,50 @@
 using System;
+using System.Collections.Generic;
+using System.Collections;
+using SimpleFirebaseUnity;
+using SimpleFirebaseUnity.MiniJSON;
+using UnityEngine;
 
-namespace AssemblyCSharp
+[Serializable]
+public class Skill
 {
-	public class Skill
-	{
-		String targets, type, name;
-		int value, threatGen, cooldown;
-		public Skill (String name, String p)
-		{
-			this.name = name;
-			targets = SkillLU.getTargets (name);
-			type = SkillLU.getType (name);
-			value = SkillLU.getValue (name);
-			threatGen = SkillLU.getThreat (name);
-			cooldown = SkillLU.getCD (name);
+		
+    string name, target, type;
+    int value, cooldown, threat;
+    string skillJson;
 
-	
-			String pType = PerkLU.getType (p);
-			int pVal = PerkLU.getValue (p);
+    public Skill(string n, int cd, int val, int threatGen, string targs, string t)
+    {
+        this.name = n;
+        this.cooldown = cd;
+        this.value = val;
+        this.threat = threatGen;
+        this.target = targs;
+        this.type = t;
 
-			if (pType.Equals ("damage")) {
-				value += pVal;
-				value++;
-			}
-			
-		}
+
+    }
+
+    public void applyPerk(string t, int val)
+    {
+        if (t.Equals("damage"))
+        {
+            value += val;
+        }
+
+        if (t.Equals("cooldown"))
+        {
+            cooldown -= val;
+        }
+
+
+    }
+
+    public string toString()
+    {
+        return "" + name + ": Value: " + value + ", Type: " + type;
+    }
+
 
 
 		public String getName() {
@@ -36,7 +56,7 @@ namespace AssemblyCSharp
 		}
 
 		public String getTargets() {
-			return targets;
+			return target;
 		}
 
 		public int getValue() {
@@ -44,12 +64,13 @@ namespace AssemblyCSharp
 		}
 
 		public int getThreatGen() {
-			return threatGen;
+			return threat;
 		}
 
 		public int getCooldown() {
 			return cooldown;
 		}
+
 	}
-}
+
 

@@ -4,7 +4,7 @@ namespace AssemblyCSharp
 {
 	public static class PerkLU
 	{
-		
+		/*
 		public static String getType(String name) {
 			String ret = "";
 			IFirebase fb, p;

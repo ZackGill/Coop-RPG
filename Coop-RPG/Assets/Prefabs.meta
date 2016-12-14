@@ -1,7 +1,19 @@
 fileFormatVersion: 2
-guid: 3418dabfe2ae5364bac209707c3e5337
+<<<<<<< HEAD
+<<<<<<< HEAD
+guid: 2ce3ed6ae3220224d8197c72d846345a
 folderAsset: yes
-timeCreated: 1473724432
+timeCreated: 1477289140
+=======
+guid: db3822c86ecf21748898a8af7eba2f6e
+folderAsset: yes
+timeCreated: 1478478696
+>>>>>>> refs/remotes/origin/Lex
+=======
+guid: 2ce3ed6ae3220224d8197c72d846345a
+folderAsset: yes
+timeCreated: 1477289140
+>>>>>>> refs/remotes/origin/JT
 licenseType: Free
 DefaultImporter:
   userData: 

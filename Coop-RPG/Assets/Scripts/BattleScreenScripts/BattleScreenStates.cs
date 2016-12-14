@@ -11,6 +11,10 @@ public class BattleScreenStates : MonoBehaviour {
         PLAYERTURN,
         NEUTRAL,
         ENEMYTURN,
+        SECONDENEMYJOINS,
+        THIRDENEMYJOINS,
+        FRIENDJOINS,
+        PICKANENEMY,
         LOSE,
         WIN
     }

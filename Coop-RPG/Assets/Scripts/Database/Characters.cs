@@ -1,53 +1,120 @@
 ﻿using System;
+using UnityEngine;
 
-namespace AssemblyCSharp
-{
+namespace AssemblyCSharp{
+    [Serializable]
 	public class Characters
 	{
-		IFirebase fb, chara, sub;
-		string[] charas;
-		public Characters (string cList)
-		{
-		///	charas = cList.Split (",");
-		}
+		int attack, magic, defense, hp, exp, level;
+		float threatLevel;
+		string clName;
+		Skill[] skills;
+		string name;
 
-		public Characters (int index) {
-			fb = Firebase.CreateNew ("https://coop-rpg.firebaseio.com/Characters");
-			fb.AuthWithCustomToken ("nofP6v645gh35aA1jlQGOc4ueceuDZqEIXu7qMs1", (AuthData auth) => {
-
-			}, (FirebaseError e) => {
-
-			});
-
-			string cName = charas[index];
-			chara = fb.Child(cName);
-
-			int exp, hp, atk, def, mag;
-			string rpgclass, weapon, armor, acc, perks, skills;
-
-			exp = int.Parse(chara.Child("EXP").ToString());
-			hp = int.Parse(chara.Child("HP").ToString());
-		///	rpgclass = int.Parse(chara.Child("class").ToString());
-			sub = chara.Child("Stats");
-			atk = int.Parse(sub.Child("attack").ToString());
-			def = int.Parse(sub.Child("defense").ToString());
-			mag = int.Parse(sub.Child("magic").ToString());
-			sub = chara.Child("equipment");
-			weapon = sub.Child("weapon").ToString();
-			armor = sub.Child("armor").ToString();
-			acc = sub.Child("accesory").ToString();
-
-
-
-		
-
-			/// Character(cName, exp, hp, atk, def, mag, rpgclass, weapon,
-			///	armor, acc, perks, skills);
-
-
+		public Characters(string n, string cl, int atk, int mg, int def, int hp, int exp, int lvl) {
+			clName = cl;
+			attack = atk;
+			magic = mg;
+			defense = def;
+			this.hp = hp;
+			this.exp = exp;
+			level = lvl;
+			threatLevel = 0f;
+			name = n;
 
 
 		}
+
+		public Characters() {
+			clName = "";
+			name = "";
+			attack = 0;
+			magic = 0;
+			defense = 0;
+			hp = 0;
+			exp = 0;
+			skills = null;
+			level = 0;
+			threatLevel = 0f;
+		}
+
+		public int getAttack() {
+			return attack;
+		}
+
+		public void setAttack(int atk) {
+			attack = atk;
+		}
+
+		public int getMagic() {
+			return magic;
+		}
+
+		public void setMagic(int mg) {
+			magic = mg;
+		}
+		public int getDefense() {
+			return defense;
+		}
+
+		public void setDefense(int def) {
+			defense = def;
+		}
+
+		public int getExp() {
+			return exp;
+		}
+
+		public void setExp(int exp) {
+			this.exp = exp;
+		}
+
+		public int getHP() {
+			return hp;
+		}
+
+		public void setHP(int hp) {
+			this.hp = hp;
+		}
+
+		public Skill[] getSkills() {
+			return skills;
+		}
+
+		public void setSkills(Skill[] sk) {
+			skills = sk;
+
+		}
+
+		public void setLevel(int lvl) {
+			level = lvl;
+		}
+
+		public int getLevel() {
+			return level;
+		}
+
+		public float getThreat() {
+			return threatLevel;
+		}
+
+		public void setThreat(float t) {
+			threatLevel = t;
+		}
+
+		public void addThreat(float toAdd) {
+			threatLevel += toAdd;
+		}
+
+		public string getClass() {
+			return clName;
+		}
+
+		public string getName() {
+			return name;
+		}
+
 	}
+
 }
 

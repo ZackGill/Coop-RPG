@@ -17,6 +17,7 @@ limitations under the License.
 using System.Collections;
 
 public class TestScript : MonoBehaviour {
+	/*
 	IFirebase firebase;
 	IFirebase child;
 	IFirebase test;
@@ -41,7 +42,7 @@ public class TestScript : MonoBehaviour {
 		};
 			
 
-		test = firebase.Child("acc23");
+		test = firebase.Child("accBUILD");
 		test.SetJsonValue ("{\"characters\" : \"TheDoo222d\", \"email\" : \"mail@mail.mail\", \"password\" : \"FUG\"}");
 		child = test.Child ("characters");
 		Debug.Log (child.ToString ());
@@ -52,4 +53,5 @@ public class TestScript : MonoBehaviour {
 	void Update () {
 	
 	}
+*/
 }
