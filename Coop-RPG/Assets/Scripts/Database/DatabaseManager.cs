@@ -253,7 +253,9 @@ namespace AssemblyCSharp
                 string[] sp = s.Split(':');
                 if (String.Equals(sp[0], "\"HP\""))
                 {
-                    hp = int.Parse(sp[1].Substring(1, 1));
+                    Debug.Log(sp[1]);
+                    char[] trim = { '\"' };
+                    hp = int.Parse(sp[1].Trim(trim));
 
                 }
                 if (sp[0].Equals("\"EXP\""))
@@ -264,7 +266,9 @@ namespace AssemblyCSharp
 
                 if (sp[0].Equals("\"LVL\""))
                 {
-                    lvl = int.Parse(sp[1].Substring(1, 1));
+                    char[] trim = { '\"' };
+
+                    lvl = int.Parse(sp[1].Trim(trim));
 
                 }
 
